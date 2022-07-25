@@ -1,7 +1,10 @@
 <template>
     <div class="v-datepicker">
         <input type="hidden" :name="name" :id="name" :value="date"/>
-        <v-date-picker v-model="date" :name="name" value-type="format" format="YYYY-MM-DD" @change="$emit('input', date)" :placeholder="placeholder"></v-date-picker>
+        <v-date-picker v-model="date" :name="name" value-type="format" format="yyyy-MM-dd" @update:modelValue="onThing" :placeholder="placeholder"></v-date-picker>
+        <!-- @change="$emit('update-date', date)" -->
+        <!-- <v-date-picker v-model="date" :name="name" value-type="format" format="yyyy-MM-dd" @change="$emit('input', date)" :placeholder="placeholder"></v-date-picker> -->
+        <!-- {{ date }} -->
     </div>
 </template>
 
@@ -34,6 +37,12 @@
         created() {
             if (this.value) {
                 this.date = new Date(this.value);
+            }
+        },
+        methods: {
+            onThing() {
+                // console.log(this.date);
+                this.$emit('update-date', this.date)
             }
         }
     };

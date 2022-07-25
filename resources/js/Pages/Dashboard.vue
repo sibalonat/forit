@@ -41,7 +41,8 @@
                                         </ul>
                                     </div>
                                     <div class="col-span-2">
-                                        <component :is="col.field" :name="col.field" class="px-4 py-3 rounded-full"> </component>
+                                        <component :is="col.field" @update-date="getData" :name="col.field" class="px-4 py-3 rounded-full"> </component>
+                                        <!-- @input="getData" -->
                                     </div>
                                 </div>
                                 </div>
@@ -61,7 +62,11 @@
                     </div>
                     </div>
                     <p v-else>No Row created</p>
-                    <button type="button" class="w-1/2 text-white bg-gray-800" @click="addONe">+</button>
+                    <div class="grid grid-cols-2">
+                        <button type="button" class="w-full text-white bg-gray-800" @click="addONe">+</button>
+                        <!-- @click="getData" -->
+                        <button type="button"  >getData</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -90,6 +95,8 @@ export default {
     data() {
         return {
             indentifier: 1,
+            value: {},
+            input: null,
             grid: [
                 { name: 'grid-cols-1', id: 1, cols: [] },
                 { name: 'grid-cols-2', id: 2, cols: [] },
@@ -179,6 +186,10 @@ export default {
             elements: [],
         }
     },
+    create() {
+        this.input = this.value;
+        console.log(this.input);
+    },
 
     computed: {
         selectedCol() {
@@ -188,6 +199,17 @@ export default {
             return this.fieldlist
         }
     },
+
+    // watch: {
+    //     value() {
+    //         this.input = this.value;
+    //         console.log(this.input);
+    //     },
+    //     input() {
+    //         this.$emit("input", this.input);
+
+    //     },
+    // },
 
     methods: {
         addONe() {
@@ -203,6 +225,10 @@ export default {
         },
         reflectValues(col) {
             console.log(col);
+        },
+        getData(e) {
+            console.log(e);
+
         }
     },
 
