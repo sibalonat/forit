@@ -41,7 +41,7 @@
                                         </ul>
                                     </div>
                                     <div class="col-span-2">
-                                        <component :is="col.field" class=""> </component>
+                                        <component :is="col.field" :name="col.field" class="px-4 py-3 rounded-full"> </component>
                                     </div>
                                 </div>
                                 </div>
@@ -75,12 +75,17 @@
 import Input from "./../Components/fields/Input.vue";
 import Textarea from "./../Components/fields/Textarea.vue";
 import FileUpload from "./../Components/fields/FileUpload.vue";
-import FileUpload from "./../Components/fields/FileUpload.vue";
+import Select from "./../Components/fields/Select.vue";
+import SignaturePad from "./../Components/fields/SignaturePad.vue";
+import VDatepicker from "./../Components/fields/VDatepicker.vue";
 export default {
     components: {
         'Text': Input,
-        'TextArea': Textarea,
-        'FileUpload': FileUpload
+        'Text Area': Textarea,
+        'Select': Select,
+        'Signature': SignaturePad,
+        'Date-Time Picker': VDatepicker,
+        'File Upload': FileUpload,
     },
     data() {
         return {
@@ -124,6 +129,14 @@ export default {
                 {
 	          		name: 'TextArea',
 	          		text: 'Text Area',
+	          		hasOptions: false,
+	          		isRequired: false,
+	          		isHelpBlockVisible: false,
+	          		isPlaceholderVisible: false,
+		        },
+                {
+	          		name: 'SignaturePad',
+	          		text: 'Signature',
 	          		hasOptions: false,
 	          		isRequired: false,
 	          		isHelpBlockVisible: false,
