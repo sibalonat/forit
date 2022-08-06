@@ -313,5 +313,15 @@ export default {
 
     },
 
+    unmounted() {
+        if (this.f.form_builder_json === null) {
+            console.log('is null');
+
+            axios.delete(`/delete/${this.f.id}`).then(response => {
+                console.log(response);
+            })
+        }
+    }
+
 }
 </script>

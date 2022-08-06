@@ -29,38 +29,48 @@ class FormController extends Controller
     // public function store(StoreFormRequest $request, Request $r)
     public function update(StoreFormRequest $request, Form $form)
     {
-        // $form = Form::create(
-        // $canGo = $request->validated();
         $request->validated();
-        // dd($request);
+
         $form->update($request->all());
-        // dd($form->id);
-            // dd($r->all());
-            // dd('is here');
-            # code...
-            // Request::all();
-
-        // dd($r);
-
-
-            // Request::validate([
-            //     'form_builder_json' => ['required'],
-            //     ])
-            // );
-        // $form->addMediaFromRequest('images')->toMediaCollection('image');
         return redirect()->route('dashboard');
     }
+    // public function update(StoreFormRequest $request, Form $form)
+    // {
+    //     // $form = Form::create(
+    //     // $canGo = $request->validated();
+    //     $request->validated();
+    //     // dd($request);
+    //     $form->update($request->all());
+    //     // dd($form->id);
+    //         // dd($r->all());
+    //         // dd('is here');
+    //         # code...
+    //         // Request::all();
+
+    //     // dd($r);
+
+
+    //         // Request::validate([
+    //         //     'form_builder_json' => ['required'],
+    //         //     ])
+    //         // );
+    //     // $form->addMediaFromRequest('images')->toMediaCollection('image');
+    //     return redirect()->route('dashboard');
+    // }
 
     public function initialstore()
     {
-
         $form = Form::create(
             Request::validate([
                 'form_builder_json' => ['nullable']
             ])
-            // 'form_builder_json' => []
         );
         return Redirect::route('form.edit', $form->id);
+    }
+
+    public function destroy(Form $form)
+    {
+        $form->delete();
     }
 
 
