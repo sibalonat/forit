@@ -42,7 +42,7 @@
         methods: {
             onThing() {
                 // console.log(this.date);
-                this.$emit('update-date', this.date)
+                this.$emit('input', this.date)
             }
         }
     };

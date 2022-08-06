@@ -16,13 +16,14 @@
         "lodash": "^4.17.19",
         "postcss": "^8.4.6",
         "tailwindcss": "^3.1.0",
-        "vite": "^2.9.11",
+        "vite": "^2.9.14",
         "vue": "^3.2.31"
     },
     "dependencies": {
         "@vuepic/vue-datepicker": "^3.3.1",
         "dropzone": "^6.0.0-beta.2",
         "signature_pad": "^4.0.7",
+        "tb-vue3-laravel-inertiajs-file-upload": "^1.8.4",
         "vue-next-select": "^2.10.4"
     }
 }

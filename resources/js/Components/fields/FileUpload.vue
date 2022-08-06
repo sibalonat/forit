@@ -8,6 +8,7 @@
         >
             <a :href="file.url" target="_blank">
                 <div class="file-upload-preview">
+                    {{ file.url }}
                     <img v-if="isImage(file.mime_type)" :src="file.url"  :title="file.filename" />
                     <img v-else src="/img/icons/pdf2.svg" :title="file.filename" style="width: 100px; height: 73px;"/>
                 </div>
@@ -18,15 +19,59 @@
             </button>
         </div>
         <div class="dropzone" ref="dropzone"></div>
+
+        <FileUploader :url="'/image'"
+                          :text="'select an image'"
+                          :buttonText="'Upload'"
+                          :autoProcess="false"
+                          :multiple="true"
+                          :btnClass="'btn btn-primary'"
+                          @file-uploader="fileUploader">
+     </FileUploader>
     </div>
 </template>
 
+<!-- :additionalFields="[
+    {
+        'type': 'text',
+        'name': 'test',
+        'value': 'test',
+        'id': 'test1',
+        'labelText': 'test1'
+        },
+
+    {
+        'type': 'text',
+        'name': 'test2',
+        'value': 'test2',
+        'id': 'test1',
+        'labelText': 'test2'
+    },
+
+    {
+        'type': 'textarea',
+        'name': 'test3',
+        'value': 'test3',
+        'id': 'test3',
+        'labelText': 'test3',
+        'cols': '50',
+        'rows': '3'
+        }
+]" -->
+
+
+
+
 <script>
+    import FileUploader from 'tb-vue3-laravel-inertiajs-file-upload'
     import axios from "axios";
     import Dropzone from "dropzone";
     Dropzone.autoDiscover = false;
     export default {
         name: "FileUpload",
+        components: {
+            FileUploader
+        },
         props: {
             name: String,
             value: {},
@@ -36,7 +81,8 @@
             },
             storeUrl: {
                 type: String,
-                default: "/file",
+                default: "/image",
+                // default: "/file",
             },
             destroyUrl: {
                 type: String,
@@ -46,6 +92,13 @@
                 type: String,
                 default: "Drop files here",
             },
+        },
+        setup() {
+            function fileUploader(response) {
+                console.log(response)
+            }
+
+            return  { fileUploader }
         },
         data() {
             return {
@@ -59,15 +112,21 @@
                 addRemoveLinks: true,
                 dictDefaultMessage: 'Drop files here',
                 sending: (file, xhr, formData) => {
-                    formData.append("_token", this.csrf);
+                    console.log(file);
+                    console.log(xhr);
+                    formData.append("_token", document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
                 },
                 success: (file, response) => {
+                    console.log(file);
+                    console.log(response);
                     this.files.push(response.data);
+                    console.log(this.files);
                 },
-                complete: (file) => {
-                    this.dropzone.removeFile(file);
-                },
+                // complete: (file) => {
+                //     this.dropzone.removeFile(file);
+                // },
             });
+            // console.log(this.storeUrl);
         },
         created() {
             let files = this.value;
@@ -86,7 +145,7 @@
                     .then((res) => {
                         this.$delete(this.files, index);
                     })
-                    .catch(console.error);
+                    .catch((error) => console.log(error));
             },
             getFile(id) {
                 axios
@@ -96,6 +155,7 @@
                         },
                     })
                     .then((res) => {
+                        console.log(res);
                         let data = res.data.data;
                         this.files.push({
                             id: data.id,

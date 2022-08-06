@@ -1,5 +1,6 @@
 <template>
-    <input :name="name" :type="type" v-model="input" :disabled="disabled" />
+    <input :name="name" :type="type" v-model.lazy="input" :disabled="disabled" />
+    <!-- {{ input }} -->
 </template>
 
 <script>
@@ -8,7 +9,7 @@
         props: {
             name: {},
             type: {},
-            value: { default: null },
+            // value: { default: null },
             disabled: { default: false },
         },
         data() {
@@ -20,9 +21,10 @@
             this.input = this.value;
         },
         watch: {
-            value() {
-                this.input = this.value;
-            },
+            // value() {
+            //     this.input = this.value;
+            //     console.log(this.input);
+            // },
             input() {
                 this.$emit("input", this.input);
             },
