@@ -6,6 +6,7 @@
 
         {{-- window.Laravel = {csrfToken: '{{ csrf_token() }}'} --}}
         {{-- <meta name="csrf-token" content="{{ csrf_token() }}"> --}}
+        <meta name="csrf_token" content="{{ csrf_token() }}">
 
         <title inertia>{{ config('app.name', 'Laravel') }}</title>
 

@@ -22,8 +22,11 @@
     "dependencies": {
         "@vuepic/vue-datepicker": "^3.3.1",
         "dropzone": "^6.0.0-beta.2",
+        "filepond": "^4.30.4",
+        "filepond-plugin-file-validate-size": "^2.2.7",
+        "filepond-plugin-file-validate-type": "^1.2.8",
         "signature_pad": "^4.0.7",
-        "tb-vue3-laravel-inertiajs-file-upload": "^1.8.4",
+        "vue-filepond": "^7.0.3",
         "vue-next-select": "^2.10.4"
     }
 }

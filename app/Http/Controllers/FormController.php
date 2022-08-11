@@ -8,8 +8,8 @@ use Illuminate\Support\Facades\Redirect;
 // use Request;
 // use Illuminate\Http\Request;
 use Inertia\Inertia;
-// use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Request;
+use Illuminate\Http\Request;
+// use Illuminate\Support\Facades\Request;
 
 class FormController extends Controller
 {
@@ -34,37 +34,28 @@ class FormController extends Controller
         $form->update($request->all());
         return redirect()->route('dashboard');
     }
-    // public function update(StoreFormRequest $request, Form $form)
-    // {
-    //     // $form = Form::create(
-    //     // $canGo = $request->validated();
-    //     $request->validated();
-    //     // dd($request);
-    //     $form->update($request->all());
-    //     // dd($form->id);
-    //         // dd($r->all());
-    //         // dd('is here');
-    //         # code...
-    //         // Request::all();
-
-    //     // dd($r);
 
 
-    //         // Request::validate([
-    //         //     'form_builder_json' => ['required'],
-    //         //     ])
-    //         // );
-    //     // $form->addMediaFromRequest('images')->toMediaCollection('image');
-    //     return redirect()->route('dashboard');
-    // }
+    public function stimage(Form $form, Request $request)
+    {
+        if (isset($request->fileUpload)) {
+            $form->addMediaFromRequest('fileUpload')->toMediaCollection();
+
+            // return $form->query()->getMedia();
+        }
+    }
+
 
     public function initialstore()
     {
-        $form = Form::create(
-            Request::validate([
-                'form_builder_json' => ['nullable']
-            ])
-        );
+        // Request::validate([
+        //     'form_builder_json' => ['nullable']
+        // ])
+        $form = Form::create([
+            'form_builder_json' => null
+
+        ]);
+
         return Redirect::route('form.edit', $form->id);
     }
 

@@ -9,20 +9,21 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Form extends Model implements HasMedia
 {
-    use HasFactory;
-    use InteractsWithMedia;
+    use HasFactory, InteractsWithMedia;
+    // use InteractsWithMedia;
 
     protected $fillable = ['form_builder_json'];
     // protected $fillable = [
     //     'form_builder_json'
     // ];
 
-    public function registerMediaCollections(): void
-    {
-        $this->addMediaCollection('image')
-            ->singleFile()
-            ->acceptsMimeTypes(['image/jpg', 'image/jpeg', 'image/png', 'image/gif']);
-    }
+    // public function registerMediaCollections()
+    // public function registerMediaCollections(): void
+    // {
+    //     $this->addMediaCollection('image')
+    //         ->singleFile();
+    //         // ->acceptsMimeTypes(['image/jpg', 'image/jpeg', 'image/png', 'image/gif']);
+    // }
 
     // public static function booted()
     // {

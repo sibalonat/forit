@@ -16,7 +16,7 @@
         <div class="py-12">
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
                 <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-                    <form @submit.prevent="store">
+                    <form @submit.prevent="store" enctype="multipart/form-data">
                     <div class="p-6 bg-white border-b border-gray-200" v-if="elements.length">
                     <div class="flex border-b border-gray-200" v-for="(el, a) in elements" :key="el.id">
                         <div class="w-4/5">
@@ -44,7 +44,11 @@
                                     </div>
                                     <div class="col-span-2">
                                         <!-- <component :is="col.field" @input="getData($event, col.field, el, a, el.cols[index], index)" :name="col.field" class="px-4 py-3 rounded-lg"> </component> -->
-                                        <component :is="col.field" @input="getData($event, col.field, el, a, el.cols[index], index)" :name="col.field" class="px-4 py-3 rounded-lg"> </component>
+                                        <component :is="col.field" @input="getData($event, col.field, el, a, el.cols[index], index)" :name="col.field" class="px-4 py-3 rounded-lg" :formId="f.id"> </component>
+
+                                        <!-- {{ f.id }} -->
+                                        <!-- <span>{{ dropzoneFile.name }}</span> -->
+                                        <!-- <component :is="col.field" @input="getData($event, col.field, el, a, el.cols[index], index)" :name="col.field" class="px-4 py-3 rounded-lg"> </component> -->
                                     </div>
                                 </div>
                                 <div class="justify-end float-right w-32">
@@ -97,6 +101,7 @@ import Select from "./../Components/fields/Select.vue";
 import SignaturePad from "./../Components/fields/SignaturePad.vue";
 import VDatepicker from "./../Components/fields/VDatepicker.vue";
 import { reactive } from '@vue/reactivity';
+// import { ref } from 'vue';
 export default {
     components: {
         'Text': Input,
@@ -104,7 +109,7 @@ export default {
         'Select': Select,
         'Signature': SignaturePad,
         'Date-Time Picker': VDatepicker,
-        'File Upload': FileUpload,
+        'fileUpload': FileUpload,
     },
     props: {
     // eslint-disable-next-line vue/prop-name-casing
@@ -183,7 +188,7 @@ export default {
 		      	},
                 {
 	          		name: 'FileUpload',
-	          		text: 'File Upload',
+	          		text: 'fileUpload',
 	          		hasOptions: false,
 	          		isRequired: false,
 	          		isHelpBlockVisible: false,
@@ -209,6 +214,7 @@ export default {
             elements: [],
         }
     },
+
     created() {
         this.input = this.value;
         console.log(this.f.id);
@@ -236,6 +242,10 @@ export default {
 
         addColumn(item) {
             item.cols.push({id: this.indentifier++ })
+        },
+
+        nameAttr() {
+            console.log(this.$attrs);
         },
 
         store() {
@@ -317,9 +327,11 @@ export default {
         if (this.f.form_builder_json === null) {
             console.log('is null');
 
-            axios.delete(`/delete/${this.f.id}`).then(response => {
-                console.log(response);
-            })
+            // axios.delete(`/delete/${this.f.id}`).then(response => {
+            //     console.log(response);
+            // })
+            // axios.delete(`/delete/${this.f.id}`).then()
+            axios.delete(`/delete/${this.f.id}`)
         }
     }
 

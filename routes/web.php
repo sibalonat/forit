@@ -30,11 +30,13 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::get('/create', [FormController::class, 'create'])->middleware(['auth', 'verified']);
+Route::get('create', [FormController::class, 'create'])->middleware(['auth', 'verified']);
 // Route::post('/create', [FormController::class, 'store'])->middleware(['auth', 'verified']);
-Route::get('/elaborate/{form}', [FormController::class, 'edit'])->middleware(['auth', 'verified'])->name('form.edit');
-Route::put('/update/{form}', [FormController::class, 'update'])->middleware(['auth', 'verified'])->name('form.update');
-Route::delete('/delete/{form}', [FormController::class, 'destroy'])->middleware(['auth', 'verified'])->name('form.destroy');
+Route::get('elaborate/{form}', [FormController::class, 'edit'])->middleware(['auth', 'verified'])->name('form.edit');
+Route::put('update/{form}', [FormController::class, 'update'])->middleware(['auth', 'verified'])->name('form.update');
+Route::delete('delete/{form}', [FormController::class, 'destroy'])->middleware(['auth', 'verified'])->name('form.destroy');
+
+Route::post('elaborate/{form}/image', [FormController::class, 'stimage'])->middleware(['auth', 'verified']);
 
 // Route::post('image', [ImageController::class,'store'])->name('image.store');
 
