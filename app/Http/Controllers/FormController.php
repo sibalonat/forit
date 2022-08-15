@@ -67,7 +67,6 @@ class FormController extends Controller
     {
         $form = Form::create([
             'form_builder_json' => null
-
         ]);
 
         return Redirect::route('form.edit', $form->id);

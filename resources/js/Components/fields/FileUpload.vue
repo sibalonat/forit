@@ -17,7 +17,8 @@ const props = defineProps({
     formId: Number
 })
 
-const emit = defineEmits(['change'])
+let emit = defineEmits(['change-file'])
+// const emit = defineEmits(['change'])
 
 
 let idToDelete = ref('')
@@ -72,8 +73,6 @@ setOptions({
 
 
 
-
-
 function filepondInitialized() {
     console.log('Filepond is ready!');
     console.log('Filepond object:', pond.value);
@@ -94,7 +93,9 @@ function handleProcessedFile(error, file) {
 
     idToDelete.value = obj.id
 
-    emit('change', obj)
+    emit('change-file', obj)
+
+    // console.log(emit);
     // console.log(idToDelete);
 
     // // let prs = JSON.parse(obj);
