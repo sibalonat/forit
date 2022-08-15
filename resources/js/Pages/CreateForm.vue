@@ -266,7 +266,6 @@ export default {
 
         },
 
-        // getData(e, dataType, row, i, col, o) {
         getData(e, dataType, row, o) {
 
             if (e) {
