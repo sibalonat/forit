@@ -42,7 +42,7 @@ import { Head } from '@inertiajs/inertia-vue3';
                                                                 class="inline-block" :id="`radio-for-${i}`">
                                                             <label class="ml-4 text-xs text-black"
                                                                 :for="`radio-for-${i}`">
-                                                                {{ fld.text }}
+                                                                {{ fld.alias }} field
                                                             </label>
                                                         </li>
                                                     </ul>
@@ -152,6 +152,7 @@ export default {
                 {
                     name: 'TextInput',
                     text: 'Text',
+                    alias: 'Text',
                     hasOptions: false,
                     isRequired: false,
                     isHelpBlockVisible: false,
@@ -168,6 +169,7 @@ export default {
                 {
                     name: 'TextArea',
                     text: 'Text Area',
+                    alias: 'Textarea',
                     hasOptions: false,
                     isRequired: false,
                     isHelpBlockVisible: false,
@@ -176,6 +178,7 @@ export default {
                 {
                     name: 'SignaturePad',
                     text: 'Signature',
+                    alias: 'Signature',
                     hasOptions: false,
                     isRequired: false,
                     isHelpBlockVisible: false,
@@ -184,6 +187,7 @@ export default {
                 {
                     name: 'SelectList',
                     text: 'Select',
+                    alias: 'Select List',
                     hasOptions: true,
                     isRequired: false,
                     isHelpBlockVisible: false,
@@ -193,6 +197,7 @@ export default {
                 {
                     name: 'FileUpload',
                     text: 'fileUpload',
+                    alias: 'File Upload',
                     hasOptions: false,
                     isRequired: false,
                     isHelpBlockVisible: false,
@@ -209,6 +214,7 @@ export default {
                 {
                     name: 'DatetimePicker',
                     text: 'Date-Time Picker',
+                    alias: 'Date-Time',
                     hasOptions: false,
                     isRequired: false,
                     isHelpBlockVisible: false,
@@ -348,7 +354,7 @@ export default {
     },
 
     unmounted() {
-        if (this.f.form_builder_json === null && this.tempJson === []) {
+        if (this.f.form_builder_json === null && this.tempJson.length === 0) {
             console.log('is null');
 
             axios.delete(route('form.destroy', { form: this.f.id }))
