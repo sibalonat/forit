@@ -348,14 +348,10 @@ export default {
     },
 
     unmounted() {
-        if (this.f.form_builder_json === null) {
+        if (this.f.form_builder_json === null && this.tempJson === []) {
             console.log('is null');
 
-            // axios.delete(`/delete/${this.f.id}`).then(response => {
-            //     console.log(response);
-            // })
-            // axios.delete(`/delete/${this.f.id}`).then()
-            axios.delete(`/delete/${this.f.id}`)
+            axios.delete(route('form.destroy', { form: this.f.id }))
         }
     }
 
