@@ -9,12 +9,15 @@ import { ref } from '@vue/reactivity';
 import { onMounted, watch } from 'vue';
 
 const FilePond = vueFilePond(FilePondPluginFileValidateType, FilePondPluginFileValidateSize, FilePondPluginImagePreview);
+// const FilePond = vueFilePond(FilePondPluginFileValidateType, FilePondPluginFileValidateSize, FilePondPluginImagePreview);
 
 
 const props = defineProps({
     name: String,
     formId: Number
 })
+
+const emit = defineEmits(['change'])
 
 
 let idToDelete = ref('')
@@ -29,6 +32,7 @@ onMounted(() => {
     filepondInitialized
     handleProcessedFile
     imageDelete
+    FilePond
 })
 
 watch(idToDelete, async (newId) => {
@@ -44,7 +48,7 @@ setOptions({
         // form.edit
         url: route('form.edit', props.formId),
         process: {
-            url: './image',
+            url: '/image',
 
             onerror: (response) => {
                 serverMessage = JSON.parse(response);
@@ -89,10 +93,12 @@ function handleProcessedFile(error, file) {
     // this.idToDelete = obj.id
 
     idToDelete.value = obj.id
-    console.log(idToDelete);
+
+    emit('change', obj)
+    // console.log(idToDelete);
 
     // // let prs = JSON.parse(obj);
-    console.log(images.value);
+    // console.log(images.value);
 
 
     if (Array.isArray(images.value)) {
@@ -127,7 +133,7 @@ function imageDelete(error, file) {
 <template>
     <div>
         <!-- :server="{url}" -->
-        <file-pond :name="name" ref="pond" credits="false" label-idle="Click to choose image, or drag here..."
+        <FilePond :name="name" ref="pond" credits="false" label-idle="Click to choose image, or drag here..."
             @init="filepondInitialized" accepted-file-types="image/jpg, image/jpeg, image/png"
             @processfile="handleProcessedFile" @removefile="imageDelete" max-file-size="1MB" />
     </div>
