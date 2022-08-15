@@ -117,7 +117,6 @@ export default {
         'fileUpload': FileUpload,
     },
     props: {
-        // eslint-disable-next-line vue/prop-name-casing
         f: Object,
     },
 
