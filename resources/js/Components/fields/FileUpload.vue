@@ -1,109 +1,134 @@
-<script>
+<script setup>
 import vueFilePond, { setOptions } from 'vue-filepond';
 import "filepond/dist/filepond.min.css";
+import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css';
 import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
 import FilePondPluginFileValidateSize from 'filepond-plugin-file-validate-size';
+import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
+import { ref } from '@vue/reactivity';
+import { onMounted, watch } from 'vue';
 
-// console.log(this.formId);
+const FilePond = vueFilePond(FilePondPluginFileValidateType, FilePondPluginFileValidateSize, FilePondPluginImagePreview);
+
+
+const props = defineProps({
+    name: String,
+    formId: Number
+})
+
+
+let idToDelete = ref('')
+let pond = ref(null)
+let routedel = ref('')
+let images = ref([])
+
+
+onMounted(() => {
+    pond.value
+    // console.log(pond.value);
+    filepondInitialized
+    handleProcessedFile
+    imageDelete
+})
+
+watch(idToDelete, async (newId) => {
+    idToDelete.value = newId
+    routedel.value = route('image.delete', { form: props.formId, id: idToDelete.value })
+    console.log(routedel.value);
+})
+
+
 let serverMessage = {};
 setOptions({
     server: {
+        // form.edit
+        url: route('form.edit', props.formId),
         process: {
-            url: `${window.location.href}/image`,
-            // url: './image',
-            // url: `./${this.formId}/image`,
+            url: './image',
+
             onerror: (response) => {
                 serverMessage = JSON.parse(response);
             },
-            headers: {
-                'X-CSRF-TOKEN': document.head.querySelector('meta[name="csrf_token"]').content
-            }
-        }
+        },
+        revert: null,
+        headers: {
+            'X-CSRF-TOKEN': document.head.querySelector('meta[name="csrf_token"]').content
+        },
+
     },
+    // console.log();
     labelFileProcessingError: () => {
         return serverMessage.error;
-    }
+    },
+
+    // labelFileProcessingComplete: () => {
+    //     return
+    // }
 });
-const FilePond = vueFilePond(FilePondPluginFileValidateType, FilePondPluginFileValidateSize);
 
 
-export default {
-    props: {
-        name: String,
-        formId: Number
-    },
 
-    components: {
-        FilePond
-    },
 
-    data() {
-        return {
-            images: [],
-            url: ''
-        }
-    },
-    created() {
-        let u = `${window.location.href}/image`
-        // console.log(u);
-        // this.$refs.pond.server = u
-        this.url = u
-        console.log(this.url);
-    },
 
-    mounted() {
-        console.log(this.name);
-        // url: '.'+formId+'/image',
-        console.log(this.formId);
-        console.log(setOptions.server);
-        // console.log(this.$refs.pond.server);
-        let u = `${window.location.href}/image`
-        // console.log(u);
-        // this.$refs.pond.server.setAttribute('server', u)
+function filepondInitialized() {
+    console.log('Filepond is ready!');
+    console.log('Filepond object:', pond.value);
+}
 
-        this.url = u
-        console.log(this.url);
-        console.log(this.$refs.pond.server);
-        // /''+{formId}+''/image`
-        // axios.get('/images')
-        //     .then((response) => {
-        //         this.images = response.data;
-        //     })
-        //     .catch((error) => {
-        //         console.error(error);
-        //     });
-    },
-
-    methods: {
-        filepondInitialized() {
-            console.log('Filepond is ready!');
-            console.log('Filepond object:', this.$refs.pond);
-        },
-        handleProcessedFile(error, file) {
-            if (error) {
-                console.error(error);
-                return;
-            }
-            // add the file to our images array
-            this.images.unshift(file.serverId);
-        }
+function handleProcessedFile(error, file) {
+    if (error) {
+        console.error(error);
+        return;
     }
+
+    // console.log(file.serverId);
+
+    // let obj = file.serverId
+    let obj = JSON.parse(file.serverId)
+
+    // this.idToDelete = obj.id
+
+    idToDelete.value = obj.id
+    console.log(idToDelete);
+
+    // // let prs = JSON.parse(obj);
+    console.log(images.value);
+
+
+    if (Array.isArray(images.value)) {
+        images.value.unshift(obj);
+    }
+}
+
+function imageDelete(error, file) {
+    if (error) {
+        console.error(error);
+        return;
+    }
+
+    // console.log();
+
+    axios.delete(`${routedel.value}`, {
+        headers: {
+            'X-CSRF-TOKEN': document.head.querySelector('meta[name="csrf_token"]').content
+        },
+    }).catch(function (error) {
+        console.log(error);
+    })
+
+
+    // console.log(file);
 
 }
+
 </script>
 
 
 <template>
     <div>
         <!-- :server="{url}" -->
-            <file-pond
-                :name="name"
-                ref="pond"
-                label-idle="Click to choose image, or drag here..."
-                @init="filepondInitialized"
-                accepted-file-types="image/jpg, image/jpeg, image/png"
-                @processfile="handleProcessedFile"
-                max-file-size="1MB"
-            />
+        <file-pond :name="name" ref="pond" credits="false" label-idle="Click to choose image, or drag here..."
+            @init="filepondInitialized" accepted-file-types="image/jpg, image/jpeg, image/png"
+            @processfile="handleProcessedFile" @removefile="imageDelete" max-file-size="1MB" />
     </div>
 </template>

@@ -36,8 +36,10 @@ Route::get('elaborate/{form}', [FormController::class, 'edit'])->middleware(['au
 Route::put('update/{form}', [FormController::class, 'update'])->middleware(['auth', 'verified'])->name('form.update');
 Route::delete('delete/{form}', [FormController::class, 'destroy'])->middleware(['auth', 'verified'])->name('form.destroy');
 
-Route::post('elaborate/{form}/image', [FormController::class, 'stimage'])->middleware(['auth', 'verified']);
-
+Route::post('elaborate/{form}/image', [FormController::class, 'stimage'])->middleware(['auth', 'verified'])->name('form.image');
+Route::get('elaborate/{form}/image/{id}/show', [FormController::class, 'showMedia'])->middleware(['auth', 'verified'])->name('image.show');
+Route::delete('elaborate/{form}/image/{id}', [FormController::class, 'deleteMedia'])->middleware(['auth', 'verified'])->name('image.delete');
+Route::get('elaborate/{form}/images', [FormController::class, 'show'])->middleware(['auth', 'verified'])->name('form.images');
 // Route::post('image', [ImageController::class,'store'])->name('image.store');
 
 require __DIR__.'/auth.php';

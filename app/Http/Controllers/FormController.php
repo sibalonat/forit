@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Redirect;
 // use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
+// use Spatie\MediaLibrary\MediaCollections\Models\Media;
+
 // use Illuminate\Support\Facades\Request;
 
 class FormController extends Controller
@@ -22,11 +24,25 @@ class FormController extends Controller
     {
         return Inertia::render('CreateForm', [
             'f' => $form
-            // 'form_builder_json' => $form->form_builder_json
         ]);
     }
 
-    // public function store(StoreFormRequest $request, Request $r)
+    public function show(Form $form)
+    {
+        return $form->getMedia();
+    }
+
+    // public function show(Form $form)
+    // {
+    //     // return all images
+    //     // return $form->getMedia()->latest()->pluck('name')->toArray();
+    //     // dd($form->getMedia());
+    //     // dd($form->getMedia());
+    //     // dd($form->query()->with('media')->get());
+    //     return $form->getMedia();
+    // }
+
+
     public function update(StoreFormRequest $request, Form $form)
     {
         $request->validated();
@@ -40,17 +56,15 @@ class FormController extends Controller
     {
         if (isset($request->fileUpload)) {
             $form->addMediaFromRequest('fileUpload')->toMediaCollection();
+            $st = $form->media->last();
 
-            // return $form->query()->getMedia();
+            return response()->json($st);
         }
     }
 
 
     public function initialstore()
     {
-        // Request::validate([
-        //     'form_builder_json' => ['nullable']
-        // ])
         $form = Form::create([
             'form_builder_json' => null
 
@@ -64,5 +78,18 @@ class FormController extends Controller
         $form->delete();
     }
 
+    public function showMedia(Form $form, $id)
+    {
+        // $element = $form->media->where('id', $media->id)->get();
+        $element = $form->media->where('id', $id)->first();
+        // $form->delete();
+        dd($element);
+    }
 
+    public function deleteMedia(Form $form, Request $request, $id)
+    {
+        $id = $request->id;
+
+        $form->media->where('id', $id)->first()->delete();
+    }
 }
