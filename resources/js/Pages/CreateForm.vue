@@ -308,7 +308,7 @@ export default {
             if (e) {
                 if (dataType === 'fileUpload') {
                     // condition
-                    console.log(dataType);
+                    // console.log(dataType);
 
                     const reactiveDtImg= reactive({
                         id: e.id,
@@ -317,7 +317,23 @@ export default {
                         name: e.name,
                     })
 
-                    console.log(reactiveDtImg);
+                    let monitor = row.cols[o]
+
+                    let check = Object.keys(monitor).indexOf("save") != -1
+
+                    console.log(check);
+                    if (!check) {
+                        // console.log('is not');
+                        monitor.save = []
+                        monitor.save.push(reactiveDtImg)
+                        this.tempJson.push(monitor)
+                    } else {
+                        // console.log('eshte');
+
+                        row.cols[o].save[0].id = e.id
+                        row.cols[o].save[0].formID = e.model_id
+                        row.cols[o].save[0].name = e.name
+                    }
                 }
             }
             console.log(e);
