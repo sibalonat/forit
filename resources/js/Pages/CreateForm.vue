@@ -61,6 +61,7 @@ import { Head } from '@inertiajs/inertia-vue3';
                                                         @input="getData($event, col.field, el, index)"
                                                         @change-file="changeData($event, col.field, el, index)"
                                                         @delete-file="deleteImg($event, col.field, el, index)"
+                                                        @input-signature="signatureData($event, col.field, el, index)"
                                                         :name="col.field" class="px-4 py-3 rounded-lg" :formId="f.id"
                                                         :saved="col.save">
                                                     </component>
@@ -325,9 +326,9 @@ export default {
 
                                 row.cols[o].save = []
                                 row.cols[o].save.push(reactiveDText)
-                                let first = row.cols[o]
+                                // let first = row.cols[o]
                                 // console.log(first);
-                                this.tempJson.push(first)
+                                // this.tempJson.push(first)
                                 // console.log(this.tempJson);
 
                             } else {
@@ -338,8 +339,6 @@ export default {
                             }
                         }
 
-                    } else if (dataType === 'Signature') {
-                        console.log('is signature');
                     }
                 }
             }
@@ -373,6 +372,45 @@ export default {
                 }
             }
 
+        },
+        signatureData(e, dataType, row, o) {
+            if (e) {
+                if (dataType === 'Signature') {
+                    console.log('is signature');
+                    console.log(e);
+                    let identif = 0;
+                    var lastItem = e;
+                    let plus = identif++;
+                    const reactiveDtSign = reactive({
+                        id: (identif === 0) ? plus : identif,
+                        item: lastItem,
+                    })
+
+                    let valueOfId = reactiveDtSign.id;
+                    let exists = Object.values(reactiveDtSign).includes(valueOfId);
+                    if (exists) {
+                        let monitor = row.cols[o]
+                        let check = Object.keys(monitor).indexOf("save") != -1
+                        if (!check) {
+                            // this.tempJson.push
+
+                            row.cols[o].save = []
+                            row.cols[o].save.push(reactiveDtSign)
+                            // let first = row.cols[o]
+                            // console.log(first);
+                            // console.log(this.tempJson);
+
+                        } else {
+                            console.log('eshte');
+                            row.cols[o].save[0].item = e
+                            // console.log(this.tempJson);
+                            //  this.tempJson
+                        }
+                    }
+
+                    console.log(row.cols[o]);
+                }
+            }
         },
 
         deleteImg(e, dataType, row, o) {

@@ -1,16 +1,22 @@
 <template>
-    <VueSignaturePad  ref="signaturePad" />
-    <div>
-        <button @click="save">Save</button>
-        <button @click="undo">Undo</button>
+    <div class="w-full h-52">
+        <VueSignaturePad  ref="signaturePad"  />
+        <!-- @input="input" -->
+        <div class="grid grid-cols-2 -mt-2">
+            <!-- -mb-14 -->
+            <div class="mt-7 flex space-x-2">
+                <button class="rounded-t-full bg-slate-700 text-yellow-200 w-1/2" @click.prevent="save">Save</button>
+                <button class="rounded-t-full bg-slate-700 text-yellow-800 w-1/2" @click.prevent="undo">Undo</button>
+            </div>
+            <div>
+
+            </div>
+        </div>
     </div>
 </template>
 
 <script>
-// import Vue from 'vue';
-// import VueSignaturePad from 'vue-signature-pad';
 
-// Vue.use(VueSignaturePad);
 
 export default {
     name: "SignaturePad",
@@ -30,27 +36,21 @@ export default {
         };
     },
     mounted() {
-        // console.log(VueSignaturePad);
-        // let canvas = this.$refs.signaturePadCanvas;
-        // canvas.style.width = "100%";
-        // canvas.style.height = "100%";
-        // canvas.width = canvas.offsetWidth;
-        // canvas.height = canvas.offsetHeight;
-        // this.signaturePad = new SignaturePad(canvas);
-        // this.signaturePad.onEnd = () => {
-        //     if (!this.signaturePad.isEmpty()) {
-        //         this.input = this.signaturePad.toDataURL();
-        //     }
-        // };
-        // if (this.value) {
-        //     this.input = this.value;
-        //     this.signaturePad.fromDataURL(this.input);
-        // }
+        const data = this.saved[0].item
+        const canvas = this.$refs.signaturePad
+
+        // console.log(data);
+        // console.log(canvas);
+
+        if (data) {
+            this.input = data;
+            canvas.fromDataURL(this.input);
+        }
     },
     watch: {
         input() {
-            this.$emit("input", this.input);
-            console.log(this.input);
+            this.$emit("input-signature", this.input);
+            // console.log(this.input);
         }
     },
     methods: {
@@ -59,8 +59,9 @@ export default {
         },
         save() {
             const { isEmpty, data } = this.$refs.signaturePad.saveSignature();
-            console.log(isEmpty);
-            console.log(data);
+            // console.log(isEmpty);
+            // console.log(data);
+            this.input = data
         }
     }
 };
