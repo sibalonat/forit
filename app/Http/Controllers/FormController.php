@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Redirect;
 // use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
+
 // use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 // use Illuminate\Support\Facades\Request;
@@ -79,10 +80,8 @@ class FormController extends Controller
 
     public function showMedia(Form $form, $id)
     {
-        // $element = $form->media->where('id', $media->id)->get();
         $element = $form->media->where('id', $id)->first();
-        // $form->delete();
-        dd($element);
+        return response()->json($element);
     }
 
     public function deleteMedia(Form $form, Request $request, $id)

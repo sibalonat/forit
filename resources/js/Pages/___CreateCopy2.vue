@@ -143,6 +143,20 @@ export default {
                 { id: 7, name: 'span-auto', type: ['col-span-auto', 'p-2', 'bg-gray-800'], field: null },
                 { id: 8, name: 'end1', type: ['col-end-1', 'p-2', 'bg-gray-800'], field: null },
                 { id: 9, name: 'end2', type: ['col-end-2', 'p-2', 'bg-gray-800'], field: null },
+
+
+                // { id: 8, name: 'end1', type: ['col-end-1', 'p-2', 'bg-gray-800'] },
+                // { id: 9, name: 'end2', type: ['col-end-2', 'p-2', 'bg-gray-800'] },
+                // { id: 1, name: 'auto', type: ['col-auto', 'p-2', 'border rounded border-black'], field: null },
+                // { id: 2, name: 'span1', type: ['col-span-1', 'p-2', 'border rounded border-black'], field: null },
+                // { id: 3, name: 'span2', type: ['col-span-2', 'p-2', 'border rounded border-black'], field: null },
+                // { id: 4, name: 'span3', type: ['col-span-3', 'p-2', 'border rounded border-black'], field: null },
+                // { id: 4, name: 'span3', type: ['col-span-3', 'p-2', 'border rounded border-black'], field: null },
+                // { id: 5, name: 'span4', type: ['col-span-4', 'p-2', 'border rounded border-black'], field: null },
+                // { id: 6, name: 'span5', type: ['col-span-5', 'p-2', 'border rounded border-black'], field: null },
+                // { id: 7, name: 'span-auto', type: ['col-span-auto', 'p-2', 'bg-gray-800'], field: null },
+                // { id: 8, name: 'end1', type: ['col-end-1', 'p-2', 'bg-gray-800'], field: null },
+                // { id: 9, name: 'end2', type: ['col-end-2', 'p-2', 'bg-gray-800'], field: null },
             ],
             fieldlist: [
                 {

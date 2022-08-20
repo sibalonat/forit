@@ -18,32 +18,117 @@ import { Head } from '@inertiajs/inertia-vue3';
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
                 <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                     <form @submit.prevent="store" enctype="multipart/form-data">
-                        <!-- <div class="p-6 bg-white border-b border-gray-200" v-if="elements.length"> -->
                         <div class="p-6 bg-white border-b border-gray-200" v-if="elements.length">
                             <div class="flex border-b border-gray-200" v-for="(el, a) in elements" :key="el.id">
                                 <div class="w-4/5">
                                     <div class="grid gap-4" :class="el.name" v-if="el.cols.length">
-
-                                        <div class="text-black" :class="col.type" v-for="(col, index) in el.cols"
-                                            :key="col.id">
+                                        <!-- <div class="text-black" :class="el.cols[index].type"
+                                            v-for="(col, index) in el.cols" :key="col.id">
 
                                             <div class="grid grid-cols-2">
 
                                                 <div class="col-auto">
-                                                    <select @change="changeColAttribute($event, index, a)"
-                                                        v-if="!col.type">
-                                                        <option v-for="(cl, y) in selectedCol" :key="y"
-                                                            :value="cl.type">
+                                                    <select v-model="el.cols[index]" v-if="!el.cols[index].type">
+                                                        <option v-for="cl in selectedCol" :key="cl.id" :value="cl">
                                                             {{ cl.name }}
                                                         </option>
                                                     </select>
                                                 </div>
-
-                                                <div class="col-span-2" v-if="col.type">
+                                                <div class="col-span-2" v-if="el.cols[index].type">
+                                                {{ col.field }}
+                                                {{ el.cols[index] }}
                                                     <ul class="grid items-center grid-flow-row grid-cols-1"
                                                         v-if="!col.field">
                                                         <li v-for="(fld, i) in fields" :key="i" class="inline-block">
 
+                                                            <input type="radio" v-model="el.cols[index].field" :value="fld.text"
+                                                                class="inline-block" :id="`radio-for-${i}`">
+                                                            <label class="ml-4 text-xs text-black"
+                                                                :for="`radio-for-${i}`">
+                                                                {{ fld.alias }} field
+                                                            </label>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <div class="col-span-2">
+
+                                                    <component :is="col.field"
+                                                        @input="getData($event, col.field, el, index)"
+                                                        @ChangeFile="changeData($event, col.field, el, index)"
+                                                        :name="col.field" class="px-4 py-3 rounded-lg" :formId="f.id">
+                                                    </component>
+
+                                                </div>
+                                            </div>
+                                            <div class="justify-end float-right w-32">
+                                                <button class="w-full text-white bg-black rounded-lg"
+                                                    @click="deleteColumn(el, col)">-</button>
+                                            </div>
+                                        </div> -->
+                                        <!-- <div class="text-black" :class="el.cols[index].type"
+                                            v-for="(col, index) in el.cols" :key="col.id">
+
+                                            <div class="grid grid-cols-2">
+
+                                                <div class="col-auto">
+                                                    <select v-model="el.cols[index]" v-if="!el.cols[index].type">
+                                                        <option v-for="cl in selectedCol" :key="cl.id" :value="cl">
+                                                            {{ cl.name }}
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-span-2" v-if="el.cols[index].type">
+                                                {{ col.field }}
+                                                {{ el.cols[index] }}
+                                                    <ul class="grid items-center grid-flow-row grid-cols-1"
+                                                        v-if="!col.field">
+                                                        <li v-for="(fld, i) in fields" :key="i" class="inline-block">
+
+                                                            <input type="radio" v-model="el.cols[index].field" :value="fld.text"
+                                                                class="inline-block" :id="`radio-for-${i}`">
+                                                            <label class="ml-4 text-xs text-black"
+                                                                :for="`radio-for-${i}`">
+                                                                {{ fld.alias }} field
+                                                            </label>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <div class="col-span-2">
+
+                                                    <component :is="col.field"
+                                                        @input="getData($event, col.field, el, index)"
+                                                        @ChangeFile="changeData($event, col.field, el, index)"
+                                                        :name="col.field" class="px-4 py-3 rounded-lg" :formId="f.id">
+                                                    </component>
+
+                                                </div>
+                                            </div>
+                                            <div class="justify-end float-right w-32">
+                                                <button class="w-full text-white bg-black rounded-lg"
+                                                    @click="deleteColumn(el, col)">-</button>
+                                            </div>
+                                        </div> -->
+                                        <div class="text-black" :class="col.type"
+                                            v-for="(col, index) in el.cols" :key="col.id">
+
+                                            <div class="grid grid-cols-2">
+
+                                                <div class="col-auto">
+                                                    <select v-model="el.cols[index]" v-if="!el.cols[index].type">
+                                                        <option v-for="cl in selectedCol" :key="cl.id" :value="cl">
+                                                            {{ cl.name }}
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-span-2" v-if="el.cols[index].type">
+                                                {{ col.field }}
+                                                {{ el.cols[index] }}
+                                                {{ index }}
+                                                    <ul class="grid items-center grid-flow-row grid-cols-1"
+                                                        v-if="!col.field">
+                                                        <li v-for="(fld, i) in fields" :key="i" class="inline-block">
+
+                                                            <!-- <input type="radio" v-model="col.field" :value="fld.text" -->
                                                             <input type="radio" v-model="col.field" :value="fld.text"
                                                                 class="inline-block" :id="`radio-for-${i}`">
                                                             <label class="ml-4 text-xs text-black"
@@ -55,14 +140,10 @@ import { Head } from '@inertiajs/inertia-vue3';
                                                 </div>
                                                 <div class="col-span-2">
 
-                                                    {{ col.save }}
-
                                                     <component :is="col.field"
                                                         @input="getData($event, col.field, el, index)"
-                                                        @change-file="changeData($event, col.field, el, index)"
-                                                        @delete-file="deleteImg($event, col.field, el, index)"
-                                                        :name="col.field" class="px-4 py-3 rounded-lg" :formId="f.id"
-                                                        :saved="col.save">
+                                                        @ChangeFile="changeData($event, col.field, el, index)"
+                                                        :name="col.field" class="px-4 py-3 rounded-lg" :formId="f.id">
                                                     </component>
 
                                                 </div>
@@ -109,12 +190,12 @@ import { Head } from '@inertiajs/inertia-vue3';
 
 
 <script>
-import Input from "./../Components/fields/Input.vue";
-import Textarea from "./../Components/fields/Textarea.vue";
-import FileUpload from "./../Components/fields/FileUpload.vue";
-import Select from "./../Components/fields/Select.vue";
-import SignaturePad from "./../Components/fields/SignaturePad.vue";
-import VDatepicker from "./../Components/fields/VDatepicker.vue";
+import Input from "../Components/fields/Input.vue";
+import Textarea from "../Components/fields/Textarea.vue";
+import FileUpload from "../Components/fields/FileUpload.vue";
+import Select from "../Components/fields/Select.vue";
+import SignaturePad from "../Components/fields/SignaturePad.vue";
+import VDatepicker from "../Components/fields/VDatepicker.vue";
 import { reactive } from '@vue/reactivity';
 // import { ref } from 'vue';
 export default {
@@ -129,6 +210,7 @@ export default {
     props: {
         f: Object,
     },
+
 
     data() {
         return {
@@ -150,14 +232,14 @@ export default {
                 { name: 'grid-cols-5', id: 5 },
             ],
             cols: [
-                { name: 'auto', type: ['col-auto', 'p-2', 'border rounded border-black'] },
-                { name: 'span1', type: ['col-span-1', 'p-2', 'border rounded border-black'] },
-                { name: 'span2', type: ['col-span-2', 'p-2', 'border rounded border-black'] },
-                { name: 'span3', type: ['col-span-3', 'p-2', 'border rounded border-black'] },
-                { name: 'span3', type: ['col-span-3', 'p-2', 'border rounded border-black'] },
-                { name: 'span4', type: ['col-span-4', 'p-2', 'border rounded border-black'] },
-                { name: 'span5', type: ['col-span-5', 'p-2', 'border rounded border-black'] },
-                { name: 'span-auto', type: ['col-span-auto', 'p-2', 'bg-gray-800'] },
+                { id: 1, name: 'auto', type: ['col-auto', 'p-2', 'border rounded border-black'] },
+                { id: 2, name: 'span1', type: ['col-span-1', 'p-2', 'border rounded border-black'] },
+                { id: 3, name: 'span2', type: ['col-span-2', 'p-2', 'border rounded border-black'] },
+                { id: 4, name: 'span3', type: ['col-span-3', 'p-2', 'border rounded border-black'] },
+                { id: 4, name: 'span3', type: ['col-span-3', 'p-2', 'border rounded border-black'] },
+                { id: 5, name: 'span4', type: ['col-span-4', 'p-2', 'border rounded border-black'] },
+                { id: 6, name: 'span5', type: ['col-span-5', 'p-2', 'border rounded border-black'] },
+                { id: 7, name: 'span-auto', type: ['col-span-auto', 'p-2', 'bg-gray-800'] },
 
             ],
             fieldlist: [
@@ -237,18 +319,11 @@ export default {
         }
     },
 
-    // beforeCreate() {
-    //     this.elements = [];
-    // },
-
     created() {
         this.input = this.value;
-        console.log(this.f.form_builder_json !== null);
+        console.log(this.f.id);
 
-        if (this.f.form_builder_json !== null) {
-            this.elements = JSON.parse(this.f.form_builder_json)
-        }
-
+        console.log(this.headers);
     },
 
     computed: {
@@ -275,9 +350,18 @@ export default {
 
             let val = e.target.value
 
-            const withoutCommas = val.replaceAll(',', ' ');
+            let roof = this.elements.indexOf(row)
 
-            this.elements[a].cols[c].type = withoutCommas
+            const withoutCommas = val.replaceAll(',', ' ');
+            console.log(withoutCommas);
+            // let l = e
+            // console.log(l.target.selectedIndex);
+            let selectedIndex = this.cols[e.target.selectedIndex].type.join(' ')
+            // console.log(selectedIndex);
+            // console.log(val);
+            // console.log(this.elements[c].cols[a]);
+            // this.elements[c].cols[a]
+            // this.elements[c].cols[a].name = 'grid gap-4 ' + val + ''
         },
 
         addColumn(item) {
@@ -291,13 +375,12 @@ export default {
 
         store() {
 
-            // this.form.form_builder_json = JSON.stringify(this.tempJson)
-            this.form.form_builder_json = JSON.stringify(this.elements)
+            this.form.form_builder_json = JSON.stringify(this.tempJson)
 
-            // console.log(this.form.form_builder_json.length);
+            console.log(this.form.form_builder_json);
 
             // this.form.put(`/update/${this.f.id}`)
-            this.form.put(route('form.update', { form: this.f.id }), this.headers)
+
         },
 
         getData(e, dataType, row, o) {
@@ -312,6 +395,7 @@ export default {
 
                         const reactiveDText = reactive({
                             id: (identif === 0) ? plus : identif,
+                            type: dataType,
                             item: lastItem,
                         })
 
@@ -322,7 +406,6 @@ export default {
                             let check = Object.keys(monitor).indexOf("save") != -1
                             if (!check) {
                                 // this.tempJson.push
-
                                 row.cols[o].save = []
                                 row.cols[o].save.push(reactiveDText)
                                 let first = row.cols[o]
@@ -338,8 +421,6 @@ export default {
                             }
                         }
 
-                    } else if (dataType === 'Signature') {
-                        console.log('is signature');
                     }
                 }
             }
@@ -350,51 +431,41 @@ export default {
                     // condition
                     // console.log(dataType);
 
-                    const reactiveDtImg = reactive({
+                    const reactiveDtImg= reactive({
                         id: e.id,
-                        formID: e.model_id
+                        formID: e.model_id,
+                        type: dataType,
+                        name: e.name,
                     })
 
                     let monitor = row.cols[o]
 
                     let check = Object.keys(monitor).indexOf("save") != -1
 
-
+                    console.log(check);
                     if (!check) {
-                        console.log('is not');
+                        // console.log('is not');
                         monitor.save = []
                         monitor.save.push(reactiveDtImg)
-                        // this.tempJson.push(monitor)
+                        this.tempJson.push(monitor)
                     } else {
-                        console.log('eshte');
-                        monitor.save.push(reactiveDtImg)
-                    }
+                        // console.log('eshte');
 
-                }
-            }
-
-        },
-
-        deleteImg(e, dataType, row, o) {
-            if (e) {
-                if (dataType === 'fileUpload') {
-                    // console.log(e);
-                    let monitor = row.cols[o]
-
-                    if (e[1] === 'delete') {
-                        console.log(e[0]);
-                        // e[0].shift()
-                        monitor.save.shift()
+                        row.cols[o].save[0].id = e.id
+                        row.cols[o].save[0].formID = e.model_id
+                        row.cols[o].save[0].name = e.name
                     }
                 }
             }
+            console.log(e);
+
         },
 
         deleteColumn(parent, child) {
             const fromEl = this.elements.indexOf(parent)
             // const fromCol = this.elements[fromEl].cols.indexOf(child)
             this.elements[fromEl].cols.splice(child, 1);
-        },
+        }
 
     },
 
@@ -403,7 +474,7 @@ export default {
             console.log('is null');
             // let headerDel =
 
-            // axios.delete(route('form.destroy', { form: this.f.id }), this.headers)
+            axios.delete(route('form.destroy', { form: this.f.id }), this.headers)
         }
     }
 

@@ -1,52 +1,55 @@
 <script setup>
-import vueFilePond, { setOptions } from 'vue-filepond';
+import vueFilePond from 'vue-filepond';
+// import vueFilePond, { setOptions } from 'vue-filepond';
 import "filepond/dist/filepond.min.css";
 import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css';
+
+// Import the plugin code
+import FilePondPluginFilePoster from 'filepond-plugin-file-poster';
+
+// Import the plugin styles
+import 'filepond-plugin-file-poster/dist/filepond-plugin-file-poster.css';
+
 import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
 import FilePondPluginFileValidateSize from 'filepond-plugin-file-validate-size';
 import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
-import { ref } from '@vue/reactivity';
-import { onMounted, watch } from 'vue';
+import { reactive, ref } from '@vue/reactivity';
+import { onMounted, watch, watchEffect } from 'vue';
 
-const FilePond = vueFilePond(FilePondPluginFileValidateType, FilePondPluginFileValidateSize, FilePondPluginImagePreview);
+const FilePond = vueFilePond(
+    FilePondPluginFileValidateType,
+    FilePondPluginFileValidateSize,
+    FilePondPluginImagePreview,
+    FilePondPluginFilePoster
+);
 // const FilePond = vueFilePond(FilePondPluginFileValidateType, FilePondPluginFileValidateSize, FilePondPluginImagePreview);
 
 
 const props = defineProps({
     name: String,
-    formId: Number
+    formId: Number,
+    saved: Array,
 })
 
-let emit = defineEmits(['change-file'])
+let emit = defineEmits(['change-file', 'delete-file'])
 // const emit = defineEmits(['change'])
 
+
+
+let header = reactive({
+    headers: { 'X-CSRF-TOKEN': document.head.querySelector('meta[name="csrf_token"]').content }
+})
 
 let idToDelete = ref('')
 let pond = ref(null)
 let routedel = ref('')
 let images = ref([])
-
-
-onMounted(() => {
-    pond.value
-    // console.log(pond.value);
-    filepondInitialized
-    handleProcessedFile
-    imageDelete
-    FilePond
-})
-
-watch(idToDelete, async (newId) => {
-    idToDelete.value = newId
-    routedel.value = route('image.delete', { form: props.formId, id: idToDelete.value })
-    console.log(routedel.value);
-})
+let img = reactive({})
 
 
 let serverMessage = {};
-setOptions({
+let db = reactive({
     server: {
-        // form.edit
         url: route('form.edit', props.formId),
         process: {
             url: '/image',
@@ -56,26 +59,88 @@ setOptions({
             },
         },
         revert: null,
+
         headers: {
             'X-CSRF-TOKEN': document.head.querySelector('meta[name="csrf_token"]').content
         },
+        labelFileProcessingError: () => {
+            return serverMessage.error;
+        },
 
-    },
-    // console.log();
-    labelFileProcessingError: () => {
-        return serverMessage.error;
-    },
-
-    // labelFileProcessingComplete: () => {
-    //     return
-    // }
-});
+    }
+})
 
 
+onMounted(() => {
 
-function filepondInitialized() {
+    filepondInitialized
+    handleProcessedFile
+    imageDelete
+    db
+
+    FilePond
+
+})
+
+watch(idToDelete, async (newId) => {
+    idToDelete.value = newId
+
+    routedel.value = route('image.delete', { form: props.formId, id: idToDelete.value })
+})
+
+
+
+
+const watcher = watchEffect(() => {
+    if (props.save) {
+        let element = props.save[0]
+        console.log('exists');
+        console.log(props.save);
+        routedel.value = route('image.delete', { form: props.formId, id: element.id })
+    }
+
+    console.log(routedel.value);
+})
+// watchEffect
+
+
+async function filepondInitialized() {
     console.log('Filepond is ready!');
     console.log('Filepond object:', pond.value);
+
+    if (props.save) {
+        let element = props.save[0]
+
+        await axios.get(route('image.show', { form: props.formId, id: element.id }), header)
+            .then((response) => {
+                // console.log(response);
+                // image = response.data
+                img = response.data
+            })
+            .catch((error) => {
+                console.log(error);
+            })
+
+        await pond.value.addFile(
+            img,
+            // img.name,
+            {
+                type: 'local',
+                metadata: {
+                    poster: img.original_url,
+                },
+                file: {
+                    name: img.name,
+                    size: img.size,
+                    type: img.mime_type,
+                },
+            }
+        )
+    } else {
+        return
+    }
+
+    // console.log(img);
 }
 
 function handleProcessedFile(error, file) {
@@ -107,35 +172,39 @@ function handleProcessedFile(error, file) {
     }
 }
 
-function imageDelete(error, file) {
+
+function imageDelete(error) {
     if (error) {
         console.error(error);
         return;
     }
 
-    // console.log();
+    // console.log(header);
+    if (props.save) {
+        var element = props.save[0]
+    }
 
-    axios.delete(`${routedel.value}`, {
-        headers: {
-            'X-CSRF-TOKEN': document.head.querySelector('meta[name="csrf_token"]').content
-        },
-    }).catch(function (error) {
-        console.log(error);
-    })
+    emit('delete-file', [element, 'delete'])
 
+    axios.delete(`${routedel.value}`, header)
+        .then((reponse) => {
+            console.log(reponse);
+        })
+        .catch(function (error) {
+            console.log(error);
+        })
 
-    // console.log(file);
+    watcher()
 
 }
 
 </script>
 
-
 <template>
     <div>
-        <!-- :server="{url}" -->
+
         <FilePond :name="name" ref="pond" credits="false" label-idle="Click to choose image, or drag here..."
-            @init="filepondInitialized" accepted-file-types="image/jpg, image/jpeg, image/png"
+            :server="db.server" @init="filepondInitialized" accepted-file-types="image/jpg, image/jpeg, image/png"
             @processfile="handleProcessedFile" @removefile="imageDelete" max-file-size="1MB" />
     </div>
 </template>
