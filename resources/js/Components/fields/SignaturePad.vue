@@ -1,6 +1,8 @@
 <template>
     <div class="w-full h-52">
-        <VueSignaturePad  ref="signaturePad"  />
+        <!-- , dotSize, minWidth, maxWidth -->
+        <!-- <VueSignaturePad ref="signaturePad" :options="{ onBegin, onEnd }" /> -->
+        <VueSignaturePad ref="signaturePad" />
         <!-- @input="input" -->
         <div class="grid grid-cols-2 -mt-2">
             <!-- -mb-14 -->
@@ -31,9 +33,24 @@ export default {
     },
     data() {
         return {
+            // options: {
+            //     dotSize: null,
+            //     minWidth: null,
+            //     maxWidth: null
+            // },
             input: null,
             signaturePad: null
         };
+    },
+    computed: {
+        entireObj: {
+            get() {
+
+            },
+            set(newvl) {
+                console.log(newvl);
+            }
+        }
     },
     mounted() {
         const data = this.saved[0].item
@@ -62,7 +79,23 @@ export default {
             // console.log(isEmpty);
             // console.log(data);
             this.input = data
-        }
+        },
+        // onBegin() {
+        //     console.log('=== Begin ===');
+        //     console.log(this.$refs.signaturePad);
+        //     // console.log(this.$refs.signaturePad.options.dotSize);
+
+        //     // this.$refs.signaturePad.options.dotSize = (0.5 + 2.5) / .15
+        //     // this.$refs.signaturePad.options.dotSize = (0.5 + 27.5) / .15
+        //     this.$refs.signaturePad.options.minWidth = 97.5
+        //     this.$refs.signaturePad.options.maxWidth = 297.5
+        //     this.$refs.signaturePad.options.penColor = '#ff0000'
+        //     console.log(this.$refs.signaturePad.options);
+        //     // dotSize: (0.5 + 2.5) / 2,
+        // },
+        // onEnd() {
+        //     console.log('=== End ===');
+        // }
     }
 };
 </script>
