@@ -2,7 +2,10 @@
     <div class="w-full h-52">
         <!-- , dotSize, minWidth, maxWidth -->
         <!-- <VueSignaturePad ref="signaturePad" :options="{ onBegin, onEnd }" /> -->
-        <VueSignaturePad ref="signaturePad" />
+        <VueSignaturePad
+        width="100%"
+        height="100%"
+        ref="signaturePad" />
         <!-- @input="input" -->
         <div class="grid grid-cols-2 -mt-2">
             <!-- -mb-14 -->

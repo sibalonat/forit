@@ -2,6 +2,11 @@
 import BreezeAuthenticatedLayout from '@/Layouts/Authenticated.vue';
 import { Head } from '@inertiajs/inertia-vue3';
 
+onMounted(() => {
+    BreezeAuthenticatedLayout
+    Head
+})
+
 </script>
 
 <template>
@@ -117,6 +122,7 @@ import Select from "./../Components/fields/Select.vue";
 import SignaturePad from "./../Components/fields/SignaturePad.vue";
 import VDatepicker from "./../Components/fields/VDatepicker.vue";
 import { reactive } from '@vue/reactivity';
+import { onMounted } from '@vue/runtime-core';
 // import { ref } from 'vue';
 export default {
     components: {
