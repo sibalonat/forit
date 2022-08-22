@@ -36,11 +36,12 @@ Route::get('/dashboard', function () {
 Route::get('mapview', [MarkersController::class, 'index'])->name('markers');
 Route::get('mapview/create', [MarkersController::class, 'create'])->name('markers.create');
 Route::get('mapview/{mapview}', [MarkersController::class, 'edit'])->name('markers.edit');
+Route::put('mapview/{mapview}', [MarkersController::class, 'update'])->name('markers.edit');
 
 // markers
-Route::get('markers', [MarkersController::class, 'index'])->name('markers');
-Route::get('markers/create', [MarkersController::class, 'create'])->name('markers.create');
-Route::get('markers/{marker}', [MarkersController::class, 'edit'])->name('markers.edit');
+// Route::get('markers', [MarkersController::class, 'index'])->name('markers');
+// Route::get('markers/create', [MarkersController::class, 'create'])->name('markers.create');
+// Route::get('markers/{marker}', [MarkersController::class, 'edit'])->name('markers.edit');
 
 Route::get('create', [FormController::class, 'create'])->middleware(['auth', 'verified']);
 // Route::post('/create', [FormController::class, 'store'])->middleware(['auth', 'verified']);

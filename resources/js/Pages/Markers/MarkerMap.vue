@@ -38,15 +38,15 @@ onMounted(() => {
     Head
     store
     FilePond
+    form
 
     console.log(props.m);
 
 })
 
-// const form = useForm({
-//     name: '',
-//     slug: '',
-// });
+const form = useForm({
+    name: '',
+});
 
 
 
@@ -56,6 +56,7 @@ onMounted(() => {
 const store = () => {
 
     console.log('whats up!');
+    form.post(route('category.store'));
 
 }
 
@@ -76,7 +77,8 @@ const store = () => {
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
                 <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                     <form @submit.prevent="store" enctype="multipart/form-data">
-                    <label for=""></label>
+                    <label for="textname">Name</label>
+                    <input type="text" class="border-y-8 border-cyan-800" v-model="form.name">
                         <!-- <div class="p-6 bg-white border-b border-gray-200" v-if="elements.length"> -->
 
                         <div class="grid grid-cols-1">

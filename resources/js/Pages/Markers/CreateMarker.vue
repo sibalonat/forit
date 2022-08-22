@@ -15,10 +15,10 @@ onMounted(() => {
 
 })
 
-const form = useForm({
-    name: '',
-    slug: '',
-});
+// const form = useForm({
+//     name: '',
+//     slug: '',
+// });
 
 // useForm
 

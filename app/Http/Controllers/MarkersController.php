@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UpdateMapRequest;
 use App\Models\MapView;
 use Inertia\Inertia;
 use App\Models\Marker;
@@ -81,9 +82,10 @@ class MarkersController extends Controller
      * @param  int  Marker $marker
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, MapView $mapview)
+    public function update(UpdateMapRequest $request, MapView $mapview)
     {
-        //
+        $request->validated();
+        $mapview->update($request->all());
     }
 
     /**
