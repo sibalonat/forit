@@ -2,7 +2,7 @@
 
 import BreezeAuthenticatedLayout from '@/Layouts/Authenticated.vue';
 import { Head, useForm } from '@inertiajs/inertia-vue3';
-import { onMounted, ref } from '@vue/runtime-core';
+import { onMounted, ref, watch } from '@vue/runtime-core';
 
 
 import "leaflet/dist/leaflet.css"
@@ -45,6 +45,16 @@ onMounted(() => {
     console.log(props.points);
 
 })
+
+
+watch(zoom, async (zoomed) => {
+
+    console.log(zoomed);
+
+})
+
+// watch
+// watch
 
 // const form = useForm({
 //     name: '',
