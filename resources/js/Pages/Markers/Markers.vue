@@ -12,7 +12,7 @@ onMounted(() => {
 
 <template>
 
-    <Head title="Dashboard" />
+    <Head title="Markers" />
     <BreezeAuthenticatedLayout>
         <template #header>
             <h2 class="text-xl font-semibold leading-tight text-gray-800">
@@ -23,7 +23,7 @@ onMounted(() => {
         <div class="py-12">
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
                 <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg flex justify-center py-40">
-                    <a class="bg-gray-800 text-lg text-gray-200 rounded-lg p-4" href="/create">Create Marker</a>
+                    <a class="bg-gray-800 text-lg text-gray-200 rounded-lg p-4" :href="route('markers.create')">Create Marker</a>
                 </div>
                 <div class="grid"></div>
             </div>

@@ -1,6 +1,8 @@
 <?php
 
-// use App\Enum\WorkStatus;
+// use App\Enums\WorkStatus;
+
+use App\Models\Marker;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -13,11 +15,12 @@ return new class () extends Migration {
      */
     public function up()
     {
+        // $enum = WorkStatus::class;
         Schema::create('markers', function (Blueprint $table) {
             $table->id();
             $table->string('name')->nullable();
+            $table->foreignIdFor(Marker::class)->constrained()->onDelete('cascade');
             $table->text('notes')->nullable();
-            $table->string('status')->default('Free');
             $table->decimal('longitude', 11, 8)->nullable();
             $table->decimal('latitude', 10, 8)->nullable();
             $table->timestamps();

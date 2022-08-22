@@ -2,24 +2,27 @@
 
 namespace App\Models;
 
-// use App\Enums\WorkStatus;
+use App\Enums\WorkStatus;
 use Spatie\MediaLibrary\HasMedia;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Marker extends Model implements HasMedia
+class MapView extends Model implements HasMedia
 {
     use HasFactory, InteractsWithMedia;
 
     protected $fillable = [
-        'name', 'notes', 'longitude', 'latitude'
+        'name', 'status'
     ];
 
-    public function map()
+
+    protected $casts = [
+        'status' => WorkStatus::class,
+    ];
+
+    public function markers()
     {
-        return $this->belongsTo(MapView::class);
+        return $this->hasMany(Marker::class);
     }
-
-
 }

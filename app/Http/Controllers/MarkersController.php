@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\MapView;
 use Inertia\Inertia;
 use App\Models\Marker;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 
 class MarkersController extends Controller
 {
@@ -15,7 +17,7 @@ class MarkersController extends Controller
      */
     public function index()
     {
-        return Inertia::render('CreateForm');
+        return Inertia::render('Markers/Markers');
     }
 
     /**
@@ -25,7 +27,15 @@ class MarkersController extends Controller
      */
     public function create()
     {
-        //
+        return $this->initialstore();
+    }
+
+
+    public function initialstore()
+    {
+        $mapview = MapView::create();
+
+        return Redirect::route('markers.edit', $mapview->id);
     }
 
     /**
@@ -45,7 +55,7 @@ class MarkersController extends Controller
      * @param  int  Marker $marker
      * @return \Illuminate\Http\Response
      */
-    public function show(Marker $marker)
+    public function show(MapView $mapview)
     {
         //
     }
@@ -56,9 +66,12 @@ class MarkersController extends Controller
      * @param  int  Marker $marker
      * @return \Illuminate\Http\Response
      */
-    public function edit(Marker $marker)
+    public function edit(MapView $mapview)
     {
-        //
+        // dd($mapview);
+        return Inertia::render('Markers/MarkerMap', [
+            'm' => $mapview
+        ]);
     }
 
     /**
@@ -68,7 +81,7 @@ class MarkersController extends Controller
      * @param  int  Marker $marker
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Marker $marker)
+    public function update(Request $request, MapView $mapview)
     {
         //
     }
@@ -79,7 +92,7 @@ class MarkersController extends Controller
      * @param  int  Marker $marker
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Marker $marker)
+    public function destroy(MapView $mapview)
     {
         //
     }

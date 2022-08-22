@@ -447,7 +447,7 @@ export default {
             console.log('is null');
             // let headerDel =
 
-            // axios.delete(route('form.destroy', { form: this.f.id }), this.headers)
+            axios.delete(route('form.destroy', { form: this.f.id }), this.headers)
         }
     }
 

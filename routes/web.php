@@ -5,6 +5,7 @@ use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
 use App\Http\Controllers\ImageController;
+use App\Http\Controllers\MarkersController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,6 +30,17 @@ Route::get('/', function () {
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+
+// mapview
+Route::get('mapview', [MarkersController::class, 'index'])->name('markers');
+Route::get('mapview/create', [MarkersController::class, 'create'])->name('markers.create');
+Route::get('mapview/{mapview}', [MarkersController::class, 'edit'])->name('markers.edit');
+
+// markers
+Route::get('markers', [MarkersController::class, 'index'])->name('markers');
+Route::get('markers/create', [MarkersController::class, 'create'])->name('markers.create');
+Route::get('markers/{marker}', [MarkersController::class, 'edit'])->name('markers.edit');
 
 Route::get('create', [FormController::class, 'create'])->middleware(['auth', 'verified']);
 // Route::post('/create', [FormController::class, 'store'])->middleware(['auth', 'verified']);
