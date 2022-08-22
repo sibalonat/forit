@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\WorkStatus;
 use App\Http\Requests\UpdateMapRequest;
 use App\Models\MapView;
 use Inertia\Inertia;
@@ -71,8 +72,19 @@ class MarkersController extends Controller
     {
         // dd($mapview);
         return Inertia::render('Markers/MarkerMap', [
-            'm' => $mapview
+            'm' => $mapview,
+            'selectStatus' => WorkStatus::cases(),
         ]);
+    }
+
+    public function mapimage(MapView $mapview, Request $request)
+    {
+        if (isset($request->fileUpload)) {
+            $mapview->addMediaFromRequest('mapView')->toMediaCollection('mapview');
+            $st = $mapview->media->last();
+
+            return response()->json($st);
+        }
     }
 
     /**

@@ -37,6 +37,7 @@ Route::get('mapview', [MarkersController::class, 'index'])->name('markers');
 Route::get('mapview/create', [MarkersController::class, 'create'])->name('markers.create');
 Route::get('mapview/{mapview}', [MarkersController::class, 'edit'])->name('markers.edit');
 Route::put('mapview/{mapview}', [MarkersController::class, 'update'])->name('markers.edit');
+Route::post('mapview/{mapview}/image', [MarkersController::class, 'update'])->name('markers.edit');
 
 // markers
 // Route::get('markers', [MarkersController::class, 'index'])->name('markers');

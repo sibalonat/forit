@@ -10,11 +10,19 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class MapView extends Model implements HasMedia
 {
-    use HasFactory, InteractsWithMedia;
+    use HasFactory;
+    use InteractsWithMedia;
 
     protected $fillable = [
         'name', 'status'
     ];
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('mapview')
+            ->singleFile()
+            ->acceptsMimeTypes(['image/jpg', 'image/jpeg', 'image/png', 'image/gif']);
+    }
 
 
     protected $casts = [

@@ -30,8 +30,15 @@ const FilePond = vueFilePond(
 );
 
 const props = defineProps({
-    m: Object
+    m: Object,
+    selectStatus: Array,
 })
+
+let pond = ref(null)
+const name = ref('mapView')
+
+let serverMessage = {};
+let db = reactive({})
 
 onMounted(() => {
     BreezeAuthenticatedLayout
@@ -39,10 +46,40 @@ onMounted(() => {
     store
     FilePond
     form
+    pond.value
 
-    console.log(props.m);
+    filepondInitialized
+    handleProcessedFile
+    imageDelete
+
+
+    // props.m.id
+    db = reactive({
+        server: {
+            url: route('markers.edit', props.m.id),
+            process: {
+                url: '/image',
+
+                onerror: (response) => {
+                    serverMessage = JSON.parse(response);
+                },
+            },
+            revert: null,
+
+            headers: {
+                'X-CSRF-TOKEN': document.head.querySelector('meta[name="csrf_token"]').content
+            },
+            labelFileProcessingError: () => {
+                return serverMessage.error;
+            },
+
+        }
+    })
+    console.log(props.selectStatus);
 
 })
+
+// console.log(db);
 
 const form = useForm({
     name: '',
@@ -60,11 +97,103 @@ const store = () => {
 
 }
 
+
+async function filepondInitialized() {
+    console.log('Filepond is ready!');
+    console.log('Filepond object:', pond.value);
+
+    if (props.save) {
+        let element = props.save[0]
+
+        await axios.get(route('image.show', { form: props.formId, id: element.id }), header)
+            .then((response) => {
+                // console.log(response);
+                // image = response.data
+                img = response.data
+            })
+            .catch((error) => {
+                console.log(error);
+            })
+
+        await pond.value.addFile(
+            img,
+            // img.name,
+            {
+                type: 'local',
+                metadata: {
+                    poster: img.original_url,
+                },
+                file: {
+                    name: img.name,
+                    size: img.size,
+                    type: img.mime_type,
+                },
+            }
+        )
+    } else {
+        return
+    }
+}
+
+function handleProcessedFile(error, file) {
+    if (error) {
+        console.error(error);
+        return;
+    }
+
+    // console.log(file.serverId);
+
+    // let obj = file.serverId
+    let obj = JSON.parse(file.serverId)
+
+    // this.idToDelete = obj.id
+
+    idToDelete.value = obj.id
+
+    emit('change-file', obj)
+
+    // console.log(emit);
+    // console.log(idToDelete);
+
+    // // let prs = JSON.parse(obj);
+    // console.log(images.value);
+
+
+    if (Array.isArray(images.value)) {
+        images.value.unshift(obj);
+    }
+}
+
+
+function imageDelete(error) {
+    if (error) {
+        console.error(error);
+        return;
+    }
+
+    // console.log(header);
+    if (props.save) {
+        var element = props.save[0]
+    }
+
+    emit('delete-file', [element, 'delete'])
+
+    axios.delete(`${routedel.value}`, header)
+        .then((reponse) => {
+            console.log(reponse);
+        })
+        .catch(function (error) {
+            console.log(error);
+        })
+
+}
+
 //  onMounted
 
 </script>
 
 <template>
+
     <Head title="Dashboard" />
     <BreezeAuthenticatedLayout>
         <template #header>
@@ -77,8 +206,19 @@ const store = () => {
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
                 <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                     <form @submit.prevent="store" enctype="multipart/form-data">
-                    <label for="textname">Name</label>
-                    <input type="text" class="border-y-8 border-cyan-800" v-model="form.name">
+                        <div class="grid grid-cols-2 gap-x-10">
+                            <div class="grid grid-flow-row">
+                                <label for="textname">Name</label>
+                                <input type="text" class="border-y-8 border-cyan-800" v-model="form.name">
+                            </div>
+                            <div>
+                                <FilePond :name="name" ref="pond" credits="false"
+                                    label-idle="Click to choose image, or drag here..." :server="db.server"
+                                    @init="filepondInitialized" accepted-file-types="image/jpg, image/jpeg, image/png"
+                                    @processfile="handleProcessedFile" @removefile="imageDelete" max-file-size="1MB" />
+
+                            </div>
+                        </div>
                         <!-- <div class="p-6 bg-white border-b border-gray-200" v-if="elements.length"> -->
 
                         <div class="grid grid-cols-1">
