@@ -6,7 +6,7 @@ use App\Enums\WorkStatus;
 use App\Http\Requests\UpdateMapRequest;
 use App\Models\MapView;
 use Inertia\Inertia;
-use App\Models\Marker;
+// use App\Models\Marker;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 
@@ -40,16 +40,6 @@ class MarkersController extends Controller
         return Redirect::route('markers.edit', $mapview->id);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
 
     /**
      * Display the specified resource.
@@ -59,7 +49,13 @@ class MarkersController extends Controller
      */
     public function show(MapView $mapview)
     {
-        //
+        // dd($mapview->markers->all());
+        return Inertia::render('Markers/CreateMarker', [
+            'm' => $mapview->with('media')->first(),
+            // 'selectStatus' => $mapview->status,
+            // 'img' => $mapview->media->first(),
+            'points' => $mapview->markers->all()
+        ]);
     }
 
     /**
@@ -114,7 +110,10 @@ class MarkersController extends Controller
     {
         $request->validated();
         $mapview->update($request->all());
+
+        return Redirect::route('markers.show', $mapview->id);
     }
+
 
     /**
      * Remove the specified resource from storage.

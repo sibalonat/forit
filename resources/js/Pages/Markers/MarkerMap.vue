@@ -43,6 +43,8 @@ let header = reactive({
 let idToDelete = ref('')
 let routedel = ref('')
 let pond = ref(null)
+let img = reactive({})
+
 const name = ref('mapView')
 
 let serverMessage = {};
@@ -67,31 +69,28 @@ let db = reactive({
     }
 })
 
+
+const form = useForm({
+    name: '',
+    status: '',
+});
+
 onMounted(() => {
-    BreezeAuthenticatedLayout
-    Head
-    store
-    FilePond
-    form
-    db
-    name
+    BreezeAuthenticatedLayout, Head, store, FilePond, form, db, name
     pond.value
 
-    filepondInitialized
-    handleProcessedFile
-    imageDelete
+    filepondInitialized, handleProcessedFile, imageDelete
 
-    console.log(props.selectStatus);
-    console.log(props.img);
+    form.name = props.m.name
+    form.status = props.m.status
 
+    console.log(props.m);
 
 })
 
 // console.log(db);
 
-const form = useForm({
-    name: '',
-});
+
 
 // onUpdated(() => {
 
@@ -103,8 +102,8 @@ const watcher = watchEffect(() => {
     if (props.img) {
         let element = props.img
         console.log('exists');
-        console.log(props.save);
-        routedel.value = route('image.delete', { form: props.formId, id: element.id })
+        // console.log(props.save);
+        routedel.value = route('markers.mediadel', { mapview: props.m.id, id: element.id })
     }
 
     console.log(routedel.value);
@@ -132,7 +131,8 @@ watch(idToDelete, async (newId) => {
 const store = () => {
 
     console.log('whats up!');
-    form.post(route('category.store'));
+    console.log(form);
+    form.put(route('markers.update', { mapview: props.m.id }));
 
 }
 
@@ -141,7 +141,7 @@ async function filepondInitialized() {
     console.log('Filepond is ready!');
     console.log('Filepond object:', pond.value);
 
-    if (props.save) {
+    if (props.img) {
         // let element = props.save[0]
 
         await axios.get(route('markers.mediashow', { mapview: props.m.id }), header)
@@ -243,7 +243,7 @@ function imageDelete(error) {
     <BreezeAuthenticatedLayout>
         <template #header>
             <h2 class="text-xl font-semibold leading-tight text-gray-800">
-                Marker Create
+                Map Create
             </h2>
         </template>
 
@@ -252,11 +252,23 @@ function imageDelete(error) {
                 <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                     <form @submit.prevent="store" enctype="multipart/form-data">
                         <div class="grid grid-cols-2 gap-x-10">
-                            <div class="grid grid-flow-row">
-                                <label for="textname">Name</label>
-                                <input type="text" class="border-y-8 border-cyan-800" v-model="form.name">
+                            <div class="grid grid-flow-row-dense">
+                                <div class="p-3">
+                                    <label for="textname" class="w-full flex">Name</label>
+                                    <input type="text" id="textname" class="border-y-1 w-full flex border-cyan-800"
+                                        v-model="form.name">
+                                    <br>
+                                    <label for="selectstatus" class="w-full flex">Status</label>
+                                    <!-- {{ form.status }} -->
+                                    <select id="selectstatus" class="border-y-1 w-full flex border-cyan-800"
+                                        v-model="form.status">
+                                        <option value="">Select</option>
+
+                                        <option v-for="opt in selectStatus" :key="opt" :value="opt">{{ opt }}</option>
+                                    </select>
+                                </div>
                             </div>
-                            <div>
+                            <div class="p-6">
                                 <FilePond :name="name" ref="pond" credits="false"
                                     label-idle="Click to choose image, or drag here..." :server="db.server"
                                     @init="filepondInitialized" accepted-file-types="image/jpg, image/jpeg, image/png"
