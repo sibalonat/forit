@@ -37,7 +37,9 @@ Route::get('mapview', [MarkersController::class, 'index'])->name('markers');
 Route::get('mapview/create', [MarkersController::class, 'create'])->name('markers.create');
 Route::get('mapview/{mapview}', [MarkersController::class, 'edit'])->name('markers.edit');
 Route::put('mapview/{mapview}', [MarkersController::class, 'update'])->name('markers.edit');
-Route::post('mapview/{mapview}/image', [MarkersController::class, 'update'])->name('markers.edit');
+Route::post('mapview/{mapview}/image', [MarkersController::class, 'mapimage'])->name('markers.mediastore');
+Route::get('mapview/{mapview}/image/{id}/show', [MarkersController::class, 'showImg'])->name('markers.mediashow');
+Route::delete('mapview/{mapview}/image/{id}/show', [MarkersController::class, 'deleteImage'])->name('markers.mediadel');
 
 // markers
 // Route::get('markers', [MarkersController::class, 'index'])->name('markers');
@@ -53,7 +55,7 @@ Route::delete('delete/{form}', [FormController::class, 'destroy'])->middleware([
 Route::post('elaborate/{form}/image', [FormController::class, 'stimage'])->middleware(['auth', 'verified'])->name('form.image');
 Route::get('elaborate/{form}/image/{id}/show', [FormController::class, 'showMedia'])->middleware(['auth', 'verified'])->name('image.show');
 Route::delete('elaborate/{form}/image/{id}', [FormController::class, 'deleteMedia'])->middleware(['auth', 'verified'])->name('image.delete');
-Route::get('elaborate/{form}/images', [FormController::class, 'show'])->middleware(['auth', 'verified'])->name('form.images');
+// Route::get('elaborate/{form}/images', [FormController::class, 'show'])->middleware(['auth', 'verified'])->name('form.images');
 // Route::post('image', [ImageController::class,'store'])->name('image.store');
 
 require __DIR__.'/auth.php';

@@ -79,12 +79,23 @@ class MarkersController extends Controller
 
     public function mapimage(MapView $mapview, Request $request)
     {
-        if (isset($request->fileUpload)) {
+        if (isset($request->mapView)) {
             $mapview->addMediaFromRequest('mapView')->toMediaCollection('mapview');
             $st = $mapview->media->last();
 
             return response()->json($st);
         }
+    }
+
+    // public function showImg()
+    // {
+
+    // }
+
+    public function showImg(MapView $mapview, $id)
+    {
+        $element = $mapview->media->where('id', $id)->first();
+        return response()->json($element);
     }
 
     /**
