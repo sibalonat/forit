@@ -74,6 +74,7 @@ class MarkersController extends Controller
         return Inertia::render('Markers/MarkerMap', [
             'm' => $mapview,
             'selectStatus' => WorkStatus::cases(),
+            'img' => $mapview->media->first(),
         ]);
     }
 
@@ -87,15 +88,19 @@ class MarkersController extends Controller
         }
     }
 
-    // public function showImg()
-    // {
 
-    // }
-
-    public function showImg(MapView $mapview, $id)
+    public function showImg(MapView $mapview)
     {
-        $element = $mapview->media->where('id', $id)->first();
+        $element = $mapview->media->first();
         return response()->json($element);
+    }
+
+
+    public function deleteImg(MapView $mapview, Request $request, $id)
+    {
+        $id = $request->id;
+
+        $mapview->media->where('id', $id)->first()->delete();
     }
 
     /**

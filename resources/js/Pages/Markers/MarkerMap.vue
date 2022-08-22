@@ -3,7 +3,7 @@
 
 import BreezeAuthenticatedLayout from '@/Layouts/Authenticated.vue';
 import { Head, useForm } from '@inertiajs/inertia-vue3';
-import { onMounted } from '@vue/runtime-core';
+import { onMounted, onUpdated, watch, watchEffect } from '@vue/runtime-core';
 
 import vueFilePond from 'vue-filepond';
 // import vueFilePond, { setOptions } from 'vue-filepond';
@@ -31,14 +31,41 @@ const FilePond = vueFilePond(
 
 const props = defineProps({
     m: Object,
+    img: Object,
     selectStatus: Array,
 })
 
+
+let header = reactive({
+    headers: { 'X-CSRF-TOKEN': document.head.querySelector('meta[name="csrf_token"]').content }
+})
+
+let idToDelete = ref('')
+let routedel = ref('')
 let pond = ref(null)
 const name = ref('mapView')
 
 let serverMessage = {};
-let db = reactive({})
+let db = reactive({
+    server: {
+        url: route('markers.edit', props.m.id),
+        process: {
+            url: '/image',
+
+            onerror: (response) => {
+                serverMessage = JSON.parse(response);
+            },
+        },
+        revert: null,
+
+        headers: {
+            'X-CSRF-TOKEN': document.head.querySelector('meta[name="csrf_token"]').content
+        },
+        labelFileProcessingError: () => {
+            return serverMessage.error;
+        },
+    }
+})
 
 onMounted(() => {
     BreezeAuthenticatedLayout
@@ -46,36 +73,17 @@ onMounted(() => {
     store
     FilePond
     form
+    db
+    name
     pond.value
 
     filepondInitialized
     handleProcessedFile
     imageDelete
 
-
-    // props.m.id
-    db = reactive({
-        server: {
-            url: route('markers.edit', props.m.id),
-            process: {
-                url: '/image',
-
-                onerror: (response) => {
-                    serverMessage = JSON.parse(response);
-                },
-            },
-            revert: null,
-
-            headers: {
-                'X-CSRF-TOKEN': document.head.querySelector('meta[name="csrf_token"]').content
-            },
-            labelFileProcessingError: () => {
-                return serverMessage.error;
-            },
-
-        }
-    })
     console.log(props.selectStatus);
+    console.log(props.img);
+
 
 })
 
@@ -85,9 +93,40 @@ const form = useForm({
     name: '',
 });
 
+// onUpdated(() => {
+
+//     console.log(db);
+
+// })
+
+const watcher = watchEffect(() => {
+    if (props.img) {
+        let element = props.img
+        console.log('exists');
+        console.log(props.save);
+        routedel.value = route('image.delete', { form: props.formId, id: element.id })
+    }
+
+    console.log(routedel.value);
+})
+
+// watchEffect
+
 
 
 // useForm
+
+watch(idToDelete, async (newId) => {
+    idToDelete.value = newId
+
+    console.log(idToDelete.value);
+
+
+    routedel.value = route('markers.mediadel', { mapview: props.m.id, id: idToDelete.value })
+    console.log(idToDelete.value);
+})
+
+// watch
 
 
 const store = () => {
@@ -103,9 +142,9 @@ async function filepondInitialized() {
     console.log('Filepond object:', pond.value);
 
     if (props.save) {
-        let element = props.save[0]
+        // let element = props.save[0]
 
-        await axios.get(route('image.show', { form: props.formId, id: element.id }), header)
+        await axios.get(route('markers.mediashow', { mapview: props.m.id }), header)
             .then((response) => {
                 // console.log(response);
                 // image = response.data
@@ -150,7 +189,9 @@ function handleProcessedFile(error, file) {
 
     idToDelete.value = obj.id
 
-    emit('change-file', obj)
+    console.log(idToDelete.value);
+
+    // emit('change-file', obj)
 
     // console.log(emit);
     // console.log(idToDelete);
@@ -159,9 +200,9 @@ function handleProcessedFile(error, file) {
     // console.log(images.value);
 
 
-    if (Array.isArray(images.value)) {
-        images.value.unshift(obj);
-    }
+    // if (Array.isArray(images.value)) {
+    //     images.value.unshift(obj);
+    // }
 }
 
 
@@ -172,11 +213,11 @@ function imageDelete(error) {
     }
 
     // console.log(header);
-    if (props.save) {
-        var element = props.save[0]
-    }
+    // if (props.save) {
+    //     var element = props.save[0]
+    // }
 
-    emit('delete-file', [element, 'delete'])
+    // emit('delete-file', [element, 'delete'])
 
     axios.delete(`${routedel.value}`, header)
         .then((reponse) => {
@@ -185,8 +226,12 @@ function imageDelete(error) {
         .catch(function (error) {
             console.log(error);
         })
+    watcher()
 
 }
+
+
+
 
 //  onMounted
 

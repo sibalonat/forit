@@ -36,10 +36,11 @@ Route::get('/dashboard', function () {
 Route::get('mapview', [MarkersController::class, 'index'])->name('markers');
 Route::get('mapview/create', [MarkersController::class, 'create'])->name('markers.create');
 Route::get('mapview/{mapview}', [MarkersController::class, 'edit'])->name('markers.edit');
-Route::put('mapview/{mapview}', [MarkersController::class, 'update'])->name('markers.edit');
+Route::put('mapview/{mapview}', [MarkersController::class, 'update'])->name('markers.update');
+Route::delete('mapview/{mapview}', [MarkersController::class, 'delete'])->name('markers.edit');
 Route::post('mapview/{mapview}/image', [MarkersController::class, 'mapimage'])->name('markers.mediastore');
-Route::get('mapview/{mapview}/image/{id}/show', [MarkersController::class, 'showImg'])->name('markers.mediashow');
-Route::delete('mapview/{mapview}/image/{id}/show', [MarkersController::class, 'deleteImage'])->name('markers.mediadel');
+Route::get('mapview/{mapview}/imgshow', [MarkersController::class, 'showImg'])->name('markers.mediashow');
+Route::delete('mapview/{mapview}/image/{id}', [MarkersController::class, 'deleteImg'])->name('markers.mediadel');
 
 // markers
 // Route::get('markers', [MarkersController::class, 'index'])->name('markers');
