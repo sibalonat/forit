@@ -9,6 +9,7 @@ use Inertia\Inertia;
 // use App\Models\Marker;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class MarkersController extends Controller
 {
@@ -19,7 +20,9 @@ class MarkersController extends Controller
      */
     public function index()
     {
-        return Inertia::render('Markers/Markers');
+        return Inertia::render('Markers/Markers', [
+            'maps' => MapView::get()
+        ]);
     }
 
     /**
@@ -49,12 +52,15 @@ class MarkersController extends Controller
      */
     public function show(MapView $mapview)
     {
-        // dd($mapview->markers->all());
+        // dd($mapview->with('media')->with('markers')->get()->first());
+        // ->with('media')
+        // ->with('markers')
+        // 'selectStatus' => $mapview->status,
+        // 'img' => $mapview->media->first(),
+        // 'points' => $mapview->markers->all()
+        // ->addSelect(['md' => Media::select('model_id')->whereColumn('model_id', $mapview->id)->latest()->take(1)])
         return Inertia::render('Markers/CreateMarker', [
-            'm' => $mapview->with('media')->first(),
-            // 'selectStatus' => $mapview->status,
-            // 'img' => $mapview->media->first(),
-            'points' => $mapview->markers->all()
+            'm' => $mapview->with('media')->with('markers')->get()->first(),
         ]);
     }
 

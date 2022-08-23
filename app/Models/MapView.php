@@ -17,6 +17,8 @@ class MapView extends Model implements HasMedia
         'name', 'status'
     ];
 
+    // protected $appends = ['recent_media'];
+
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('mapview')
@@ -33,4 +35,12 @@ class MapView extends Model implements HasMedia
     {
         return $this->hasMany(Marker::class);
     }
+
+    // public function scopeWithRecentMedia ($query) {
+    //     $query->with('media')->latest()->first();
+    // }
+
+    // public function getRecentMediaAttribute () {
+    //     return $this->media->latest()->last();
+    // }
 }
