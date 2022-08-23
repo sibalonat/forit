@@ -36,8 +36,8 @@ let latitude = ref('')
 const ob = reactive({
     name: '',
     notes: '',
-    longitude: '',
-    latitude: '',
+    longitude: '126',
+    latitude: '126',
 })
 
 // reactive
@@ -56,9 +56,12 @@ onMounted(() => {
     bounds, zoom, statement
     //form attributes
     name, notes, longitude, latitude
+
+    //map object
+    console.log(props.m);
     // console.log(LMap);
 
-    console.log(props.m);
+    // console.log(props.m);
     // console.log(props.img);
     // console.log(props.m.status);
     // console.log(props.points);
@@ -89,24 +92,17 @@ watch(props.m, async (fresh) => {
 
 
 const store = () => {
+    if (ob.name.length === 0) {
+        axios.post(route('markers.store', { mapview: props.m.id }), ob)
+            .then(function (response) {
+                console.log(response);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    } else {
 
-    // console.log('whats up!');
-    // console.log(name.value);
-    // console.log(notes.value);
-    // name.value
-    // notes.value
-    // longitude.value
-    // latitude.value
-
-    console.log(ob);
-    axios.post(route('markers.store', { mapview: props.m.id }), ob)
-        .then(function (response) {
-            console.log(response);
-        })
-        .catch(function (error) {
-            console.log(error);
-        });
-
+    }
 }
 
 
@@ -153,7 +149,7 @@ const infodrag = () => {
 
                     <div ref="bool"
                         class="absolute top-0 -left-64 h-full min-h-0 overflow-y-auto inset-y-0 z-0 bg-white"
-                        :class="statement ? 'w-64 opacity-100' : 'w-0 opacity-0'">
+                        :class="statement ? 'w-64 opacity-100 transition-width transition-slowest ease' : 'w-0 opacity-0 transition-width transition-slowest ease'">
                         <div class="flex justify-end items-center h-20">
                             <button class="rounded-full bg-black text-white px-3" @click="statement = !statement"> X
                             </button>
@@ -174,18 +170,23 @@ const infodrag = () => {
                                 <input type="text" id="longitute" class="h-8" v-model="ob.latitude">
                                 <br>
                                 <br>
-                                <br>
-                                <button class=" bg-slate-900 text-neutral-400 " @click="store"> Store Marker</button>
-
+                                <button class=" bg-slate-900 text-neutral-400 rounded-md py-1 px-2 " @click="store">
+                                    Store Marker</button>
                             </div>
                         </div>
+                        <br>
+                        <br>
                         <div class="flex flex-col grow overflow-y-auto min-h-0">
                             <div class="px-4">
-                                <p v-for="marker in m.markers" :key="marker.id" class=" text-sm ">{{ marker.name }}</p>
+                                <!-- <p class=" text-lg ">kjo</p> -->
+                                <div class="grid grid-cols-2" v-for="mark in m.markers" :key="mark.id">
+                                    <p class=" text-lg ">{{ mark.name }}</p>
+                                    <div class="flex">
+                                        <button></button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-
-
                     </div>
 
                     <!-- <div class="container relative z-50 bg-white mx-auto w-3/5">
