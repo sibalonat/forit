@@ -45,9 +45,13 @@ Route::delete('mapview/{mapview}/image/{id}', [MarkersController::class, 'delete
 
 // markers
 Route::post('mapview/{mapview}/store', [MarkersController::class, 'store'])->name('markers.store');
-Route::get('mapview/{mapview}/marker/{marker}', [MarkersController::class, 'single'])->name('marker.single');
-Route::put('mapview/{mapview}/marker/{marker}', [MarkersController::class, 'up'])->name('markers.up');
-Route::delete('mapview/{mapview}/marker/{marker}', [MarkersController::class, 'del'])->name('markers.del');
+Route::get('marker/{marker}', [MarkersController::class, 'single'])->name('marker.single');
+Route::put('marker/{marker}', [MarkersController::class, 'up'])->name('markers.up');
+Route::delete('marker/{marker}', [MarkersController::class, 'del'])->name('markers.del');
+// Route::post('mapview/{mapview}/store', [MarkersController::class, 'store'])->name('markers.store');
+// Route::get('mapview/{mapview}/marker/{marker}', [MarkersController::class, 'single'])->name('marker.single');
+// Route::put('mapview/{mapview}/marker/{marker}', [MarkersController::class, 'up'])->name('markers.up');
+// Route::delete('mapview/{mapview}/marker/{marker}', [MarkersController::class, 'del'])->name('markers.del');
 // Route::get('markers/create', [MarkersController::class, 'create'])->name('markers.create');
 // Route::get('markers/{marker}', [MarkersController::class, 'edit'])->name('markers.edit');
 

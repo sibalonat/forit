@@ -29,6 +29,7 @@ let zoom = ref(2)
 let statement = ref(false)
 
 // form
+let intentifier = ref(null)
 let name = ref('')
 let notes = ref('')
 let longitude = ref('')
@@ -69,9 +70,16 @@ watch(zoom, async (zoomed) => {
     console.log(zoomed);
 
 })
+
 watch(props.m, async (fresh) => {
 
     console.log(fresh);
+
+})
+
+watch(intentifier, async (id) => {
+
+    console.log(id);
 
 })
 
@@ -88,14 +96,35 @@ const store = () => {
                 console.log(error);
             });
     } else {
+        console.log('is not empty');
+        axios.post(route('markers.store', { marker: intentifier.value }), ob)
+            .then(function (response) {
+                console.log(response);
+                ob.name = ''
+                ob.notes = ''
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
 
     }
 }
 
-const updateValues = () => {
+const updateValues = (el) => {
     if (ob.name.length === 0) {
 
         console.log('is empty');
+
+        axios.get(route('marker.single', { marker: parseInt(el) }))
+            .then(function (response) {
+                console.log(response);
+                ob.name = response.data.name
+                ob.notes = response.data.notes
+                intentifier.value = el
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
 
     }
 }
@@ -182,7 +211,7 @@ const infodrag = () => {
                                     <p class=" text-lg self-center">{{ mark.name }}</p>
                                     <div class="flex flex-col">
                                         <button class=" bg-teal-500 text-slate-900 rounded-md py-0 px-1 grow mb-1"
-                                            @click="updateValues"> Edit </button>
+                                            @click="updateValues(mark.id)"> Edit </button>
                                         <button class=" bg-red-600 text-slate-900 rounded-md py-0 px-1 grow"
                                             @click="deleteValues(mark.id)"> Delete </button>
                                     </div>
