@@ -10,10 +10,11 @@ import { LMap, LGeoJson, LImageOverlay, LMarker, LPolyline, LPopup } from "@vue-
 
 // selectStatus: String,
 // img: Object,
+// img: Object,
+// points: Object,
+
 const props = defineProps({
     m: Object,
-    // img: Object,
-    // points: Object,
 })
 
 // let idToDelete = ref('')
@@ -49,7 +50,7 @@ onMounted(() => {
     //components
     BreezeAuthenticatedLayout, Head
     // functions
-    store
+    store, updateValues, deleteValues, infodrag
     // leaflet
     LMap, LGeoJson, LImageOverlay, LMarker, LPolyline, LPopup
     // attributes
@@ -59,12 +60,6 @@ onMounted(() => {
 
     //map object
     console.log(props.m);
-    // console.log(LMap);
-
-    // console.log(props.m);
-    // console.log(props.img);
-    // console.log(props.m.status);
-    // console.log(props.points);
 
 })
 
@@ -80,22 +75,14 @@ watch(props.m, async (fresh) => {
 
 })
 
-// watch
-// watch
-
-// const form = useForm({
-//     name: '',
-//     slug: '',
-// });
-
-// useForm
-
 
 const store = () => {
     if (ob.name.length === 0) {
         axios.post(route('markers.store', { mapview: props.m.id }), ob)
             .then(function (response) {
                 console.log(response);
+                ob.name = ''
+                ob.notes = ''
             })
             .catch(function (error) {
                 console.log(error);
@@ -103,6 +90,18 @@ const store = () => {
     } else {
 
     }
+}
+
+const updateValues = () => {
+    if (ob.name.length === 0) {
+
+        console.log('is empty');
+
+    }
+}
+
+const deleteValues = (el) => {
+    console.log(el);
 }
 
 
@@ -180,20 +179,17 @@ const infodrag = () => {
                             <div class="px-4">
                                 <!-- <p class=" text-lg ">kjo</p> -->
                                 <div class="grid grid-cols-2" v-for="mark in m.markers" :key="mark.id">
-                                    <p class=" text-lg ">{{ mark.name }}</p>
-                                    <div class="flex">
-                                        <button></button>
+                                    <p class=" text-lg self-center">{{ mark.name }}</p>
+                                    <div class="flex flex-col">
+                                        <button class=" bg-teal-500 text-slate-900 rounded-md py-0 px-1 grow mb-1"
+                                            @click="updateValues"> Edit </button>
+                                        <button class=" bg-red-600 text-slate-900 rounded-md py-0 px-1 grow"
+                                            @click="deleteValues(mark.id)"> Delete </button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-                    <!-- <div class="container relative z-50 bg-white mx-auto w-3/5">
-                        <img :src="url" class="absolute inset-8 object-fill w-full" alt="">
-                    </div> -->
-                    <!-- <div class="w-full relative bg-cover" :style="{ backgroundImage: 'url('+ props.img.original_url +')' }"> -->
-
                 </div>
             </div>
         </div>

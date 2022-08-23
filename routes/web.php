@@ -4,7 +4,7 @@ use App\Http\Controllers\FormController;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
-use App\Http\Controllers\ImageController;
+
 use App\Http\Controllers\MarkersController;
 
 /*
@@ -37,15 +37,17 @@ Route::get('mapview', [MarkersController::class, 'index'])->name('markers');
 Route::get('mapview/create', [MarkersController::class, 'create'])->name('markers.create');
 Route::get('mapview/{mapview}', [MarkersController::class, 'edit'])->name('markers.edit');
 Route::get('mapview/{mapview}/show', [MarkersController::class, 'show'])->name('markers.show');
-Route::post('mapview/{mapview}/store', [MarkersController::class, 'store'])->name('markers.store');
 Route::put('mapview/{mapview}', [MarkersController::class, 'update'])->name('markers.update');
-Route::delete('mapview/{mapview}', [MarkersController::class, 'delete'])->name('markers.edit');
+Route::delete('mapview/{mapview}', [MarkersController::class, 'delete'])->name('markers.delete');
 Route::post('mapview/{mapview}/image', [MarkersController::class, 'mapimage'])->name('markers.mediastore');
 Route::get('mapview/{mapview}/imgshow', [MarkersController::class, 'showImg'])->name('markers.mediashow');
 Route::delete('mapview/{mapview}/image/{id}', [MarkersController::class, 'deleteImg'])->name('markers.mediadel');
 
 // markers
-// Route::get('markers', [MarkersController::class, 'index'])->name('markers');
+Route::post('mapview/{mapview}/store', [MarkersController::class, 'store'])->name('markers.store');
+Route::get('mapview/{mapview}/marker/{marker}', [MarkersController::class, 'single'])->name('marker.single');
+Route::put('mapview/{mapview}/marker/{marker}', [MarkersController::class, 'up'])->name('markers.up');
+Route::delete('mapview/{mapview}/marker/{marker}', [MarkersController::class, 'del'])->name('markers.del');
 // Route::get('markers/create', [MarkersController::class, 'create'])->name('markers.create');
 // Route::get('markers/{marker}', [MarkersController::class, 'edit'])->name('markers.edit');
 
