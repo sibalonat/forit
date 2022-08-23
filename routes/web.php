@@ -37,6 +37,7 @@ Route::get('mapview', [MarkersController::class, 'index'])->name('markers');
 Route::get('mapview/create', [MarkersController::class, 'create'])->name('markers.create');
 Route::get('mapview/{mapview}', [MarkersController::class, 'edit'])->name('markers.edit');
 Route::get('mapview/{mapview}/show', [MarkersController::class, 'show'])->name('markers.show');
+Route::post('mapview/{mapview}/store', [MarkersController::class, 'store'])->name('markers.store');
 Route::put('mapview/{mapview}', [MarkersController::class, 'update'])->name('markers.update');
 Route::delete('mapview/{mapview}', [MarkersController::class, 'delete'])->name('markers.edit');
 Route::post('mapview/{mapview}/image', [MarkersController::class, 'mapimage'])->name('markers.mediastore');

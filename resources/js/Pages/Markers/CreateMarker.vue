@@ -2,7 +2,7 @@
 
 import BreezeAuthenticatedLayout from '@/Layouts/Authenticated.vue';
 import { Head, useForm } from '@inertiajs/inertia-vue3';
-import { onMounted, ref, watch } from '@vue/runtime-core';
+import { onMounted, reactive, ref, watch } from '@vue/runtime-core';
 
 
 import "leaflet/dist/leaflet.css"
@@ -32,6 +32,15 @@ let name = ref('')
 let notes = ref('')
 let longitude = ref('')
 let latitude = ref('')
+
+const ob = reactive({
+    name: '',
+    notes: '',
+    longitude: '',
+    latitude: '',
+})
+
+// reactive
 
 console.log(url.value);
 
@@ -81,7 +90,22 @@ watch(props.m, async (fresh) => {
 
 const store = () => {
 
-    console.log('whats up!');
+    // console.log('whats up!');
+    // console.log(name.value);
+    // console.log(notes.value);
+    // name.value
+    // notes.value
+    // longitude.value
+    // latitude.value
+
+    console.log(ob);
+    axios.post(route('markers.store', { mapview: props.m.id }), ob)
+        .then(function (response) {
+            console.log(response);
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
 
 }
 
@@ -127,7 +151,8 @@ const infodrag = () => {
                             Marker</button>
                     </div>
 
-                    <div ref="bool" class="absolute top-0 -left-64 h-full min-h-0 overflow-y-auto inset-y-0 z-0 bg-white"
+                    <div ref="bool"
+                        class="absolute top-0 -left-64 h-full min-h-0 overflow-y-auto inset-y-0 z-0 bg-white"
                         :class="statement ? 'w-64 opacity-100' : 'w-0 opacity-0'">
                         <div class="flex justify-end items-center h-20">
                             <button class="rounded-full bg-black text-white px-3" @click="statement = !statement"> X
@@ -136,23 +161,27 @@ const infodrag = () => {
                         <div class="flex flex-col">
                             <div class="grow px-4">
                                 <label for="name">name</label>
-                                <input type="text" class=" h-8" id="name" v-model="name">
+                                <input type="text" class=" h-8" id="name" v-model="ob.name">
                                 <br>
                                 <label for="notes">notes</label>
-                                <textarea id="notes" name="notes" cols="21" rows="6" v-model="notes"></textarea>
+                                <textarea id="notes" name="notes" cols="21" rows="6" v-model="ob.notes"></textarea>
                                 <!-- <input type="text" id="name" class="h-8" v-model="notes"> -->
                                 <br>
                                 <label for="latitude">latitude</label>
-                                <input type="text" id="latitude" class="h-8" v-model="longitude">
+                                <input type="text" id="latitude" class="h-8" v-model="ob.longitude">
                                 <br>
                                 <label for="longitute">longitute</label>
-                                <input type="text" id="longitute" class="h-8" v-model="latitude">
+                                <input type="text" id="longitute" class="h-8" v-model="ob.latitude">
                                 <br>
+                                <br>
+                                <br>
+                                <button class=" bg-slate-900 text-neutral-400 " @click="store"> Store Marker</button>
+
                             </div>
                         </div>
                         <div class="flex flex-col grow overflow-y-auto min-h-0">
                             <div class="px-4">
-                                 <p v-for="marker in m.markers" :key="marker.id" class=" text-sm ">{{ marker.name }}</p>
+                                <p v-for="marker in m.markers" :key="marker.id" class=" text-sm ">{{ marker.name }}</p>
                             </div>
                         </div>
 

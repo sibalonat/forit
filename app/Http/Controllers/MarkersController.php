@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\WorkStatus;
-use App\Http\Requests\UpdateMapRequest;
-use App\Models\MapView;
+use Spatie\Url\Url;
 use Inertia\Inertia;
+use App\Models\Marker;
+use App\Models\MapView;
 // use App\Models\Marker;
+use App\Enums\WorkStatus;
 use Illuminate\Http\Request;
+use App\Http\Requests\UpdateMapRequest;
 use Illuminate\Support\Facades\Redirect;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
@@ -52,15 +54,17 @@ class MarkersController extends Controller
      */
     public function show(MapView $mapview)
     {
-        // dd($mapview->with('media')->with('markers')->get()->first());
+        // dd($mapview->getFirstMedia('mapview'));
         // ->with('media')
+        // 'img' => $mapview->getFirstMedia('mapview')
         // ->with('markers')
         // 'selectStatus' => $mapview->status,
         // 'img' => $mapview->media->first(),
         // 'points' => $mapview->markers->all()
         // ->addSelect(['md' => Media::select('model_id')->whereColumn('model_id', $mapview->id)->latest()->take(1)])
+        // 'm' => $mapview->with('media')->with('markers')->get()->first(),
         return Inertia::render('Markers/CreateMarker', [
-            'm' => $mapview->with('media')->with('markers')->get()->first(),
+            'm' => $mapview->with('markers')->with('media')->get()->first(),
         ]);
     }
 
@@ -118,6 +122,14 @@ class MarkersController extends Controller
         $mapview->update($request->all());
 
         return Redirect::route('markers.show', $mapview->id);
+    }
+
+
+    // marker
+    public function store(Request $request)
+    {
+        $marker = Marker::create($request->all());
+        return response()->json($marker);
     }
 
 
