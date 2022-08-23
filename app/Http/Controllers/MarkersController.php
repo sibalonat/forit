@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Spatie\Url\Url;
+
 use Inertia\Inertia;
 use App\Models\Marker;
 use App\Models\MapView;
@@ -11,7 +11,7 @@ use App\Enums\WorkStatus;
 use Illuminate\Http\Request;
 use App\Http\Requests\UpdateMapRequest;
 use Illuminate\Support\Facades\Redirect;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
+
 
 class MarkersController extends Controller
 {
@@ -54,15 +54,6 @@ class MarkersController extends Controller
      */
     public function show(MapView $mapview)
     {
-        // dd($mapview->getFirstMedia('mapview'));
-        // ->with('media')
-        // 'img' => $mapview->getFirstMedia('mapview')
-        // ->with('markers')
-        // 'selectStatus' => $mapview->status,
-        // 'img' => $mapview->media->first(),
-        // 'points' => $mapview->markers->all()
-        // ->addSelect(['md' => Media::select('model_id')->whereColumn('model_id', $mapview->id)->latest()->take(1)])
-        // 'm' => $mapview->with('media')->with('markers')->get()->first(),
         return Inertia::render('Markers/CreateMarker', [
             'm' => $mapview->with('markers')->with('media')->get()->first(),
         ]);
@@ -130,6 +121,28 @@ class MarkersController extends Controller
     {
         $marker = Marker::create($request->all());
         return response()->json($marker);
+    }
+
+    // marker single
+    public function single(Marker $marker)
+    {
+        // $marker = Marker::create($request->all());
+        // return response()->json($marker);
+        return response()->json($marker);
+    }
+
+    // marker update
+    public function up(Marker $marker, Request $request)
+    {
+        $marker->update($request->all());
+        return response()->json($marker);
+    }
+
+    // marker delete
+    public function del(Marker $marker)
+    {
+        $marker->delete();
+        return response()->json('done');
     }
 
 
