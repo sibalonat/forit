@@ -2,16 +2,13 @@
 
 import BreezeAuthenticatedLayout from '@/Layouts/Authenticated.vue';
 import { Head, useForm } from '@inertiajs/inertia-vue3';
-import { onMounted, reactive, ref, watch } from '@vue/runtime-core';
+import { getCurrentInstance, onMounted, reactive, ref, watch, watchEffect } from '@vue/runtime-core';
 
 
 import "leaflet/dist/leaflet.css"
 import { LMap, LGeoJson, LImageOverlay, LMarker, LPolyline, LPopup } from "@vue-leaflet/vue-leaflet";
+import axios from 'axios';
 
-// selectStatus: String,
-// img: Object,
-// img: Object,
-// points: Object,
 
 const props = defineProps({
     m: Object,
@@ -22,60 +19,45 @@ const props = defineProps({
 // let pond = ref(null)
 // let img = reactive({})
 
+let data = ref([])
+
 let url = ref(props.m.media[0].original_url)
-// let bounds = ref([[-326.5, -326], [1223, 1223]])
+
 let bounds = ref([[-326, -326], [326, 326]])
 let zoom = ref(2)
 let statement = ref(false)
+let drag = ref(true)
 
 // form
 let intentifier = ref(null)
-let name = ref('')
-let notes = ref('')
-let longitude = ref('')
-let latitude = ref('')
+
 
 const ob = reactive({
     name: '',
     notes: '',
-    longitude: '126',
-    latitude: '126',
+    lng: 0,
+    lat: 0,
 })
 
-// reactive
-
-console.log(url.value);
 
 
 onMounted(() => {
+
     //components
     BreezeAuthenticatedLayout, Head
     // functions
-    store, updateValues, deleteValues, infodrag
+    store, updateValues, deleteValues, infodrag, thingOnUpdate, markers()
     // leaflet
     LMap, LGeoJson, LImageOverlay, LMarker, LPolyline, LPopup
     // attributes
-    bounds, zoom, statement
+    bounds, zoom, statement, data, drag, url
     //form attributes
-    name, notes, longitude, latitude
+    ob
 
-    //map object
-    console.log(props.m);
 
 })
 
 
-watch(zoom, async (zoomed) => {
-
-    console.log(zoomed);
-
-})
-
-watch(props.m, async (fresh) => {
-
-    console.log(fresh);
-
-})
 
 watch(intentifier, async (id) => {
 
@@ -84,58 +66,88 @@ watch(intentifier, async (id) => {
 })
 
 
+watchEffect(() => console.log(ob.name))
+watchEffect(() => console.log(data.value))
+
+const markers = () => {
+    axios.get(route('markers.all', { mapview: props.m.id }))
+        .then((response) => {
+            console.log(response);
+            data.value = response.data
+        })
+}
+
+
 const store = () => {
-    if (ob.name.length === 0) {
+    // console.log(props.m.markers.includes(ob.name));
+    if (data.value.some(item => item.name === ob.name) === false) {
+
         axios.post(route('markers.store', { mapview: props.m.id }), ob)
             .then(function (response) {
                 console.log(response);
                 ob.name = ''
                 ob.notes = ''
+                markers()
+
             })
             .catch(function (error) {
                 console.log(error);
             });
-    } else {
-        console.log('is not empty');
-        axios.post(route('markers.store', { marker: intentifier.value }), ob)
+    } else if (data.value.some(item => item.name === ob.name) === true) {
+
+        axios.put(route('markers.up', { marker: intentifier.value }), ob)
             .then(function (response) {
                 console.log(response);
                 ob.name = ''
                 ob.notes = ''
+                markers()
             })
             .catch(function (error) {
                 console.log(error);
             });
-
     }
 }
 
 const updateValues = (el) => {
+
     if (ob.name.length === 0) {
-
-        console.log('is empty');
-
         axios.get(route('marker.single', { marker: parseInt(el) }))
             .then(function (response) {
                 console.log(response);
                 ob.name = response.data.name
                 ob.notes = response.data.notes
+
                 intentifier.value = el
             })
             .catch(function (error) {
                 console.log(error);
             });
-
     }
 }
 
 const deleteValues = (el) => {
-    console.log(el);
+    axios.delete(route('markers.del', { marker: parseInt(el) }))
+        .then(function (response) {
+            console.log(response);
+            markers()
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
 }
 
 
+const thingOnUpdate = (el, w) => {
+    console.log('ready');
+    console.log(w);
+    console.log(el);
+}
 
-const infodrag = () => {
+// ($event, marker)
+
+
+
+const infodrag = (el) => {
     // log('move')
     console.log('move');
 }
@@ -164,7 +176,8 @@ const infodrag = () => {
                         <l-image-overlay :url="url" :bounds="bounds" />
 
                         <!-- {{ m.markers }} -->
-                        <l-marker v-for="marker in m.markers" :key="marker.id" :lat-lng="marker">
+                        <l-marker v-for="marker in data" :key="marker.id"
+                            @update:lat-lng="thingOnUpdate($event, marker)" :lat-lng="marker" :draggable="drag">
                             <l-popup :content="marker.name" />
                         </l-marker>
                     </l-map>
@@ -188,14 +201,14 @@ const infodrag = () => {
                                 <input type="text" class=" h-8" id="name" v-model="ob.name">
                                 <br>
                                 <label for="notes">notes</label>
-                                <textarea id="notes" name="notes" cols="21" rows="6" v-model="ob.notes"></textarea>
+                                <textarea id="notes" name="notes" rows="6" v-model="ob.notes"></textarea>
                                 <!-- <input type="text" id="name" class="h-8" v-model="notes"> -->
+                                <!-- <br>
+                                <label for="lat">latitude</label>
+                                <input type="number" id="lat" class="h-8" v-model="ob.lat">
                                 <br>
-                                <label for="latitude">latitude</label>
-                                <input type="text" id="latitude" class="h-8" v-model="ob.longitude">
-                                <br>
-                                <label for="longitute">longitute</label>
-                                <input type="text" id="longitute" class="h-8" v-model="ob.latitude">
+                                <label for="lng">longitute</label>
+                                <input type="number" id="lng" class="h-8" v-model="ob.lng"> -->
                                 <br>
                                 <br>
                                 <button class=" bg-slate-900 text-neutral-400 rounded-md py-1 px-2 " @click="store">
@@ -207,7 +220,7 @@ const infodrag = () => {
                         <div class="flex flex-col grow overflow-y-auto min-h-0">
                             <div class="px-4">
                                 <!-- <p class=" text-lg ">kjo</p> -->
-                                <div class="grid grid-cols-2" v-for="mark in m.markers" :key="mark.id">
+                                <div class="grid grid-cols-2" v-for="mark in data" :key="mark.id">
                                     <p class=" text-lg self-center">{{ mark.name }}</p>
                                     <div class="flex flex-col">
                                         <button class=" bg-teal-500 text-slate-900 rounded-md py-0 px-1 grow mb-1"

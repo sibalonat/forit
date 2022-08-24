@@ -22,8 +22,14 @@ return new class () extends Migration {
             $table->string('name')->nullable();
             $table->foreignIdFor(MapView::class)->constrained()->onDelete('cascade');
             $table->text('notes')->nullable();
-            $table->decimal('longitude', 11, 8)->nullable();
-            $table->decimal('latitude', 10, 8)->nullable();
+            $table->string('lng')->default(0);
+            $table->string('lat')->default(0);
+            $table->boolean('drag')->default(true);
+            // $table->string('lng', 15)->default();
+            // $table->decimal('longitude')->nullable();
+            // $table->decimal('latitude')->nullable();
+            // $table->decimal('longitude', 11, 8)->nullable();
+            // $table->decimal('latitude', 10, 8)->nullable();
             $table->timestamps();
         });
     }

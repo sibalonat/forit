@@ -262,9 +262,7 @@ function imageDelete(error) {
                                     <!-- {{ form.status }} -->
                                     <select id="selectstatus" class="border-y-1 w-full flex border-cyan-800"
                                         v-model="form.status">
-                                        <option value="">Select</option>
-
-                                        <option v-for="opt in selectStatus" :key="opt" :value="opt">{{ opt }}</option>
+                                      <option v-for="opt in selectStatus" :key="opt" :value="opt">{{ opt }}</option>
                                     </select>
                                 </div>
                             </div>

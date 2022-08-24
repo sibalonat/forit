@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-
 use Inertia\Inertia;
 use App\Models\Marker;
 use App\Models\MapView;
@@ -11,7 +10,6 @@ use App\Enums\WorkStatus;
 use Illuminate\Http\Request;
 use App\Http\Requests\UpdateMapRequest;
 use Illuminate\Support\Facades\Redirect;
-
 
 class MarkersController extends Controller
 {
@@ -54,8 +52,12 @@ class MarkersController extends Controller
      */
     public function show(MapView $mapview)
     {
+        // $markers = Marker::where('map_view_id', $mapview->id)->get();
+        // dd($markers);
         return Inertia::render('Markers/CreateMarker', [
-            'm' => $mapview->with('markers')->with('media')->get()->first(),
+            'm' => $mapview->with('media')->get()->first(),
+            // 'm' => $mapview->with('markers')->with('media')->get()->first(),
+            // 'markers' => $mapview->markers->all(),
         ]);
     }
 
@@ -117,6 +119,13 @@ class MarkersController extends Controller
 
 
     // marker
+    public function getMarkers(MapView $mapview)
+    {
+        // $mapview->markers->all();
+        $markers = Marker::where('map_view_id', $mapview->id)->get();
+        return response()->json($markers);
+    }
+    // marker
     public function store(Request $request)
     {
         $marker = Marker::create($request->all());
@@ -124,10 +133,11 @@ class MarkersController extends Controller
     }
 
     // marker single
+    // public function single(MapView $mapview, Marker $marker)
     public function single(Marker $marker)
     {
-        // $marker = Marker::create($request->all());
-        // return response()->json($marker);
+        // $mark = $mapview->markers->where('id', $marker->id)->first();
+
         return response()->json($marker);
     }
 
