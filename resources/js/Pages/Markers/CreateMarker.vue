@@ -2,7 +2,7 @@
 
 import BreezeAuthenticatedLayout from '@/Layouts/Authenticated.vue';
 import { Head, useForm } from '@inertiajs/inertia-vue3';
-import { getCurrentInstance, onMounted, reactive, ref, watch, watchEffect } from '@vue/runtime-core';
+import { onMounted, reactive, ref, watch, watchEffect } from '@vue/runtime-core';
 
 
 import "leaflet/dist/leaflet.css"
@@ -42,7 +42,6 @@ const ob = reactive({
 
 
 onMounted(() => {
-
     //components
     BreezeAuthenticatedLayout, Head
     // functions
@@ -53,8 +52,6 @@ onMounted(() => {
     bounds, zoom, statement, data, drag, url
     //form attributes
     ob
-
-
 })
 
 
@@ -66,6 +63,7 @@ watch(intentifier, async (id) => {
 })
 
 
+watchEffect(() => console.log(ob))
 watchEffect(() => console.log(ob.name))
 watchEffect(() => console.log(data.value))
 
@@ -87,6 +85,9 @@ const store = () => {
                 console.log(response);
                 ob.name = ''
                 ob.notes = ''
+                ob.lng = ''
+                ob.lat = ''
+
                 markers()
 
             })
@@ -100,6 +101,9 @@ const store = () => {
                 console.log(response);
                 ob.name = ''
                 ob.notes = ''
+                ob.lng = ''
+                ob.lat = ''
+
                 markers()
             })
             .catch(function (error) {
@@ -109,7 +113,6 @@ const store = () => {
 }
 
 const updateValues = (el) => {
-
     if (ob.name.length === 0) {
         axios.get(route('marker.single', { marker: parseInt(el) }))
             .then(function (response) {
@@ -118,6 +121,8 @@ const updateValues = (el) => {
                 ob.notes = response.data.notes
 
                 intentifier.value = el
+
+
             })
             .catch(function (error) {
                 console.log(error);
@@ -177,7 +182,7 @@ const infodrag = (el) => {
 
                         <!-- {{ m.markers }} -->
                         <l-marker v-for="marker in data" :key="marker.id"
-                            @update:lat-lng="thingOnUpdate($event, marker)" :lat-lng="marker" :draggable="drag">
+                            @update:lat-lng="thingOnUpdate($event, marker)" :lat-lng="marker" :draggable="marker.drag">
                             <l-popup :content="marker.name" />
                         </l-marker>
                     </l-map>

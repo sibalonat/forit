@@ -16,7 +16,7 @@ class Marker extends Model implements HasMedia
     use InteractsWithMedia;
 
     protected $fillable = [
-        'name', 'notes', 'lng', 'lat'
+        'name', 'notes', 'lng', 'lat', 'drag'
     ];
 
     public static function booted()

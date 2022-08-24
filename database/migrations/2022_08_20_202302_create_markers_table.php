@@ -24,7 +24,7 @@ return new class () extends Migration {
             $table->text('notes')->nullable();
             $table->string('lng')->default(0);
             $table->string('lat')->default(0);
-            $table->boolean('drag')->default(true);
+            $table->boolean('drag')->default(false);
             // $table->string('lng', 15)->default();
             // $table->decimal('longitude')->nullable();
             // $table->decimal('latitude')->nullable();
