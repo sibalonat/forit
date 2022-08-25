@@ -56,11 +56,7 @@ onMounted(() => {
 
 
 
-watch(intentifier, async (id) => {
-
-    console.log(id);
-
-})
+watch(intentifier, async (id) => console.log(id))
 
 
 watchEffect(() => console.log(ob))
@@ -155,22 +151,12 @@ const thingOnUpdate = (el) => {
     ob.lat = parseFloat(el.lat)
 }
 
-// const dragCondition = (el, w) => {
-//     console.log('ready');
-//     console.log(w);
-//     console.log(el);
-// }
-
-// ($event, marker)
-
 
 
 const infodrag = (el) => {
-    // log('move')
     console.log('move');
 }
 
-//  onMounted
 
 </script>
 
@@ -188,12 +174,12 @@ const infodrag = (el) => {
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
                 <div class="overflow-visible relative bg-white shadow-sm sm:rounded-lg">
 
-                    <!-- <l-map v-model="zoom" v-model:zoom="zoom" :center="[47.41322, -1.219482]" @move="infodrag" -->
+
                     <l-map v-model="zoom" v-model:zoom="zoom" :center="[17.41322, -1.219482]" @move="infodrag"
                         style="height:100vh">
                         <l-image-overlay :url="url" :bounds="bounds" />
 
-                        <!-- {{ m.markers }} -->
+
                         <l-marker v-for="marker in data" :key="marker.id"
                             @update:lat-lng="thingOnUpdate($event)" :lat-lng="marker" :draggable="statement">
                             <l-popup :content="marker.name" />
@@ -220,13 +206,6 @@ const infodrag = (el) => {
                                 <br>
                                 <label for="notes">notes</label>
                                 <textarea id="notes" name="notes" rows="6" v-model="ob.notes"></textarea>
-                                <!-- <input type="text" id="name" class="h-8" v-model="notes"> -->
-                                <!-- <br>
-                                <label for="lat">latitude</label>
-                                <input type="number" id="lat" class="h-8" v-model="ob.lat">
-                                <br>
-                                <label for="lng">longitute</label>
-                                <input type="number" id="lng" class="h-8" v-model="ob.lng"> -->
                                 <br>
                                 <br>
                                 <button class=" bg-slate-900 text-neutral-400 rounded-md py-1 px-2 " @click="store">
@@ -238,7 +217,7 @@ const infodrag = (el) => {
                         <div class="flex flex-col grow overflow-y-auto min-h-0">
                             <div class="px-4">
                                 <!-- <p class=" text-lg ">kjo</p> -->
-                                <div class="grid grid-cols-2 " v-for="mark in data" :key="mark.id">
+                                <div class="grid grid-cols-2 mb-2" v-for="mark in data" :key="mark.id">
                                     <p class=" text-lg self-center">{{ mark.name }}</p>
                                     <div class="flex flex-col">
                                         <button class=" bg-teal-500 text-slate-900 rounded-md py-0 px-1 grow mb-1"
