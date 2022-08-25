@@ -88,6 +88,8 @@ const store = () => {
                 ob.lng = ''
                 ob.lat = ''
 
+                statement.value = false
+
                 markers()
 
             })
@@ -103,6 +105,8 @@ const store = () => {
                 ob.notes = ''
                 ob.lng = ''
                 ob.lat = ''
+
+                statement.value = false
 
                 markers()
             })
@@ -121,6 +125,8 @@ const updateValues = (el) => {
                 ob.notes = response.data.notes
 
                 intentifier.value = el
+
+                statement.value = true
 
 
             })
@@ -142,11 +148,18 @@ const deleteValues = (el) => {
 }
 
 
-const thingOnUpdate = (el, w) => {
+const thingOnUpdate = (el) => {
     console.log('ready');
-    console.log(w);
-    console.log(el);
+
+    ob.lng = parseFloat(el.lng)
+    ob.lat = parseFloat(el.lat)
 }
+
+// const dragCondition = (el, w) => {
+//     console.log('ready');
+//     console.log(w);
+//     console.log(el);
+// }
 
 // ($event, marker)
 
@@ -182,7 +195,7 @@ const infodrag = (el) => {
 
                         <!-- {{ m.markers }} -->
                         <l-marker v-for="marker in data" :key="marker.id"
-                            @update:lat-lng="thingOnUpdate($event, marker)" :lat-lng="marker" :draggable="marker.drag">
+                            @update:lat-lng="thingOnUpdate($event)" :lat-lng="marker" :draggable="statement">
                             <l-popup :content="marker.name" />
                         </l-marker>
                     </l-map>
@@ -225,7 +238,7 @@ const infodrag = (el) => {
                         <div class="flex flex-col grow overflow-y-auto min-h-0">
                             <div class="px-4">
                                 <!-- <p class=" text-lg ">kjo</p> -->
-                                <div class="grid grid-cols-2" v-for="mark in data" :key="mark.id">
+                                <div class="grid grid-cols-2 " v-for="mark in data" :key="mark.id">
                                     <p class=" text-lg self-center">{{ mark.name }}</p>
                                     <div class="flex flex-col">
                                         <button class=" bg-teal-500 text-slate-900 rounded-md py-0 px-1 grow mb-1"

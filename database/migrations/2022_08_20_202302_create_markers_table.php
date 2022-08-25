@@ -12,6 +12,14 @@ return new class () extends Migration {
     /**
      * Run the migrations.
      *
+     *
+     *        $table->boolean('drag')->default(false);
+     *        $table->string('lng', 15)->default();
+     *        $table->decimal('longitude')->nullable();
+     *        $table->decimal('latitude')->nullable();
+     *        $table->decimal('longitude', 11, 8)->nullable();
+     *        $table->decimal('latitude', 10, 8)->nullable();
+     *
      * @return void
      */
     public function up()
@@ -24,12 +32,6 @@ return new class () extends Migration {
             $table->text('notes')->nullable();
             $table->string('lng')->default(0);
             $table->string('lat')->default(0);
-            $table->boolean('drag')->default(false);
-            // $table->string('lng', 15)->default();
-            // $table->decimal('longitude')->nullable();
-            // $table->decimal('latitude')->nullable();
-            // $table->decimal('longitude', 11, 8)->nullable();
-            // $table->decimal('latitude', 10, 8)->nullable();
             $table->timestamps();
         });
     }
