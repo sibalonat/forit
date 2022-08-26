@@ -36,6 +36,8 @@ const props = defineProps({
     m: Object,
 })
 
+let name = ref('markersArr')
+
 let idToDelete = ref('')
 let routedel = ref('')
 let pond = ref(null)
@@ -99,7 +101,7 @@ onMounted(() => {
     // leaflet
     LMap, LGeoJson, LImageOverlay, LMarker, LPolyline, LPopup
     // attributes
-    bounds, zoom, statement, data, drag, url, db, pond, idToDelete, routedel, img
+    bounds, zoom, statement, data, drag, url, db, pond, idToDelete, routedel, img, name
     //form attributes
     ob
 })

@@ -49,6 +49,11 @@ Route::post('mapview/{mapview}/store', [MarkersController::class, 'store'])->mid
 Route::get('marker/{marker}', [MarkersController::class, 'single'])->middleware(['auth', 'verified'])->name('marker.single');
 Route::put('marker/{marker}', [MarkersController::class, 'up'])->middleware(['auth', 'verified'])->name('markers.up');
 Route::delete('marker/{marker}', [MarkersController::class, 'del'])->middleware(['auth', 'verified'])->name('markers.del');
+
+// marker images
+Route::post('marker/{marker}/image', [MarkersController::class, 'markerImg'])->middleware(['auth', 'verified'])->name('markers.imgpost');
+Route::get('marker/{marker}/images', [MarkersController::class, 'markerImages'])->middleware(['auth', 'verified'])->name('markers.imgsget');
+Route::delete('marker/{marker}/images/{id}', [MarkersController::class, 'deleteMarkerImg'])->middleware(['auth', 'verified'])->name('markers.imgdel');
 // Route::post('mapview/{mapview}/store', [MarkersController::class, 'store'])->name('markers.store');
 // Route::get('mapview/{mapview}/marker/{marker}', [MarkersController::class, 'single'])->name('marker.single');
 // Route::put('mapview/{mapview}/marker/{marker}', [MarkersController::class, 'up'])->name('markers.up');

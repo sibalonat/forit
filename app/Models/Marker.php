@@ -28,6 +28,12 @@ class Marker extends Model implements HasMedia
         });
     }
 
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('markersArr')
+            ->acceptsMimeTypes(['image/jpg', 'image/jpeg', 'image/png', 'image/gif']);
+    }
+
     public function map()
     {
         return $this->belongsTo(MapView::class);

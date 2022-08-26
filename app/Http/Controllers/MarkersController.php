@@ -166,6 +166,20 @@ class MarkersController extends Controller
         }
     }
 
+    // marker imgs
+    public function markerImages(Marker $marker)
+    {
+        $element = $marker->media->get();
+        return response()->json($element);
+    }
+
+    public function deleteMarkerImg(Marker $marker, Request $request, $id)
+    {
+        $id = $request->id;
+
+        $marker->media->where('id', $id)->first()->delete();
+    }
+
 
     /**
      * Remove the specified resource from storage.
