@@ -39,6 +39,7 @@ const props = defineProps({
 let name = ref('markersArr')
 
 let idToDelete = ref('')
+let intentifier = ref(null)
 let routedel = ref('')
 let pond = ref(null)
 let img = reactive({})
@@ -47,28 +48,29 @@ let header = reactive({
     headers: { 'X-CSRF-TOKEN': document.head.querySelector('meta[name="csrf_token"]').content }
 })
 
+let db = reactive({})
 
-let serverMessage = {};
-let db = reactive({
-    server: {
-        url: route('markers.edit', props.m.id),
-        process: {
-            url: '/image',
+// let serverMessage = {};
+// let db = reactive({
+//     server: {
+//         url: route('marker.single', intentifier.value),
+//         process: {
+//             url: '/image',
 
-            onerror: (response) => {
-                serverMessage = JSON.parse(response);
-            },
-        },
-        revert: null,
+//             onerror: (response) => {
+//                 serverMessage = JSON.parse(response);
+//             },
+//         },
+//         revert: null,
 
-        headers: {
-            'X-CSRF-TOKEN': document.head.querySelector('meta[name="csrf_token"]').content
-        },
-        labelFileProcessingError: () => {
-            return serverMessage.error;
-        },
-    }
-})
+//         headers: {
+//             'X-CSRF-TOKEN': document.head.querySelector('meta[name="csrf_token"]').content
+//         },
+//         labelFileProcessingError: () => {
+//             return serverMessage.error;
+//         },
+//     }
+// })
 
 let data = ref([])
 
@@ -77,10 +79,12 @@ let url = ref(props.m.media[0].original_url)
 let bounds = ref([[-326, -326], [326, 326]])
 let zoom = ref(2)
 let statement = ref(false)
-let drag = ref(true)
+let stateimg = ref(false)
+// let idMarker = ref(null)
+let drag = ref(false)
 
 // form
-let intentifier = ref(null)
+
 
 
 const ob = reactive({
@@ -97,7 +101,7 @@ onMounted(() => {
     BreezeAuthenticatedLayout, Head, FilePond
     // functions
     store, updateValues, deleteValues, infodrag, thingOnUpdate, markers()
-    filepondInitialized, handleProcessedFile, imageDelete
+    filepondInitialized, handleProcessedFile, imageDelete, closes
     // leaflet
     LMap, LGeoJson, LImageOverlay, LMarker, LPolyline, LPopup
     // attributes
@@ -113,10 +117,10 @@ watch(intentifier, async (id) => console.log(id))
 watch(idToDelete, async (newId) => {
     idToDelete.value = newId
 
-    console.log(idToDelete.value);
+    // console.log(idToDelete.value);
 
 
-    routedel.value = route('markers.mediadel', { mapview: props.m.id, id: idToDelete.value })
+    routedel.value = route('markers.imgdel', { marker: intentifier.value, id: idToDelete.value })
     console.log(idToDelete.value);
 })
 
@@ -125,7 +129,7 @@ const watcher = watchEffect(() => {
         let element = props.img
         console.log('exists');
         // console.log(props.save);
-        routedel.value = route('markers.mediadel', { mapview: props.m.id, id: element.id })
+        routedel.value = route('markers.imgdel', { mapview: props.m.id, id: element.id })
     }
 
     console.log(routedel.value);
@@ -231,7 +235,8 @@ const store = () => {
                 ob.lng = ''
                 ob.lat = ''
 
-                statement.value = false
+                drag.value = false
+                stateimg.value = false
 
                 markers()
 
@@ -249,7 +254,8 @@ const store = () => {
                 ob.lng = ''
                 ob.lat = ''
 
-                statement.value = false
+                drag.value = false
+                stateimg.value = false
 
                 markers()
             })
@@ -269,7 +275,32 @@ const updateValues = (el) => {
 
                 intentifier.value = el
 
-                statement.value = true
+                drag.value = true
+                stateimg.value = true
+
+                db = {
+                    server: {
+                        url: route('marker.single', intentifier.value),
+                        process: {
+                            url: '/image',
+
+                            onerror: (response) => {
+                                serverMessage = JSON.parse(response);
+                            },
+                        },
+                        revert: null,
+
+                        headers: {
+                            'X-CSRF-TOKEN': document.head.querySelector('meta[name="csrf_token"]').content
+                        },
+                        labelFileProcessingError: () => {
+                            return serverMessage.error;
+                        },
+                    }
+                }
+
+
+                console.log(db);
 
 
             })
@@ -304,6 +335,19 @@ const infodrag = (el) => {
     console.log('move');
 }
 
+const closes = () => {
+    if (statement.value === false) {
+        console.log('is true');
+        statement.value = !statement.value
+    } else if (statement.value === true && stateimg.value === true) {
+        console.log('both are now');
+        statement.value = !statement.value
+        stateimg.value = !stateimg.value
+    } else {
+        statement.value = !statement.value
+    }
+}
+
 
 </script>
 
@@ -326,15 +370,15 @@ const infodrag = (el) => {
                         <l-image-overlay :url="url" :bounds="bounds" />
 
 
-                        <l-marker v-for="marker in data" :key="marker.id"
-                            @update:lat-lng="thingOnUpdate($event)" :lat-lng="marker" :draggable="statement">
+                        <l-marker v-for="marker in data" :key="marker.id" @update:lat-lng="thingOnUpdate($event)"
+                            :lat-lng="marker" :draggable="drag">
                             <l-popup :content="marker.name" />
                         </l-marker>
                     </l-map>
                     <div class="absolute top-0 -left-64 z-50">
 
                         <button type="button" class=" bg-slate-800 text-white p-1 rounded-lg"
-                            :class="statement ? 'opacity-0' : ''" @click="statement = !statement">Create
+                            :class="statement ? 'opacity-0' : ''" @click="closes">Create
                             Marker</button>
                     </div>
 
@@ -342,8 +386,10 @@ const infodrag = (el) => {
                         class="absolute top-0 -left-64 h-full min-h-0 overflow-y-auto inset-y-0 z-0 bg-white"
                         :class="statement ? 'w-64 opacity-100 transition-width transition-slowest ease' : 'w-0 opacity-0 transition-width transition-slowest ease-in-out delay-150'">
                         <div class="flex justify-end items-center h-20">
-                            <button class="rounded-full bg-black text-white px-3" @click="statement = !statement"> X
+                            <button class="rounded-full bg-black text-white px-3" @click="closes"> X
                             </button>
+                            <!-- <button class="rounded-full bg-black text-white px-3" @click="statement = !statement"> X
+                            </button> -->
                         </div>
                         <div class="flex flex-col">
                             <div class="grow px-4">
@@ -376,12 +422,12 @@ const infodrag = (el) => {
                         </div>
                     </div>
                     <div class="absolute top-0 -right-72 h-full min-h-0 overflow-y-auto inset-y-0 z-0 bg-white"
-                        :class="statement ? 'w-72 opacity-100 transition-width transition-slowest ease' : 'w-0 opacity-0 transition-width transition-slowest ease-in-out delay-150'">
+                        :class="stateimg ? 'w-72 opacity-100 transition-width transition-slowest ease' : 'w-0 opacity-0 transition-width transition-slowest ease-in-out delay-150'">
                         <div class="flex flex-col">
                             <div class="grow px-4">
                                 <br>
                                 <br>
-                                 <FilePond :name="name" ref="pond" allowMultiple="true" credits="false"
+                                <FilePond :name="name" ref="pond" allowMultiple="true" credits="false"
                                     label-idle="Click to choose image, or drag here..." :server="db.server"
                                     @init="filepondInitialized" accepted-file-types="image/jpg, image/jpeg, image/png"
                                     @processfile="handleProcessedFile" @removefile="imageDelete" max-file-size="5MB" />
