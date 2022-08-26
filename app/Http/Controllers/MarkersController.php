@@ -169,7 +169,9 @@ class MarkersController extends Controller
     // marker imgs
     public function markerImages(Marker $marker)
     {
-        $element = $marker->media->get();
+        $element = $marker->media->all();
+
+        // dd($element);
         return response()->json($element);
     }
 

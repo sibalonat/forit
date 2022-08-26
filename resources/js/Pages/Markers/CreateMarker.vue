@@ -17,6 +17,10 @@ import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css';
 // Import the plugin code
 import FilePondPluginFilePoster from 'filepond-plugin-file-poster';
 
+// lodash
+import _ from 'lodash';
+
+
 // Import the plugin styles
 import 'filepond-plugin-file-poster/dist/filepond-plugin-file-poster.css';
 
@@ -32,6 +36,8 @@ const FilePond = vueFilePond(
 );
 
 
+
+
 const props = defineProps({
     m: Object,
 })
@@ -42,7 +48,10 @@ let idToDelete = ref('')
 let intentifier = ref(null)
 let routedel = ref('')
 let pond = ref(null)
-let img = reactive({})
+// let img = []
+let imgs = ref(null)
+// let img = reactive([])
+
 
 let header = reactive({
     headers: { 'X-CSRF-TOKEN': document.head.querySelector('meta[name="csrf_token"]').content }
@@ -59,6 +68,7 @@ let statement = ref(false)
 let stateimg = ref(false)
 // let idMarker = ref(null)
 let drag = ref(false)
+// let apimarker = ref(false)
 
 // form
 
@@ -82,39 +92,14 @@ onMounted(() => {
     // leaflet
     LMap, LGeoJson, LImageOverlay, LMarker, LPolyline, LPopup
     // attributes
-    bounds, zoom, statement, data, drag, url, pond, idToDelete, routedel, img, name
+    bounds, zoom, statement, data, drag, url, pond, idToDelete, routedel, name, imgs
     //form attributes
     ob
 })
 
 
 
-watch(intentifier, async (id) => console.log(id))
 
-
-watch(idToDelete, async (newId) => {
-    idToDelete.value = newId
-
-
-    routedel.value = route('markers.imgdel', { marker: intentifier.value, id: idToDelete.value })
-    console.log(idToDelete.value);
-})
-
-const watcher = watchEffect(() => {
-    if (props.img) {
-        let element = props.img
-        console.log('exists');
-        // console.log(props.save);
-        routedel.value = route('markers.imgdel', { mapview: props.m.id, id: element.id })
-    }
-
-    console.log(routedel.value);
-})
-
-
-watchEffect(() => console.log(ob))
-watchEffect(() => console.log(ob.name))
-watchEffect(() => console.log(data.value))
 
 
 const markers = () => {
@@ -130,37 +115,8 @@ async function filepondInitialized() {
     console.log('Filepond is ready!');
     console.log('Filepond object:', pond.value);
 
-    if (props.img) {
-        // let element = props.save[0]
+    console.log(pond.value.getFiles());
 
-        await axios.get(route('markers.imgsget', { marker: props.m.id }), header)
-            .then((response) => {
-                // console.log(response);
-                // image = response.data
-                img = response.data
-            })
-            .catch((error) => {
-                console.log(error);
-            })
-
-        await pond.value.addFiles(
-            img,
-            // img.name,
-            {
-                type: 'local',
-                metadata: {
-                    poster: img.original_url,
-                },
-                file: {
-                    name: img.name,
-                    size: img.size,
-                    type: img.mime_type,
-                },
-            }
-        )
-    } else {
-        return
-    }
 }
 
 function handleProcessedFile(error, file) {
@@ -243,7 +199,7 @@ const store = () => {
 }
 
 const updateValues = (el) => {
-    if (ob.name.length === 0) {
+    if (data.value.some(item => item.name === ob.name) === true || ob.name.length === 0) {
         axios.get(route('marker.single', { marker: parseInt(el) }), header)
             .then(function (response) {
                 console.log(response);
@@ -256,25 +212,65 @@ const updateValues = (el) => {
                 stateimg.value = true
 
 
+                axios.get(route('markers.imgsget', { marker: intentifier.value }), header)
+                    .then((response) => {
+                        console.log(response);
+
+                        if (!_.isEmpty(response.data)) {
+                            console.log('ka dicka');
+                            imgs.value = response.data.map((item) => {
+
+                                let single = {
+                                    source: item.original_url,
+                                    options: {
+                                        type: 'local',
+                                        metadata: {
+                                            poster: item.original_url,
+                                        },
+                                        file: {
+                                            name: item.name,
+                                            size: item.size,
+                                            type: item.mime_type
+                                        }
+                                    }
+                                }
+                                return single
+                            })
+
+                            setOptions({files: imgs.value})
+                        }
+
+
+                    })
+                    .catch((error) => {
+                        console.log('and this');
+                        console.log(error);
+                    })
+
                 setOptions({
+                    // onInit: console.log('init'),
                     server: {
+                        url: route('marker.single', intentifier.value),
                         process: {
-                            url: route('markers.imgpost', intentifier.value),
+                            url: '/image',
+                            // url: route('marker.single', intentifier.value),
                             onerror: (response) => {
                                 serverMessage = JSON.parse(response);
                             },
                         },
                         revert: null,
+                        load: null,
                         headers: {
                             'X-CSRF-TOKEN': document.head.querySelector('meta[name="csrf_token"]').content
                         }
                     },
+
                     labelFileProcessingError: () => {
                         return serverMessage.error;
                     }
                 });
-
             })
+
             .catch(function (error) {
                 console.log(error);
             });
@@ -316,6 +312,44 @@ const closes = () => {
         statement.value = !statement.value
     }
 }
+
+
+
+watch(intentifier, async (id) => console.log(id))
+// watch(imgs, async (i) => {
+//     console.log(i);
+// }, { deep: true })
+
+// watch(img, async (i) => {
+//     console.log(i);
+// }, { deep: true })
+
+
+watch(idToDelete, async (newId) => {
+    idToDelete.value = newId
+
+
+    routedel.value = route('markers.imgdel', { marker: intentifier.value, id: idToDelete.value })
+    console.log(idToDelete.value);
+})
+
+const watcher = watchEffect(() => {
+    // console.log(img);
+    if (props.img) {
+        let element = props.img
+        console.log('exists');
+        // console.log(props.save);
+        routedel.value = route('markers.imgdel', { mapview: props.m.id, id: element.id })
+    }
+
+    console.log(routedel.value);
+})
+
+
+watchEffect(() => console.log(ob))
+// watchEffect(() => console.log(img))
+watchEffect(() => console.log(ob.name))
+watchEffect(() => console.log(data.value))
 
 </script>
 
