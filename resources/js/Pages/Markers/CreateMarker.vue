@@ -1,7 +1,7 @@
 <script setup>
 
 import BreezeAuthenticatedLayout from '@/Layouts/Authenticated.vue';
-import { Head, useForm } from '@inertiajs/inertia-vue3';
+import { Head } from '@inertiajs/inertia-vue3';
 import { onMounted, reactive, ref, watch, watchEffect } from '@vue/runtime-core';
 
 
@@ -9,15 +9,64 @@ import "leaflet/dist/leaflet.css"
 import { LMap, LGeoJson, LImageOverlay, LMarker, LPolyline, LPopup } from "@vue-leaflet/vue-leaflet";
 import axios from 'axios';
 
+import vueFilePond from 'vue-filepond';
+// import vueFilePond, { setOptions } from 'vue-filepond';
+import "filepond/dist/filepond.min.css";
+import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css';
+
+// Import the plugin code
+import FilePondPluginFilePoster from 'filepond-plugin-file-poster';
+
+// Import the plugin styles
+import 'filepond-plugin-file-poster/dist/filepond-plugin-file-poster.css';
+
+import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
+import FilePondPluginFileValidateSize from 'filepond-plugin-file-validate-size';
+import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
+
+const FilePond = vueFilePond(
+    FilePondPluginFileValidateType,
+    FilePondPluginFileValidateSize,
+    FilePondPluginImagePreview,
+    FilePondPluginFilePoster
+);
+
 
 const props = defineProps({
     m: Object,
 })
 
-// let idToDelete = ref('')
-// let routedel = ref('')
-// let pond = ref(null)
-// let img = reactive({})
+let idToDelete = ref('')
+let routedel = ref('')
+let pond = ref(null)
+let img = reactive({})
+
+let header = reactive({
+    headers: { 'X-CSRF-TOKEN': document.head.querySelector('meta[name="csrf_token"]').content }
+})
+
+
+let serverMessage = {};
+let db = reactive({
+    server: {
+        url: route('markers.edit', props.m.id),
+        process: {
+            url: '/image',
+
+            onerror: (response) => {
+                serverMessage = JSON.parse(response);
+            },
+        },
+        revert: null,
+
+        headers: {
+            'X-CSRF-TOKEN': document.head.querySelector('meta[name="csrf_token"]').content
+        },
+        labelFileProcessingError: () => {
+            return serverMessage.error;
+        },
+    }
+})
 
 let data = ref([])
 
@@ -43,13 +92,14 @@ const ob = reactive({
 
 onMounted(() => {
     //components
-    BreezeAuthenticatedLayout, Head
+    BreezeAuthenticatedLayout, Head, FilePond
     // functions
     store, updateValues, deleteValues, infodrag, thingOnUpdate, markers()
+    filepondInitialized, handleProcessedFile, imageDelete
     // leaflet
     LMap, LGeoJson, LImageOverlay, LMarker, LPolyline, LPopup
     // attributes
-    bounds, zoom, statement, data, drag, url
+    bounds, zoom, statement, data, drag, url, db, pond, idToDelete, routedel, img
     //form attributes
     ob
 })
@@ -58,13 +108,34 @@ onMounted(() => {
 
 watch(intentifier, async (id) => console.log(id))
 
+watch(idToDelete, async (newId) => {
+    idToDelete.value = newId
+
+    console.log(idToDelete.value);
+
+
+    routedel.value = route('markers.mediadel', { mapview: props.m.id, id: idToDelete.value })
+    console.log(idToDelete.value);
+})
+
+const watcher = watchEffect(() => {
+    if (props.img) {
+        let element = props.img
+        console.log('exists');
+        // console.log(props.save);
+        routedel.value = route('markers.mediadel', { mapview: props.m.id, id: element.id })
+    }
+
+    console.log(routedel.value);
+})
+
 
 watchEffect(() => console.log(ob))
 watchEffect(() => console.log(ob.name))
 watchEffect(() => console.log(data.value))
 
 const markers = () => {
-    axios.get(route('markers.all', { mapview: props.m.id }))
+    axios.get(route('markers.all', { mapview: props.m.id }), header)
         .then((response) => {
             console.log(response);
             data.value = response.data
@@ -72,11 +143,85 @@ const markers = () => {
 }
 
 
+async function filepondInitialized() {
+    console.log('Filepond is ready!');
+    console.log('Filepond object:', pond.value);
+
+    if (props.img) {
+        // let element = props.save[0]
+
+        await axios.get(route('markers.mediashow', { mapview: props.m.id }), header)
+            .then((response) => {
+                // console.log(response);
+                // image = response.data
+                img = response.data
+            })
+            .catch((error) => {
+                console.log(error);
+            })
+
+        await pond.value.addFile(
+            img,
+            // img.name,
+            {
+                type: 'local',
+                metadata: {
+                    poster: img.original_url,
+                },
+                file: {
+                    name: img.name,
+                    size: img.size,
+                    type: img.mime_type,
+                },
+            }
+        )
+    } else {
+        return
+    }
+}
+
+function handleProcessedFile(error, file) {
+    if (error) {
+        console.error(error);
+        return;
+    }
+
+    // console.log(file.serverId);
+
+    // let obj = file.serverId
+    let obj = JSON.parse(file.serverId)
+
+    // this.idToDelete = obj.id
+
+    idToDelete.value = obj.id
+
+    console.log(idToDelete.value);
+}
+
+
+function imageDelete(error) {
+    if (error) {
+        console.error(error);
+        return;
+    }
+
+    axios.delete(`${routedel.value}`, header)
+        .then((reponse) => {
+            console.log(reponse);
+        })
+        .catch(function (error) {
+            console.log(error);
+        })
+    watcher()
+
+}
+
+
 const store = () => {
     // console.log(props.m.markers.includes(ob.name));
     if (data.value.some(item => item.name === ob.name) === false) {
 
-        axios.post(route('markers.store', { mapview: props.m.id }), ob)
+        axios.post(route('markers.store', { mapview: props.m.id }), ob, header)
             .then(function (response) {
                 console.log(response);
                 ob.name = ''
@@ -94,7 +239,7 @@ const store = () => {
             });
     } else if (data.value.some(item => item.name === ob.name) === true) {
 
-        axios.put(route('markers.up', { marker: intentifier.value }), ob)
+        axios.put(route('markers.up', { marker: intentifier.value }), ob, header)
             .then(function (response) {
                 console.log(response);
                 ob.name = ''
@@ -114,7 +259,7 @@ const store = () => {
 
 const updateValues = (el) => {
     if (ob.name.length === 0) {
-        axios.get(route('marker.single', { marker: parseInt(el) }))
+        axios.get(route('marker.single', { marker: parseInt(el) }), header)
             .then(function (response) {
                 console.log(response);
                 ob.name = response.data.name
@@ -133,7 +278,7 @@ const updateValues = (el) => {
 }
 
 const deleteValues = (el) => {
-    axios.delete(route('markers.del', { marker: parseInt(el) }))
+    axios.delete(route('markers.del', { marker: parseInt(el) }), header)
         .then(function (response) {
             console.log(response);
             markers()
@@ -174,7 +319,6 @@ const infodrag = (el) => {
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
                 <div class="overflow-visible relative bg-white shadow-sm sm:rounded-lg">
 
-
                     <l-map v-model="zoom" v-model:zoom="zoom" :center="[17.41322, -1.219482]" @move="infodrag"
                         style="height:100vh">
                         <l-image-overlay :url="url" :bounds="bounds" />
@@ -194,7 +338,7 @@ const infodrag = (el) => {
 
                     <div ref="bool"
                         class="absolute top-0 -left-64 h-full min-h-0 overflow-y-auto inset-y-0 z-0 bg-white"
-                        :class="statement ? 'w-64 opacity-100 transition-width transition-slowest ease' : 'w-0 opacity-0 transition-width transition-slowest ease'">
+                        :class="statement ? 'w-64 opacity-100 transition-width transition-slowest ease' : 'w-0 opacity-0 transition-width transition-slowest ease-in-out delay-150'">
                         <div class="flex justify-end items-center h-20">
                             <button class="rounded-full bg-black text-white px-3" @click="statement = !statement"> X
                             </button>
@@ -228,6 +372,24 @@ const infodrag = (el) => {
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <div class="absolute top-0 -right-72 h-full min-h-0 overflow-y-auto inset-y-0 z-0 bg-white"
+                        :class="statement ? 'w-72 opacity-100 transition-width transition-slowest ease' : 'w-0 opacity-0 transition-width transition-slowest ease-in-out delay-150'">
+                        <div class="flex flex-col">
+                            <div class="grow px-4">
+                                <br>
+                                <br>
+                                 <FilePond :name="name" ref="pond" allowMultiple="true" credits="false"
+                                    label-idle="Click to choose image, or drag here..." :server="db.server"
+                                    @init="filepondInitialized" accepted-file-types="image/jpg, image/jpeg, image/png"
+                                    @processfile="handleProcessedFile" @removefile="imageDelete" max-file-size="5MB" />
+
+                                <br>
+                                <br>
+                            </div>
+                        </div>
+                        <br>
+                        <br>
                     </div>
                 </div>
             </div>

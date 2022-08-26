@@ -155,6 +155,17 @@ class MarkersController extends Controller
         return response()->json('done');
     }
 
+    // marker img
+    public function markerImg(Marker $marker, Request $request)
+    {
+        if (isset($request->mapView)) {
+            $marker->addMediaFromRequest('mapView')->toMediaCollection('mapview');
+            $st = $marker->media->last();
+
+            return response()->json($st);
+        }
+    }
+
 
     /**
      * Remove the specified resource from storage.
