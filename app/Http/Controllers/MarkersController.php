@@ -158,8 +158,8 @@ class MarkersController extends Controller
     // marker img
     public function markerImg(Marker $marker, Request $request)
     {
-        if (isset($request->mapView)) {
-            $marker->addMediaFromRequest('mapView')->toMediaCollection('mapview');
+        if (isset($request->markersArr)) {
+            $marker->addMediaFromRequest('markersArr')->toMediaCollection('markersArr');
             $st = $marker->media->last();
 
             return response()->json($st);

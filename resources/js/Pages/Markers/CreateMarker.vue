@@ -9,7 +9,7 @@ import "leaflet/dist/leaflet.css"
 import { LMap, LGeoJson, LImageOverlay, LMarker, LPolyline, LPopup } from "@vue-leaflet/vue-leaflet";
 import axios from 'axios';
 
-import vueFilePond from 'vue-filepond';
+import vueFilePond, { setOptions } from 'vue-filepond';
 // import vueFilePond, { setOptions } from 'vue-filepond';
 import "filepond/dist/filepond.min.css";
 import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css';
@@ -48,29 +48,6 @@ let header = reactive({
     headers: { 'X-CSRF-TOKEN': document.head.querySelector('meta[name="csrf_token"]').content }
 })
 
-let db = reactive({})
-
-// let serverMessage = {};
-// let db = reactive({
-//     server: {
-//         url: route('marker.single', intentifier.value),
-//         process: {
-//             url: '/image',
-
-//             onerror: (response) => {
-//                 serverMessage = JSON.parse(response);
-//             },
-//         },
-//         revert: null,
-
-//         headers: {
-//             'X-CSRF-TOKEN': document.head.querySelector('meta[name="csrf_token"]').content
-//         },
-//         labelFileProcessingError: () => {
-//             return serverMessage.error;
-//         },
-//     }
-// })
 
 let data = ref([])
 
@@ -105,7 +82,7 @@ onMounted(() => {
     // leaflet
     LMap, LGeoJson, LImageOverlay, LMarker, LPolyline, LPopup
     // attributes
-    bounds, zoom, statement, data, drag, url, db, pond, idToDelete, routedel, img, name
+    bounds, zoom, statement, data, drag, url, pond, idToDelete, routedel, img, name
     //form attributes
     ob
 })
@@ -114,10 +91,9 @@ onMounted(() => {
 
 watch(intentifier, async (id) => console.log(id))
 
+
 watch(idToDelete, async (newId) => {
     idToDelete.value = newId
-
-    // console.log(idToDelete.value);
 
 
     routedel.value = route('markers.imgdel', { marker: intentifier.value, id: idToDelete.value })
@@ -140,6 +116,7 @@ watchEffect(() => console.log(ob))
 watchEffect(() => console.log(ob.name))
 watchEffect(() => console.log(data.value))
 
+
 const markers = () => {
     axios.get(route('markers.all', { mapview: props.m.id }), header)
         .then((response) => {
@@ -156,7 +133,7 @@ async function filepondInitialized() {
     if (props.img) {
         // let element = props.save[0]
 
-        await axios.get(route('markers.mediashow', { mapview: props.m.id }), header)
+        await axios.get(route('markers.imgsget', { marker: props.m.id }), header)
             .then((response) => {
                 // console.log(response);
                 // image = response.data
@@ -166,7 +143,7 @@ async function filepondInitialized() {
                 console.log(error);
             })
 
-        await pond.value.addFile(
+        await pond.value.addFiles(
             img,
             // img.name,
             {
@@ -278,30 +255,24 @@ const updateValues = (el) => {
                 drag.value = true
                 stateimg.value = true
 
-                db = {
-                    server: {
-                        url: route('marker.single', intentifier.value),
-                        process: {
-                            url: '/image',
 
+                setOptions({
+                    server: {
+                        process: {
+                            url: route('markers.imgpost', intentifier.value),
                             onerror: (response) => {
                                 serverMessage = JSON.parse(response);
                             },
                         },
                         revert: null,
-
                         headers: {
                             'X-CSRF-TOKEN': document.head.querySelector('meta[name="csrf_token"]').content
-                        },
-                        labelFileProcessingError: () => {
-                            return serverMessage.error;
-                        },
+                        }
+                    },
+                    labelFileProcessingError: () => {
+                        return serverMessage.error;
                     }
-                }
-
-
-                console.log(db);
-
+                });
 
             })
             .catch(function (error) {
@@ -337,17 +308,14 @@ const infodrag = (el) => {
 
 const closes = () => {
     if (statement.value === false) {
-        console.log('is true');
         statement.value = !statement.value
     } else if (statement.value === true && stateimg.value === true) {
-        console.log('both are now');
         statement.value = !statement.value
         stateimg.value = !stateimg.value
     } else {
         statement.value = !statement.value
     }
 }
-
 
 </script>
 
@@ -427,11 +395,11 @@ const closes = () => {
                             <div class="grow px-4">
                                 <br>
                                 <br>
-                                <FilePond :name="name" ref="pond" allowMultiple="true" credits="false"
-                                    label-idle="Click to choose image, or drag here..." :server="db.server"
-                                    @init="filepondInitialized" accepted-file-types="image/jpg, image/jpeg, image/png"
-                                    @processfile="handleProcessedFile" @removefile="imageDelete" max-file-size="5MB" />
 
+                                <FilePond :name="name" ref="pond" allowMultiple="true" credits="false"
+                                    label-idle="Click to choose image, or drag here..." @init="filepondInitialized"
+                                    accepted-file-types="image/jpg, image/jpeg, image/png"
+                                    @processfile="handleProcessedFile" @removefile="imageDelete" max-file-size="5MB" />
                                 <br>
                                 <br>
                             </div>
