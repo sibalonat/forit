@@ -238,6 +238,8 @@ const updateValues = (el) => {
                             })
 
                             setOptions({files: imgs.value})
+                        } else {
+                            setOptions({files: []})
                         }
 
 
