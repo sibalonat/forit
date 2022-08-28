@@ -44,9 +44,8 @@ const props = defineProps({
 
 let name = ref('markersArr')
 
-let idToDelete = ref('')
 let intentifier = ref(null)
-let routedel = ref('')
+
 let pond = ref(null)
 // let img = []
 let imgs = ref(null)
@@ -92,7 +91,7 @@ onMounted(() => {
     // leaflet
     LMap, LGeoJson, LImageOverlay, LMarker, LPolyline, LPopup
     // attributes
-    bounds, zoom, statement, data, drag, url, pond, idToDelete, routedel, name, imgs
+    bounds, zoom, statement, data, drag, url, pond, name, imgs
     //form attributes
     ob
 })
@@ -154,9 +153,6 @@ function handleProcessedFile(error, file) {
 
     imgs.value.unshift(img)
 
-    // idToDelete.value = obj.id
-
-    // console.log(idToDelete.value);
 }
 
 const updateStarts = () => {
@@ -166,8 +162,6 @@ const updateStarts = () => {
 const errorCatched = (error) => {
     console.log(error);
 }
-
-
 
 
 
@@ -392,30 +386,6 @@ watch(imgs, async (i) => {
 // }, { deep: true })
 
 
-watch(idToDelete, async (newId) => {
-    idToDelete.value = newId
-
-
-    routedel.value = route('markers.imgdel', { marker: intentifier.value, id: idToDelete.value })
-    console.log(idToDelete.value);
-})
-
-// watchEffect(() => {
-//     // console.log(img);
-//     if (imgs.value) {
-//         let element = imgs.value
-//         console.log(element);
-//         element.forEach(el => {
-//             routedel.value = route('markers.imgdel', { marker: el.source.model_id, id: el.source.id })
-//         });
-//         console.log('exists');
-//         // console.log(props.save);
-//     } else {
-//         return
-//     }
-
-//     console.log(routedel.value);
-// })
 
 
 watchEffect(() => {
