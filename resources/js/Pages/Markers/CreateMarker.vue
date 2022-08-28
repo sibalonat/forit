@@ -88,7 +88,7 @@ onMounted(() => {
     BreezeAuthenticatedLayout, Head, FilePond
     // functions
     store, updateValues, deleteValues, infodrag, thingOnUpdate, markers()
-    filepondInitialized, handleProcessedFile, imageDelete, closes
+    filepondInitialized, handleProcessedFile, imageDelete, closes, updateStarts, errorCatched
     // leaflet
     LMap, LGeoJson, LImageOverlay, LMarker, LPolyline, LPopup
     // attributes
@@ -128,32 +128,47 @@ function handleProcessedFile(error, file) {
     // console.log(file.serverId);
 
     // let obj = file.serverId
+    // let obj = JSON.parse(file.serverId)
     let obj = JSON.parse(file.serverId)
 
-    // this.idToDelete = obj.id
+    // console.log(obj);
 
-    idToDelete.value = obj.id
+    // // this.idToDelete = obj.id
 
-    console.log(idToDelete.value);
-}
-
-
-function imageDelete(error) {
-    if (error) {
-        console.error(error);
-        return;
+    let img = {
+        source: obj,
+        options: {
+            type: 'local',
+            metadata: {
+                poster: obj.original_url,
+            },
+            file: {
+                name: obj.name,
+                size: obj.size,
+                type: obj.mime_type
+            }
+        }
     }
+    // markers()
 
-    axios.delete(`${routedel.value}`, header)
-        .then((reponse) => {
-            console.log(reponse);
-        })
-        .catch(function (error) {
-            console.log(error);
-        })
-    watcher()
 
+    imgs.value.unshift(img)
+
+    // idToDelete.value = obj.id
+
+    // console.log(idToDelete.value);
 }
+
+const updateStarts = () => {
+    console.log('this now');
+}
+
+const errorCatched = (error) => {
+    console.log(error);
+}
+
+
+
 
 
 const store = () => {
@@ -215,13 +230,14 @@ const updateValues = (el) => {
                 axios.get(route('markers.imgsget', { marker: intentifier.value }), header)
                     .then((response) => {
                         console.log(response);
+                        imgs.value = []
 
                         if (!_.isEmpty(response.data)) {
                             console.log('ka dicka');
                             imgs.value = response.data.map((item) => {
 
                                 let single = {
-                                    source: item.original_url,
+                                    source: item,
                                     options: {
                                         type: 'local',
                                         metadata: {
@@ -237,9 +253,9 @@ const updateValues = (el) => {
                                 return single
                             })
 
-                            setOptions({files: imgs.value})
+                            setOptions({ files: imgs.value })
                         } else {
-                            setOptions({files: []})
+                            setOptions({ files: [] })
                         }
 
 
@@ -315,12 +331,61 @@ const closes = () => {
     }
 }
 
+async function imageDelete(error, file) {
+    if (error) {
+        console.error(error);
+        return;
+    }
+
+
+    let namePerPick = file.file.name
+
+
+    var obj = imgs.value.find((o) => o.source.file_name === namePerPick)
+
+
+    // @addfile.once="markMainImage"
+
+    if (file.serverId) {
+        axios.delete(route('markers.imgdel', { marker: await file.serverId.model_id, id: await file.serverId.id }), header)
+            .then((reponse) => {
+                // imgs.value
+                console.log(imgs.value.length);
+                console.log(reponse);
+            })
+            .catch(function (error) {
+                console.log(error);
+            })
+    } else {
+
+        axios.delete(route('markers.imgdel', { marker: await obj.source.model_id, id: await obj.source.id }), header)
+            .then((reponse) => {
+                // imgs.value
+                console.log(imgs.value.length);
+                console.log(reponse);
+            })
+            .catch(function (error) {
+                console.log(error);
+            })
+    }
+
+
+    console.log(imgs.value);
+
+}
+
 
 
 watch(intentifier, async (id) => console.log(id))
 // watch(imgs, async (i) => {
 //     console.log(i);
 // }, { deep: true })
+
+watch(imgs, async (i) => {
+    console.log(i);
+    pond.value.getFiles()
+    console.log(pond.value.getFiles())
+}, { deep: true })
 
 // watch(img, async (i) => {
 //     console.log(i);
@@ -335,19 +400,30 @@ watch(idToDelete, async (newId) => {
     console.log(idToDelete.value);
 })
 
-const watcher = watchEffect(() => {
-    // console.log(img);
-    if (props.img) {
-        let element = props.img
-        console.log('exists');
-        // console.log(props.save);
-        routedel.value = route('markers.imgdel', { mapview: props.m.id, id: element.id })
-    }
+// watchEffect(() => {
+//     // console.log(img);
+//     if (imgs.value) {
+//         let element = imgs.value
+//         console.log(element);
+//         element.forEach(el => {
+//             routedel.value = route('markers.imgdel', { marker: el.source.model_id, id: el.source.id })
+//         });
+//         console.log('exists');
+//         // console.log(props.save);
+//     } else {
+//         return
+//     }
 
-    console.log(routedel.value);
+//     console.log(routedel.value);
+// })
+
+
+watchEffect(() => {
+    console.log(imgs.value)
+    // pond.value.getFiles()
+    // console.log(pond.value.getFiles())
+
 })
-
-
 watchEffect(() => console.log(ob))
 // watchEffect(() => console.log(img))
 watchEffect(() => console.log(ob.name))
@@ -434,8 +510,9 @@ watchEffect(() => console.log(data.value))
 
                                 <FilePond :name="name" ref="pond" allowMultiple="true" credits="false"
                                     label-idle="Click to choose image, or drag here..." @init="filepondInitialized"
-                                    accepted-file-types="image/jpg, image/jpeg, image/png"
-                                    @processfile="handleProcessedFile" @removefile="imageDelete" max-file-size="5MB" />
+                                    accepted-file-types="image/jpg, image/jpeg, image/png" @updatefiles="updateStarts"
+                                    @error="errorCatched" @processfile="handleProcessedFile" @removefile="imageDelete"
+                                    max-file-size="5MB" />
                                 <br>
                                 <br>
                             </div>
