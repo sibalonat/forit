@@ -34,6 +34,8 @@ const props = defineProps({
 let emit = defineEmits(['change-file', 'delete-file'])
 // const emit = defineEmits(['change'])
 
+console.log(props.saved);
+
 
 
 let header = reactive({
@@ -92,11 +94,11 @@ watch(idToDelete, async (newId) => {
 
 
 const watcher = watchEffect(() => {
-    if (props.save) {
-        let element = props.save[0]
+    if (props.saved) {
+        let element = props.saved[0]
         console.log('exists');
-        console.log(props.save);
-        routedel.value = route('image.delete', { form: props.formId, id: element.id })
+        console.log(props.saved);
+        routedel.value = route('image.delete', { form: element.formID, id: element.id })
     }
 
     console.log(routedel.value);
@@ -108,14 +110,16 @@ async function filepondInitialized() {
     console.log('Filepond is ready!');
     console.log('Filepond object:', pond.value);
 
-    if (props.save) {
-        let element = props.save[0]
+    if (props.saved) {
+        let element = props.saved[0]
 
-        await axios.get(route('image.show', { form: props.formId, id: element.id }), header)
+        await axios.get(route('image.show', { form: element.formID, id: element.id }), header)
             .then((response) => {
-                // console.log(response);
+                console.log(response);
+
                 // image = response.data
                 img = response.data
+                console.log(img);
             })
             .catch((error) => {
                 console.log(error);

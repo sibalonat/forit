@@ -2,8 +2,12 @@
 import BreezeAuthenticatedLayout from '@/Layouts/Authenticated.vue';
 import { Head } from '@inertiajs/inertia-vue3';
 
+import { Vue3ToggleButton } from 'vue3-toggle-button'
+
+import '../../../node_modules/vue3-toggle-button/dist/style.css'
+
 onMounted(() => {
-    BreezeAuthenticatedLayout
+    BreezeAuthenticatedLayout, Vue3ToggleButton
     Head
 })
 
@@ -22,6 +26,9 @@ onMounted(() => {
         <div class="py-12">
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
                 <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
+                    <Vue3ToggleButton v-model:isActive="isActive" :handleColor="'#cc00cc'"> </Vue3ToggleButton>
+                    <p @on-change="toggle">Value: {{ isActive }}</p>
+
                     <form @submit.prevent="store" enctype="multipart/form-data">
                         <!-- <div class="p-6 bg-white border-b border-gray-200" v-if="elements.length"> -->
                         <div class="p-6 bg-white border-b border-gray-200" v-if="elements.length">
@@ -59,8 +66,6 @@ onMounted(() => {
                                                     </ul>
                                                 </div>
                                                 <div class="col-span-2">
-
-                                                    {{ col.save }}
 
                                                     <component :is="col.field"
                                                         @input="getData($event, col.field, el, index)"
@@ -143,8 +148,8 @@ export default {
                 'X-CSRF-TOKEN': document.head.querySelector('meta[name="csrf_token"]').content
             },
             indentifier: 1,
+            isActive: true,
             value: {},
-            tempJson: [],
             input: null,
             form: this.$inertia.form({
                 form_builder_json: [],
@@ -251,6 +256,9 @@ export default {
     created() {
         this.input = this.value;
         console.log(this.f.form_builder_json !== null);
+
+        console.log(this.f.form_builder_json);
+        console.log(this.elements.length);
 
         if (this.f.form_builder_json !== null) {
             this.elements = JSON.parse(this.f.form_builder_json)
@@ -440,10 +448,14 @@ export default {
             this.elements[fromEl].cols.splice(child, 1);
         },
 
+        toggle() {
+            isActive = !isActive;
+        }
+
     },
 
     unmounted() {
-        if (this.f.form_builder_json === null && this.tempJson.length === 0) {
+        if (this.f.form_builder_json === null && this.elements.length === 0) {
             console.log('is null');
             // let headerDel =
 

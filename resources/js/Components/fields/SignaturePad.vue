@@ -2,10 +2,7 @@
     <div class="w-full h-52">
         <!-- , dotSize, minWidth, maxWidth -->
         <!-- <VueSignaturePad ref="signaturePad" :options="{ onBegin, onEnd }" /> -->
-        <VueSignaturePad
-        width="100%"
-        height="100%"
-        ref="signaturePad" />
+        <VueSignaturePad width="100%" height="100%" ref="signaturePad" />
         <!-- @input="input" -->
         <div class="grid grid-cols-2 -mt-2">
             <!-- -mb-14 -->
@@ -56,21 +53,27 @@ export default {
         }
     },
     mounted() {
-        const data = this.saved[0].item
         const canvas = this.$refs.signaturePad
+
+        if (this.saved) {
+            const data = this.saved[0].item
+            console.log('it is');
+
+            this.input = data;
+            canvas.fromDataURL(this.input);
+        }
 
         // console.log(data);
         // console.log(canvas);
 
-        if (data) {
-            this.input = data;
-            canvas.fromDataURL(this.input);
-        }
+        // if (data) {
+        //     this.input = data;
+        //     canvas.fromDataURL(this.input);
+        // }
     },
     watch: {
         input() {
             this.$emit("input-signature", this.input);
-            // console.log(this.input);
         }
     },
     methods: {
@@ -79,26 +82,9 @@ export default {
         },
         save() {
             const { isEmpty, data } = this.$refs.signaturePad.saveSignature();
-            // console.log(isEmpty);
-            // console.log(data);
+
             this.input = data
         },
-        // onBegin() {
-        //     console.log('=== Begin ===');
-        //     console.log(this.$refs.signaturePad);
-        //     // console.log(this.$refs.signaturePad.options.dotSize);
-
-        //     // this.$refs.signaturePad.options.dotSize = (0.5 + 2.5) / .15
-        //     // this.$refs.signaturePad.options.dotSize = (0.5 + 27.5) / .15
-        //     this.$refs.signaturePad.options.minWidth = 97.5
-        //     this.$refs.signaturePad.options.maxWidth = 297.5
-        //     this.$refs.signaturePad.options.penColor = '#ff0000'
-        //     console.log(this.$refs.signaturePad.options);
-        //     // dotSize: (0.5 + 2.5) / 2,
-        // },
-        // onEnd() {
-        //     console.log('=== End ===');
-        // }
     }
 };
 </script>

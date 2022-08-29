@@ -9,6 +9,7 @@
         props: {
             name: {},
             type: {},
+            saved: {},
             // value: { default: null },
             disabled: { default: false },
         },
@@ -18,13 +19,11 @@
             };
         },
         created() {
-            this.input = this.value;
+            if (this.saved) {
+                this.input = this.saved[0].item
+            }
         },
         watch: {
-            // value() {
-            //     this.input = this.value;
-            //     console.log(this.input);
-            // },
             input() {
                 this.$emit("input", this.input);
             },

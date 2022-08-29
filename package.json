@@ -30,6 +30,7 @@
         "filepond-plugin-image-preview": "^4.6.11",
         "vue-filepond": "^7.0.3",
         "vue-next-select": "^2.10.4",
-        "vue-signature-pad": "^3.0.2"
+        "vue-signature-pad": "^3.0.2",
+        "vue3-toggle-button": "^1.0.3"
     }
 }
