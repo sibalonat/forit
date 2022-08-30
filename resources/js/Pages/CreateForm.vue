@@ -76,10 +76,9 @@ onMounted(() => {
                                                         :saved="col.save">
                                                     </component>
 
-
                                                 </div>
                                                 <div class="w-full h-full col-start-5 content-center" v-if="col.hover && col.field">
-                                                    <button @click="spanCol(col.type)" type="button"
+                                                    <button @click="spanCol(col.type, index, a)" type="button"
                                                         class=" bg-slate-900 text-orange-300 text-3xl flex justify-center text-center w-full rounded-lg ">
                                                         <span class=" text-base place-self-center ">+</span> >
                                                     </button>
@@ -105,6 +104,16 @@ onMounted(() => {
                                             @click="addColumn(el)">
                                             Add Column
                                         </button>
+
+                                        <div class="col-span-2">
+                                            <button class="w-full bg-black text-orange-200">
+                                                <!-- <p class="-rotate-90">&lt;</p> -->
+                                                <p class="-rotate-90">&#62;</p>
+                                            </button>
+                                            <button class="w-full bg-black text-orange-200">
+                                                <p class="-rotate-90">&lt;</p>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -439,20 +448,23 @@ export default {
             console.log(file);
             isActive = !isActive;
         },
-        spanCol(e) {
-
-            console.log(e);
+        spanCol(e, i, a) {
             const arrayClassToCop = e.split(" ")
 
             const classToChange = arrayClassToCop[0].split("-")
 
-
-            let quarterFinal = parseInt(classToChange[2]) + 1
-
-            let semiFinal = quarterFinal.join("-")
+            let semiFinal = parseInt(classToChange[2]) + 1
 
             let teamPlay = classToChange[0].concat('-', classToChange[1], '-', semiFinal)
-            console.log(teamPlay);
+
+            let final = teamPlay.concat(
+                ' ', arrayClassToCop[1],
+                ' ', arrayClassToCop[2],
+                ' ', arrayClassToCop[3],
+                ' ', arrayClassToCop[4]
+                )
+            this.elements[a].cols[i].type = final
+            // console.log(final);
         }
 
     },
