@@ -31,7 +31,6 @@ onMounted(() => {
                     <p @on-change="toggle">Value: {{  isActive  }}</p>
 
                     <form @submit.prevent="store" enctype="multipart/form-data">
-                        <!-- <div class="p-6 bg-white border-b border-gray-200" v-if="elements.length"> -->
                         <div class="p-6 bg-white border-b border-gray-200" v-if="elements.length">
                             <div class="flex border-b border-gray-200" v-for="(el, a) in elements" :key="el.id">
                                 <div class="w-4/5">
@@ -77,41 +76,44 @@ onMounted(() => {
                                                     </component>
 
                                                 </div>
-                                                <div class="w-full h-full col-start-5 content-center" v-if="col.hover && col.field">
+                                                <div class="w-full h-full col-start-5 content-center"
+                                                    v-if="col.hover && col.field">
                                                     <button @click="spanCol(col.type, index, a)" type="button"
                                                         class=" bg-slate-900 text-orange-300 text-3xl flex justify-center text-center w-full rounded-lg ">
                                                         <span class=" text-base place-self-center ">+</span> >
                                                     </button>
+                                                    <br>
+                                                    <div class="justify-end float-right w-full">
+                                                        <button class="w-full text-white bg-black rounded-lg"
+                                                            @click="deleteColumn(el, col)">
+                                                            -
+                                                        </button>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="justify-end float-right w-32">
-                                                <button class="w-full text-white bg-black rounded-lg"
-                                                    @click="deleteColumn(el, col)">-</button>
                                             </div>
                                         </div>
                                     </div>
                                     <p v-else>No columns</p>
                                 </div>
                                 <div class="w-1/5">
-                                    <div class="grid grid-cols-2">
-                                        <select @change="changeAttribute($event, a)">
-                                            <option v-for="(gr, u) in grid" :key="u" :value="gr.name">
-                                                {{  gr.name  }}
-                                            </option>
-                                        </select>
+                                    <div class="grid grid-cols-4">
 
-                                        <button type="button" class="w-full text-white bg-slate-900"
+                                        <p class=" bg-black text-center text-3xl text-slate-50">{{  el.name.split(" ")[2].split("-")[2] }}</p>
+
+                                        <button type="button" class="w-full col-span-3 text-white bg-slate-900"
                                             @click="addColumn(el)">
                                             Add Column
                                         </button>
 
-                                        <div class="col-span-2">
-                                            <button class="w-full bg-black text-orange-200">
-                                                <!-- <p class="-rotate-90">&lt;</p> -->
-                                                <p class="-rotate-90">&#62;</p>
+                                        <div class="col-span-4">
+                                            <button type="button" class="w-full bg-black text-orange-200"
+                                                @click="gridRowPlus(el, el.name, a)">
+                                                <p class="-rotate-90 w-1 mx-auto">&#62;</p>
                                             </button>
-                                            <button class="w-full bg-black text-orange-200">
-                                                <p class="-rotate-90">&lt;</p>
+                                            <br>
+                                            <button type="button" class="w-full bg-black text-orange-200"
+                                                @click="gridRowMinus(el, el.name, a)">
+                                                <p class="-rotate-90 w-1 mx-auto">&lt;</p>
                                             </button>
                                         </div>
                                     </div>
@@ -170,13 +172,7 @@ export default {
             form: this.$inertia.form({
                 form_builder_json: [],
             }),
-            grid: [
-                { name: 'grid-cols-1', id: 1 },
-                { name: 'grid-cols-2', id: 2 },
-                { name: 'grid-cols-3', id: 3 },
-                { name: 'grid-cols-4', id: 4 },
-                { name: 'grid-cols-5', id: 5 },
-            ],
+
             cols: [
                 { name: 'auto', type: ['col-auto', 'p-2', 'border rounded border-black'] },
                 { name: 'span1', type: ['col-span-1', 'p-2', 'border rounded border-black'] },
@@ -277,10 +273,6 @@ export default {
             this.elements.push({ id: this.indentifier++, name: 'grid gap-4 grid-cols-4', cols: [] })
         },
 
-        changeAttribute(e, s) {
-            let val = e.target.value
-            this.elements[s].name = 'grid gap-4 ' + val + ''
-        },
 
         changeColAttribute(e, c, a) {
 
@@ -462,16 +454,43 @@ export default {
                 ' ', arrayClassToCop[2],
                 ' ', arrayClassToCop[3],
                 ' ', arrayClassToCop[4]
-                )
+            )
             this.elements[a].cols[i].type = final
             // console.log(final);
+        },
+        gridRowPlus(el, it, s) {
+            const arrayClassToRow = it.split(" ")[2].split("-")[2]
+
+            if (arrayClassToRow < 7) {
+
+                let int = parseInt(arrayClassToRow) + 1
+
+                this.elements[s].name = 'grid gap-4 grid-cols-' + int + ''
+                console.log(el);
+            }
+
+
+        },
+        gridRowMinus(el, it, s) {
+            const arrayClassToRow = it.split(" ")[2].split("-")[2]
+
+            console.log(arrayClassToRow);
+
+            if (arrayClassToRow > 2) {
+
+                let int = parseInt(arrayClassToRow) - 1
+
+                this.elements[s].name = 'grid gap-4 grid-cols-' + int + ''
+                console.log(el);
+            }
+
         }
 
     },
 
     unmounted() {
         if (this.f.form_builder_json === null && this.elements.length === 0) {
-            axios.delete(route('form.destroy', { form: this.f.id }), this.headers)
+            // axios.delete(route('form.destroy', { form: this.f.id }), this.headers)
         }
     }
 
