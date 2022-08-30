@@ -26,8 +26,9 @@ onMounted(() => {
         <div class="py-12">
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
                 <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-                    <Vue3ToggleButton v-model:isActive="isActive" :handleColor="'#cc00cc'"> </Vue3ToggleButton>
-                    <p @on-change="toggle">Value: {{ isActive }}</p>
+                    <Vue3ToggleButton v-model:isActive="isActive" :handleColor="'#cc00cc'" :track-height="'20px'"
+                        :handleDiameter="'20px'" :trackWidth="'5%'"> </Vue3ToggleButton>
+                    <p @on-change="toggle">Value: {{  isActive  }}</p>
 
                     <form @submit.prevent="store" enctype="multipart/form-data">
                         <!-- <div class="p-6 bg-white border-b border-gray-200" v-if="elements.length"> -->
@@ -37,35 +38,34 @@ onMounted(() => {
                                     <div class="grid gap-4" :class="el.name" v-if="el.cols.length">
 
                                         <div class="text-black" :class="col.type" v-for="(col, index) in el.cols"
-                                            :key="col.id">
+                                            @mouseover="col.hover = true" @mouseleave="col.hover = false" :key="col.id">
+                                            <div class="grid grid-cols-5 content-center">
 
-                                            <div class="grid grid-cols-2">
-
-                                                <div class="col-auto">
-                                                    <select @change="changeColAttribute($event, index, a)"
-                                                        v-if="!col.type">
+                                                <div class="col-auto" v-if="!col.type">
+                                                    <select @change="changeColAttribute($event, index, a)">
                                                         <option v-for="(cl, y) in selectedCol" :key="y"
                                                             :value="cl.type">
-                                                            {{ cl.name }}
+                                                            {{  cl.name  }}
                                                         </option>
                                                     </select>
                                                 </div>
 
-                                                <div class="col-span-2" v-if="col.type">
-                                                    <ul class="grid items-center grid-flow-row grid-cols-1"
-                                                        v-if="!col.field">
+                                                <div class="col-span-2" v-if="col.type && !col.field">
+                                                    <ul class="grid items-center grid-flow-row grid-cols-1">
                                                         <li v-for="(fld, i) in fields" :key="i" class="inline-block">
 
                                                             <input type="radio" v-model="col.field" :value="fld.text"
                                                                 class="inline-block" :id="`radio-for-${i}`">
                                                             <label class="ml-4 text-xs text-black"
                                                                 :for="`radio-for-${i}`">
-                                                                {{ fld.alias }} field
+                                                                {{  fld.alias  }} field
                                                             </label>
                                                         </li>
                                                     </ul>
+
                                                 </div>
-                                                <div class="col-span-2">
+
+                                                <div class="col-span-4" v-if="col.field">
 
                                                     <component :is="col.field"
                                                         @input="getData($event, col.field, el, index)"
@@ -76,6 +76,13 @@ onMounted(() => {
                                                         :saved="col.save">
                                                     </component>
 
+
+                                                </div>
+                                                <div class="w-full h-full col-start-5" v-if="col.hover && col.field">
+                                                    <button @click="spanCol(col.type)" type="button"
+                                                        class=" bg-slate-900 text-orange-300 text-3xl w-full rounded-lg ">
+                                                        <span class=" text-sm ">+</span> >
+                                                    </button>
                                                 </div>
                                             </div>
                                             <div class="justify-end float-right w-32">
@@ -90,7 +97,7 @@ onMounted(() => {
                                     <div class="grid grid-cols-2">
                                         <select @change="changeAttribute($event, a)">
                                             <option v-for="(gr, u) in grid" :key="u" :value="gr.name">
-                                                {{ gr.name }}
+                                                {{  gr.name  }}
                                             </option>
                                         </select>
 
@@ -182,14 +189,6 @@ export default {
                     isHelpBlockVisible: false,
                     isPlaceholderVisible: true,
                 },
-                // {
-                // 	name: 'NumberInput',
-                // 	text: 'Number',
-                // 	hasOptions: false,
-                // 	isRequired: false,
-                // 	isHelpBlockVisible: false,
-                // 	isPlaceholderVisible: false,
-                // },
                 {
                     name: 'TextArea',
                     text: 'Text Area',
@@ -257,8 +256,8 @@ export default {
         this.input = this.value;
         console.log(this.f.form_builder_json !== null);
 
-        console.log(this.f.form_builder_json);
-        console.log(this.elements.length);
+        // console.log(this.f.form_builder_json);
+        // console.log(this.elements.length);
 
         if (this.f.form_builder_json !== null) {
             this.elements = JSON.parse(this.f.form_builder_json)
@@ -297,7 +296,7 @@ export default {
 
         addColumn(item) {
             console.log(item);
-            item.cols.push({ id: this.indentifier++, field: null })
+            item.cols.push({ id: this.indentifier++, field: null, hover: false })
         },
 
         nameAttr() {
@@ -448,8 +447,12 @@ export default {
             this.elements[fromEl].cols.splice(child, 1);
         },
 
-        toggle() {
+        toggle(file) {
+            console.log(file);
             isActive = !isActive;
+        },
+        spanCol(e) {
+
         }
 
     },
