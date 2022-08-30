@@ -35,7 +35,7 @@ onMounted(() => {
                         <div class="p-6 bg-white border-b border-gray-200" v-if="elements.length">
                             <div class="flex border-b border-gray-200" v-for="(el, a) in elements" :key="el.id">
                                 <div class="w-4/5">
-                                    <div class="grid gap-4" :class="el.name" v-if="el.cols.length">
+                                    <div class="grid" :class="el.name" v-if="el.cols.length">
 
                                         <div class="text-black" :class="col.type" v-for="(col, index) in el.cols"
                                             @mouseover="col.hover = true" @mouseleave="col.hover = false" :key="col.id">
@@ -78,10 +78,10 @@ onMounted(() => {
 
 
                                                 </div>
-                                                <div class="w-full h-full col-start-5" v-if="col.hover && col.field">
+                                                <div class="w-full h-full col-start-5 content-center" v-if="col.hover && col.field">
                                                     <button @click="spanCol(col.type)" type="button"
-                                                        class=" bg-slate-900 text-orange-300 text-3xl w-full rounded-lg ">
-                                                        <span class=" text-sm ">+</span> >
+                                                        class=" bg-slate-900 text-orange-300 text-3xl flex justify-center text-center w-full rounded-lg ">
+                                                        <span class=" text-base place-self-center ">+</span> >
                                                     </button>
                                                 </div>
                                             </div>
@@ -173,7 +173,6 @@ export default {
                 { name: 'span1', type: ['col-span-1', 'p-2', 'border rounded border-black'] },
                 { name: 'span2', type: ['col-span-2', 'p-2', 'border rounded border-black'] },
                 { name: 'span3', type: ['col-span-3', 'p-2', 'border rounded border-black'] },
-                { name: 'span3', type: ['col-span-3', 'p-2', 'border rounded border-black'] },
                 { name: 'span4', type: ['col-span-4', 'p-2', 'border rounded border-black'] },
                 { name: 'span5', type: ['col-span-5', 'p-2', 'border rounded border-black'] },
                 { name: 'span-auto', type: ['col-span-auto', 'p-2', 'bg-gray-800'] },
@@ -226,14 +225,6 @@ export default {
                     isHelpBlockVisible: false,
                     isPlaceholderVisible: false,
                 },
-                // {
-                // 	name: 'TimePicker',
-                // 	text: 'Time Picker',
-                // 	hasOptions: false,
-                // 	isRequired: false,
-                // 	isHelpBlockVisible: false,
-                // 	isPlaceholderVisible: false,
-                // },
                 {
                     name: 'DatetimePicker',
                     text: 'Date-Time Picker',
@@ -248,9 +239,6 @@ export default {
         }
     },
 
-    // beforeCreate() {
-    //     this.elements = [];
-    // },
 
     created() {
         this.input = this.value;
@@ -453,15 +441,24 @@ export default {
         },
         spanCol(e) {
 
+            console.log(e);
+            const arrayClassToCop = e.split(" ")
+
+            const classToChange = arrayClassToCop[0].split("-")
+
+
+            let quarterFinal = parseInt(classToChange[2]) + 1
+
+            let semiFinal = quarterFinal.join("-")
+
+            let teamPlay = classToChange[0].concat('-', classToChange[1], '-', semiFinal)
+            console.log(teamPlay);
         }
 
     },
 
     unmounted() {
         if (this.f.form_builder_json === null && this.elements.length === 0) {
-            console.log('is null');
-            // let headerDel =
-
             axios.delete(route('form.destroy', { form: this.f.id }), this.headers)
         }
     }
