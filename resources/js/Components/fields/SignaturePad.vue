@@ -1,11 +1,9 @@
 <template>
     <div class="w-full h-52">
-        <!-- , dotSize, minWidth, maxWidth -->
-        <!-- <VueSignaturePad ref="signaturePad" :options="{ onBegin, onEnd }" /> -->
+
         <VueSignaturePad width="100%" height="100%" ref="signaturePad" />
-        <!-- @input="input" -->
+
         <div class="grid grid-cols-2 -mt-2">
-            <!-- -mb-14 -->
             <div class="mt-7 flex space-x-2">
                 <button class="rounded-t-full bg-slate-700 text-yellow-200 w-1/2" @click.prevent="save">Save</button>
                 <button class="rounded-t-full bg-slate-700 text-yellow-800 w-1/2" @click.prevent="undo">Undo</button>
@@ -24,6 +22,7 @@ export default {
     name: "SignaturePad",
 
     props: {
+        // name: {},
         name: {
             type: String,
             required: true
@@ -33,27 +32,14 @@ export default {
     },
     data() {
         return {
-            // options: {
-            //     dotSize: null,
-            //     minWidth: null,
-            //     maxWidth: null
-            // },
             input: null,
             signaturePad: null
         };
     },
-    computed: {
-        entireObj: {
-            get() {
-
-            },
-            set(newvl) {
-                console.log(newvl);
-            }
-        }
-    },
     mounted() {
         const canvas = this.$refs.signaturePad
+
+        console.log(this.name);
 
         if (this.saved) {
             const data = this.saved[0].item
@@ -63,13 +49,6 @@ export default {
             canvas.fromDataURL(this.input);
         }
 
-        // console.log(data);
-        // console.log(canvas);
-
-        // if (data) {
-        //     this.input = data;
-        //     canvas.fromDataURL(this.input);
-        // }
     },
     watch: {
         input() {

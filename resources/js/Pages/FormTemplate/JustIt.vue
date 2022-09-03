@@ -1,12 +1,92 @@
 <script setup>
-import { computed, inject, onMounted, ref } from 'vue'
-import { XMarkIcon, SwatchIcon, EllipsisVerticalIcon } from '@heroicons/vue/24/solid'
+import { computed, inject, onMounted, reactive, ref } from 'vue'
+import Text from "../../Components/fields/Input.vue";
+import Textarea from "../../Components/fields/Textarea.vue";
+import FileUpload from "../../Components/fields/FileUpload.vue";
+import Select from "../../Components/fields/Select.vue";
+import SignaturePad from "../../Components/fields/SignaturePad.vue";
+import VDatepicker from "../../Components/fields/VDatepicker.vue";
+
+import { XMarkIcon, SwatchIcon, EllipsisVerticalIcon, EllipsisHorizontalIcon } from '@heroicons/vue/24/solid'
 
 
 const emit = defineEmits(['layoutChanged', 'contain'])
 const proped = defineProps({
     classes: String
 })
+
+
+const fieldlist = ref(
+    [
+
+        {
+            name: 'TextInput',
+            text: 'Text',
+            alias: 'Text',
+            hasOptions: false,
+            isRequired: false,
+            isHelpBlockVisible: false,
+            isPlaceholderVisible: true,
+        },
+        {
+            name: 'TextArea',
+            text: 'Text Area',
+            alias: 'Textarea',
+            hasOptions: false,
+            isRequired: false,
+            isHelpBlockVisible: false,
+            isPlaceholderVisible: false,
+        },
+        {
+            name: 'SignaturePad',
+            text: 'Signature',
+            alias: 'Signature',
+            hasOptions: false,
+            isRequired: false,
+            isHelpBlockVisible: false,
+            isPlaceholderVisible: false,
+        },
+        {
+            name: 'SelectList',
+            text: 'Select',
+            alias: 'Select List',
+            hasOptions: true,
+            isRequired: false,
+            isHelpBlockVisible: false,
+            isPlaceholderVisible: false,
+
+        },
+        {
+            name: 'FileUpload',
+            text: 'fileUpload',
+            alias: 'File Upload',
+            hasOptions: false,
+            isRequired: false,
+            isHelpBlockVisible: false,
+            isPlaceholderVisible: false,
+        },
+        {
+            name: 'DatetimePicker',
+            text: 'Date-Time Picker',
+            alias: 'Date-Time',
+            hasOptions: false,
+            isRequired: false,
+            isHelpBlockVisible: false,
+            isPlaceholderVisible: false,
+        },
+
+    ]
+)
+
+
+const components = {
+    'Text': Text,
+    'Text Area': Textarea,
+    'Select': Select,
+    'Signature': SignaturePad,
+    'Date-Time Picker': VDatepicker,
+    'fileUpload': FileUpload,
+}
 
 const element = ref(null)
 
@@ -24,20 +104,38 @@ const setStateItem = (e) => {
     // console.log(e);
     if (e.stateitem === false) {
         e.stateitem = !e.stateitem
+    } else if (e.stateitem === true) {
+        e.stateitem = !e.stateitem
     }
+}
+
+const hideReplace = (e) => {
+    console.log(e);
 }
 
 // computed
 const rowHeight = computed(() => (window.innerWidth - 56) / 12)
+const fields = computed(() => fieldlist.value)
+
+// const component = computed({
+//     get: () => count.value + 1,
+//     set: (val) => {
+//         count.value = val - 1
+//     }
+// })
 
 const colNum = inject('colNum')
 const elements = inject('elements')
+const formId = inject('formId')
 
 onMounted(() => {
-    containerResizedEvent, layoutUpdatedEvent, setStateItem
-    colNum, elements, rowHeight
+    containerResizedEvent, layoutUpdatedEvent, setStateItem, hideReplace
+    colNum, elements, rowHeight, formId
     // components
-    XMarkIcon, SwatchIcon, EllipsisVerticalIcon
+    XMarkIcon, SwatchIcon, EllipsisVerticalIcon, EllipsisHorizontalIcon
+    // form components
+    Text, Textarea, FileUpload, Select, SignaturePad, VDatepicker
+    fieldlist, fields, components
 
     element.value = element
     console.log(proped.classes);
@@ -51,23 +149,44 @@ onMounted(() => {
         @layout-updated="layoutUpdatedEvent" :class="classes">
 
         <grid-item v-for="item in elements" :x="item.x" :y="item.y" :w="item.w" :h="item.h" :i="item.i" :key="item.i"
-            @container-resized="containerResizedEvent" :is-horizontal-resize="true" :is-vertical-resize="true" class=" pb-36 ">
-            <!-- class=" pb-36 " -->
-            <div class="flex flex-row h-4/5 pb-8">
-                <div class="basis-5/6 relative w-full h-full">
+            @container-resized="containerResizedEvent" :is-horizontal-resize="true" :is-vertical-resize="true"
+            class=" pb-36 ">
 
-                    <EllipsisVerticalIcon class="h-4 w-4" @click="setStateItem(item)"></EllipsisVerticalIcon>
-                    <!-- h-full -->
-                    <div class="absolute top-0 left-0 min-h-0 overflow-y-auto inset-y-0 z-0 bg-white h-36 text-left"
-                    :class="item.stateitem ? 'w-28 opacity-100 transition-width transition-slowest ease' : 'w-0 opacity-0 transition-width transition-slowest ease-in-out delay-150'"
-                    >
-                        drag
+            <div class="flex flex-row h-36 bg-no-repeat bg-contain bg-center"
+                style="background-image: url('/images/bgimg.svg')">
+                <div class="basis-5/6 relative w-full h-full">
+                    <!-- item.stateitem && -->
+                    <EllipsisVerticalIcon class="h-4 w-4" @click="setStateItem(item)" v-if="!item.field">
+                    </EllipsisVerticalIcon>
+                    <div class="absolute top-0 left-0 min-h-0 overflow-y-auto inset-y-0 z-0 rounded-r-lg bg-white h-36 text-left"
+                        :class="item.stateitem ? 'w-11/12 opacity-100 transition-width transition-slowest ease' : 'w-0 opacity-0 transition-width transition-slowest ease-in-out delay-150'"
+                        v-if="!item.field">
+                        <div class="w-full">
+                            <div class="grid grid-cols-5">
+                                <div class="col-span-4">
+                                    <ul class="grid items-center grid-flow-row grid-cols-1 ml-2">
+                                        <li v-for="(fld, i) in fields" :key="i" class="inline-block">
+                                            <input type="radio" v-model="item.field" @click="hideReplace"
+                                                :value="fld.text" class="inline-block w-3 h-3" :id="`radio-for-${i}`">
+                                            <label class="ml-4 text-xs text-black" :for="`radio-for-${i}`">
+                                                {{ fld.alias }} field
+                                            </label>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <EllipsisHorizontalIcon class="h-3 w-3 mx-auto mt-2 text-black"
+                                        @click="setStateItem(item)"> </EllipsisHorizontalIcon>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="self-stretch text-center place-content-center ">
-                        <SwatchIcon class="w-4 h-4 text-teal-500"></SwatchIcon>
-                        <!-- <p class="text-4xl ">{{ item.i }}</p>
-                        <p class="text-sm ">static:{{ item.static }}</p> -->
-                    </div>
+
+                    <component
+                    :name="item.field"
+                    :formId="formId"
+                    :is="components[item.field]"
+                    class="w-full"></component>
                 </div>
                 <div class="basis-1/6">
                     <XMarkIcon class="h-5 w-5 text-black" @click="removeItem(item.i)"> </XMarkIcon>
@@ -76,6 +195,7 @@ onMounted(() => {
 
         </grid-item>
     </grid-layout>
+
 
 
 </template>
@@ -138,5 +258,14 @@ onMounted(() => {
     box-sizing: border-box;
     cursor: pointer;
 }
+
+/* style="background-image: url("data:image/svg+xml;utf8, <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+                    <path fill-rule="evenodd"
+                        d="M2.25 4.125c0-1.036.84-1.875 1.875-1.875h5.25c1.036 0 1.875.84 1.875 1.875V17.25a4.5 4.5 0 11-9 0V4.125zm4.5 14.25a1.125 1.125 0 100-2.25 1.125 1.125 0 000 2.25z"
+                        clip-rule="evenodd" />
+                    <path
+                        d="M10.719 21.75h9.156c1.036 0 1.875-.84 1.875-1.875v-5.25c0-1.036-.84-1.875-1.875-1.875h-.14l-8.742 8.743c-.09.089-.18.175-.274.257zM12.738 17.625l6.474-6.474a1.875 1.875 0 000-2.651L15.5 4.787a1.875 1.875 0 00-2.651 0l-.1.099V17.25c0 .126-.003.251-.01.375z" />
+                    </svg>
+                    ")" */
 </style>
 

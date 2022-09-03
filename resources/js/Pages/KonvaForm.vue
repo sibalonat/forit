@@ -3,13 +3,6 @@ import { onMounted, reactive, ref, watchEffect, provide } from 'vue';
 import BreezeAuthenticatedLayout from '@/Layouts/Authenticated.vue';
 import { Head, useForm } from '@inertiajs/inertia-vue3';
 
-
-import Input from "./../Components/fields/Input.vue";
-import Textarea from "./../Components/fields/Textarea.vue";
-import FileUpload from "./../Components/fields/FileUpload.vue";
-import Select from "./../Components/fields/Select.vue";
-import SignaturePad from "./../Components/fields/SignaturePad.vue";
-import VDatepicker from "./../Components/fields/VDatepicker.vue";
 import JustIt from "./FormTemplate/JustIt.vue";
 
 const props = defineProps({
@@ -22,72 +15,10 @@ const form = useForm({
 
 let elements = ref([])
 
-let colNum = ref(10)
+let colNum = ref(6)
 let index = ref(null)
 
 let classes = ref(null)
-
-const fieldlist = ref(
-    [
-
-        {
-            name: 'TextInput',
-            text: 'Text',
-            alias: 'Text',
-            hasOptions: false,
-            isRequired: false,
-            isHelpBlockVisible: false,
-            isPlaceholderVisible: true,
-        },
-        {
-            name: 'TextArea',
-            text: 'Text Area',
-            alias: 'Textarea',
-            hasOptions: false,
-            isRequired: false,
-            isHelpBlockVisible: false,
-            isPlaceholderVisible: false,
-        },
-        {
-            name: 'SignaturePad',
-            text: 'Signature',
-            alias: 'Signature',
-            hasOptions: false,
-            isRequired: false,
-            isHelpBlockVisible: false,
-            isPlaceholderVisible: false,
-        },
-        {
-            name: 'SelectList',
-            text: 'Select',
-            alias: 'Select List',
-            hasOptions: true,
-            isRequired: false,
-            isHelpBlockVisible: false,
-            isPlaceholderVisible: false,
-
-        },
-        {
-            name: 'FileUpload',
-            text: 'fileUpload',
-            alias: 'File Upload',
-            hasOptions: false,
-            isRequired: false,
-            isHelpBlockVisible: false,
-            isPlaceholderVisible: false,
-        },
-        {
-            name: 'DatetimePicker',
-            text: 'Date-Time Picker',
-            alias: 'Date-Time',
-            hasOptions: false,
-            isRequired: false,
-            isHelpBlockVisible: false,
-            isPlaceholderVisible: false,
-        },
-
-    ]
-)
 
 let header = reactive({
     headers: { 'X-CSRF-TOKEN': document.head.querySelector('meta[name="csrf_token"]').content }
@@ -100,12 +31,13 @@ const removeItem = (e) => {
 
 const addItem = () => {
     elements.value.push({
-        x: (elements.value.length * 2) % (colNum.value || 10),
-        y: elements.value.length + (colNum.value || 10),
+        x: (elements.value.length * 2) % (colNum.value || 6),
+        y: elements.value.length + (colNum.value || 6),
         w: 2,
         h: 2,
         i: index.value,
-        stateitem: false
+        stateitem: false,
+        field: null
     })
 
     classes.value = 'overflow-y-auto'
@@ -126,17 +58,17 @@ const container = (e) => {
 
 onMounted(() => {
     Head
-    BreezeAuthenticatedLayout, Input, Textarea, FileUpload, Select, SignaturePad, VDatepicker, JustIt, colNum, elements
+    BreezeAuthenticatedLayout, JustIt, colNum, elements
     //cors
     header
     //form
-    form, fieldlist
+    form
 
     // methods
 
     removeItem, addItem, layoutchanges, container
 
-    elements.value.push({ x: 0, y: 0, w: 2, h: 2, i: 0, stateitem: false })
+    elements.value.push({ x: 0, y: 0, w: 2, h: 2, i: 0, stateitem: false, field: null })
 
     index.value = elements.value.length
 })
@@ -150,6 +82,7 @@ watchEffect(() => {
 provide('elements', elements.value)
 
 provide('colNum', colNum.value)
+provide('formId', props.f.id)
 
 // provide('stateitem', stateitem)
 
