@@ -107,8 +107,6 @@ const layoutUpdatedEvent = (e) => {
 }
 
 const removeItem = (e) => {
-    // console.log(e);
-    // console.log(i);
     const index = elements.map(item => item.i).indexOf(e);
     elements.splice(index, 1);
 }
@@ -140,7 +138,7 @@ onMounted(() => {
     fieldlist, fields, components, styleObject
 
     element.value = element
-    console.log(proped.classes);
+
 })
 
 </script>
@@ -156,7 +154,6 @@ onMounted(() => {
             <div class="flex flex-row h-36 bg-no-repeat bg-contain bg-center"
                 :style="item.backCond ? styleObject :  'background-image: url()'">
                 <div class="basis-5/6 relative w-full h-full">
-                    <!-- item.stateitem && -->
                     <EllipsisVerticalIcon class="h-4 w-4" @click="setStateItem(item)" v-if="!item.field">
                     </EllipsisVerticalIcon>
                     <div class="absolute top-0 left-0 min-h-0 overflow-y-auto inset-y-0 z-0 rounded-r-lg bg-white h-36 text-left"
