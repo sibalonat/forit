@@ -1,5 +1,5 @@
 <script setup>
-import { computed, inject, onMounted, reactive, ref } from 'vue'
+import { computed, inject, onMounted, ref } from 'vue'
 import Text from "../../Components/fields/Input.vue";
 import Textarea from "../../Components/fields/Textarea.vue";
 import FileUpload from "../../Components/fields/FileUpload.vue";
@@ -14,6 +14,10 @@ const emit = defineEmits(['layoutChanged', 'contain'])
 const proped = defineProps({
     classes: String
 })
+
+const colNum = inject('colNum')
+const elements = inject('elements')
+const formId = inject('formId')
 
 
 const fieldlist = ref(
@@ -94,8 +98,16 @@ const containerResizedEvent = (e) => {
     emit('contain', e)
 }
 
+// const index = this.layout.map(item => item.i).indexOf(val);
+// this.layout.splice(index, 1);
+
 const layoutUpdatedEvent = (e) => {
     emit('layoutChanged', e)
+}
+
+const removeItem = (e) => {
+    const index = elements.map(item => item.i).indexOf(e);
+    elements.splice(index, 1);
 }
 
 const setStateItem = (e) => {
@@ -115,12 +127,10 @@ const rowHeight = computed(() => (window.innerWidth - 56) / 12)
 const fields = computed(() => fieldlist.value)
 
 
-const colNum = inject('colNum')
-const elements = inject('elements')
-const formId = inject('formId')
+
 
 onMounted(() => {
-    containerResizedEvent, layoutUpdatedEvent, setStateItem, hideReplace
+    containerResizedEvent, layoutUpdatedEvent, setStateItem, hideReplace, removeItem
     colNum, elements, rowHeight, formId
     // components
     XMarkIcon, SwatchIcon, EllipsisVerticalIcon, EllipsisHorizontalIcon
@@ -173,11 +183,8 @@ onMounted(() => {
                         </div>
                     </div>
 
-                    <component
-                    :name="item.field"
-                    :formId="formId"
-                    :is="components[item.field]"
-                    class="w-full"></component>
+                    <component :name="item.field" :formId="formId" :is="components[item.field]" class="w-full">
+                    </component>
                 </div>
                 <div class="basis-1/6">
                     <XMarkIcon class="h-5 w-5 text-black" @click="removeItem(item.i)"> </XMarkIcon>
@@ -249,6 +256,5 @@ onMounted(() => {
     box-sizing: border-box;
     cursor: pointer;
 }
-
 </style>
 

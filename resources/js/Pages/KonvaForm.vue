@@ -25,9 +25,6 @@ let header = reactive({
 })
 
 
-const removeItem = (e) => {
-    console.log(e);
-}
 
 const addItem = () => {
     elements.value.push({
@@ -66,7 +63,7 @@ onMounted(() => {
 
     // methods
 
-    removeItem, addItem, layoutchanges, container
+    addItem, layoutchanges, container
 
     elements.value.push({ x: 0, y: 0, w: 2, h: 2, i: 0, stateitem: false, field: null })
 
