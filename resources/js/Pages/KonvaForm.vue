@@ -34,7 +34,8 @@ const addItem = () => {
         h: 2,
         i: index.value,
         stateitem: false,
-        field: null
+        field: null,
+        backCond: true
     })
 
     classes.value = 'overflow-y-auto'
@@ -65,7 +66,16 @@ onMounted(() => {
 
     addItem, layoutchanges, container
 
-    elements.value.push({ x: 0, y: 0, w: 2, h: 2, i: 0, stateitem: false, field: null })
+    elements.value.push({
+        x: 0,
+        y: 0,
+        w: 2,
+        h: 2,
+        i: 0,
+        stateitem: false,
+        field: null,
+        backCond: true
+    })
 
     index.value = elements.value.length
 })

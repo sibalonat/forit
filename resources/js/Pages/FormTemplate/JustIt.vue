@@ -1,5 +1,5 @@
 <script setup>
-import { computed, inject, onMounted, ref } from 'vue'
+import { computed, inject, onMounted, reactive, ref } from 'vue'
 import Text from "../../Components/fields/Input.vue";
 import Textarea from "../../Components/fields/Textarea.vue";
 import FileUpload from "../../Components/fields/FileUpload.vue";
@@ -18,6 +18,10 @@ const proped = defineProps({
 const colNum = inject('colNum')
 const elements = inject('elements')
 const formId = inject('formId')
+
+const styleObject = reactive({
+    backgroundImage: `url('/images/bgimg.svg')`
+})
 
 
 const fieldlist = ref(
@@ -98,14 +102,13 @@ const containerResizedEvent = (e) => {
     emit('contain', e)
 }
 
-// const index = this.layout.map(item => item.i).indexOf(val);
-// this.layout.splice(index, 1);
-
 const layoutUpdatedEvent = (e) => {
     emit('layoutChanged', e)
 }
 
 const removeItem = (e) => {
+    // console.log(e);
+    // console.log(i);
     const index = elements.map(item => item.i).indexOf(e);
     elements.splice(index, 1);
 }
@@ -119,15 +122,13 @@ const setStateItem = (e) => {
 }
 
 const hideReplace = (e) => {
-    console.log(e);
+    // console.log(e);
+    e.backCond = !e.backCond
 }
 
 // computed
 const rowHeight = computed(() => (window.innerWidth - 56) / 12)
 const fields = computed(() => fieldlist.value)
-
-
-
 
 onMounted(() => {
     containerResizedEvent, layoutUpdatedEvent, setStateItem, hideReplace, removeItem
@@ -136,7 +137,7 @@ onMounted(() => {
     XMarkIcon, SwatchIcon, EllipsisVerticalIcon, EllipsisHorizontalIcon
     // form components
     Text, Textarea, FileUpload, Select, SignaturePad, VDatepicker
-    fieldlist, fields, components
+    fieldlist, fields, components, styleObject
 
     element.value = element
     console.log(proped.classes);
@@ -151,10 +152,9 @@ onMounted(() => {
 
         <grid-item v-for="item in elements" :x="item.x" :y="item.y" :w="item.w" :h="item.h" :i="item.i" :key="item.i"
             @container-resized="containerResizedEvent" :is-horizontal-resize="true" :is-vertical-resize="true"
-            class=" pb-36 ">
-
+            class="pb-36">
             <div class="flex flex-row h-36 bg-no-repeat bg-contain bg-center"
-                style="background-image: url('/images/bgimg.svg')">
+                :style="item.backCond ? styleObject :  'background-image: url()'">
                 <div class="basis-5/6 relative w-full h-full">
                     <!-- item.stateitem && -->
                     <EllipsisVerticalIcon class="h-4 w-4" @click="setStateItem(item)" v-if="!item.field">
@@ -167,7 +167,7 @@ onMounted(() => {
                                 <div class="col-span-4">
                                     <ul class="grid items-center grid-flow-row grid-cols-1 ml-2">
                                         <li v-for="(fld, i) in fields" :key="i" class="inline-block">
-                                            <input type="radio" v-model="item.field" @click="hideReplace"
+                                            <input type="radio" v-model="item.field" @click="hideReplace(item)"
                                                 :value="fld.text" class="inline-block w-3 h-3" :id="`radio-for-${i}`">
                                             <label class="ml-4 text-xs text-black" :for="`radio-for-${i}`">
                                                 {{ fld.alias }} field
