@@ -21,14 +21,15 @@
         "vue": "^3.2.31"
     },
     "dependencies": {
+        "@heroicons/vue": "^2.0.10",
         "@vuepic/vue-datepicker": "^3.3.1",
-        "dropzone": "^6.0.0-beta.2",
         "filepond": "^4.30.4",
         "filepond-plugin-file-poster": "^2.5.1",
         "filepond-plugin-file-validate-size": "^2.2.7",
         "filepond-plugin-file-validate-type": "^1.2.8",
         "filepond-plugin-image-preview": "^4.6.11",
         "vue-filepond": "^7.0.3",
+        "vue-grid-layout": "^3.0.0-beta1",
         "vue-next-select": "^2.10.4",
         "vue-signature-pad": "^3.0.2",
         "vue3-toggle-button": "^1.0.3"

@@ -40,14 +40,14 @@ onMounted(() => {
                                             @mouseover="col.hover = true" @mouseleave="col.hover = false" :key="col.id">
                                             <div class="grid grid-cols-5 content-center">
 
-                                                <div class="col-auto" v-if="!col.type">
+                                                <!-- <div class="col-auto" v-if="!col.type">
                                                     <select @change="changeColAttribute($event, index, a)">
                                                         <option v-for="(cl, y) in selectedCol" :key="y"
                                                             :value="cl.type">
                                                             {{  cl.name  }}
                                                         </option>
                                                     </select>
-                                                </div>
+                                                </div> -->
 
                                                 <div class="col-span-2" v-if="col.type && !col.field">
                                                     <ul class="grid items-center grid-flow-row grid-cols-1">
@@ -98,7 +98,9 @@ onMounted(() => {
                                 <div class="w-1/5">
                                     <div class="grid grid-cols-4">
 
-                                        <p class=" bg-black text-center text-3xl text-slate-50">{{  el.name.split(" ")[2].split("-")[2] }}</p>
+                                        <p class=" bg-black text-center text-3xl text-slate-50">
+                                            {{  el.name.split(" ")[2].split("-")[2]  }}
+                                        </p>
 
                                         <button type="button" class="w-full col-span-3 text-white bg-slate-900"
                                             @click="addColumn(el)">
@@ -180,7 +182,7 @@ export default {
                 { name: 'span3', type: ['col-span-3', 'p-2', 'border rounded border-black'] },
                 { name: 'span4', type: ['col-span-4', 'p-2', 'border rounded border-black'] },
                 { name: 'span5', type: ['col-span-5', 'p-2', 'border rounded border-black'] },
-                { name: 'span-auto', type: ['col-span-auto', 'p-2', 'bg-gray-800'] },
+                { name: 'span-auto', type: ['col-span-auto', 'p-2', 'border rounded border-black'] },
 
             ],
             fieldlist: [
@@ -284,8 +286,37 @@ export default {
         },
 
         addColumn(item) {
-            console.log(item);
-            item.cols.push({ id: this.indentifier++, field: null, hover: false })
+            const arrayClassToRow = item.name.split(" ")[2].split("-")[2]
+
+            switch (arrayClassToRow) {
+                case '3':
+                    console.log('triggers');
+                    item.cols.push({ id: this.indentifier++, type: 'col-span-2 p-2 border rounded border-black', field: null, hover: false })
+                    break;
+
+                case '4':
+                    console.log('triggers');
+                    item.cols.push({ id: this.indentifier++, type: 'col-span-2 p-2 border rounded border-black', field: null, hover: false })
+
+                    break;
+
+                case '5':
+                    item.cols.push({ id: this.indentifier++, type: 'col-span-1 p-2 border rounded border-black', field: null, hover: false })
+
+                    break;
+                case '6':
+                    item.cols.push({ id: this.indentifier++, type: 'col-span-1 p-2 border rounded border-black', field: null, hover: false })
+
+                    break;
+                case '7':
+                    item.cols.push({ id: this.indentifier++, type: 'col-span-1 p-2 border rounded border-black', field: null, hover: false })
+
+                    break;
+
+                default:
+                    break;
+            }
+
         },
 
         nameAttr() {
@@ -465,7 +496,7 @@ export default {
 
                 let int = parseInt(arrayClassToRow) + 1
 
-                this.elements[s].name = 'grid gap-4 grid-cols-' + int + ''
+                this.elements[s].name = 'grid gap-4 grid-cols-' + int + ' grid-rows-3 grid-flow-row-dense'
                 console.log(el);
             }
 

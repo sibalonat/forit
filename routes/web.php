@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\FormController;
+use App\Http\Controllers\KonvaController;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
@@ -72,5 +73,19 @@ Route::get('elaborate/{form}/image/{id}/show', [FormController::class, 'showMedi
 Route::delete('elaborate/{form}/image/{id}', [FormController::class, 'deleteMedia'])->middleware(['auth', 'verified'])->name('image.delete');
 // Route::get('elaborate/{form}/images', [FormController::class, 'show'])->middleware(['auth', 'verified'])->name('form.images');
 // Route::post('image', [ImageController::class,'store'])->name('image.store');
+
+
+// konva
+
+Route::get('crt', [KonvaController::class, 'create'])->middleware(['auth', 'verified']);
+
+Route::get('konva/{form}', [KonvaController::class, 'edit'])->middleware(['auth', 'verified'])->name('konva.edit');
+Route::put('up/{form}', [KonvaController::class, 'update'])->middleware(['auth', 'verified'])->name('konva.update');
+Route::delete('de/{form}', [KonvaController::class, 'destroy'])->middleware(['auth', 'verified'])->name('konva.destroy');
+
+Route::post('konva/{form}/image', [KonvaController::class, 'stimage'])->middleware(['auth', 'verified'])->name('konva.image');
+Route::get('konva/{form}/image/{id}/show', [KonvaController::class, 'showMedia'])->middleware(['auth', 'verified'])->name('konvaimage.show');
+Route::delete('konva/{form}/image/{id}', [KonvaController::class, 'deleteMedia'])->middleware(['auth', 'verified'])->name('konvaimage.delete');
+
 
 require __DIR__.'/auth.php';

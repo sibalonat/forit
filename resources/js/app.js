@@ -8,15 +8,17 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m';
 
 
+
+import VueGridLayout from "vue-grid-layout";
+import { GridItem, GridLayout } from "vue-grid-layout";
+
+
 // import Datepicker from '@vuepic/vue-datepicker';
 // import '@vuepic/vue-datepicker/dist/main.css'
 
 // import drag from "v-drag"
 
 import VueSignaturePad from 'vue-signature-pad';
-
-// import GridLayout from 'v3-grid-layout'
-// import 'v3-grid-layout/dist/style.css'
 
 const appName = window.document.getElementsByTagName('title')[0]?.innerText || 'Laravel';
 
@@ -29,11 +31,19 @@ createInertiaApp({
         VueApp.config.globalProperties.$route = route
         VueApp.use(plugin)
         VueApp.use(ZiggyVue, Ziggy)
-        // VueApp.use(drag)
+
+        VueApp.use(VueGridLayout)
+
+        VueApp.component('grid-layout', GridLayout)
+        VueApp.component('grid-item', GridItem)
+
         VueApp.use(VueSignaturePad)
 
         VueApp.mount(el)
+
         return VueApp
+
+
     },
 });
 
