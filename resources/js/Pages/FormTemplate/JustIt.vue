@@ -1,6 +1,8 @@
 <script setup>
 import { computed, inject, onMounted, reactive, ref } from 'vue'
 import Text from "../../Components/fields/Input.vue";
+// import Text from "../../Components/fields/Input.vue";
+// @/Components/
 import Textarea from "../../Components/fields/Textarea.vue";
 import FileUpload from "../../Components/fields/FileUpload.vue";
 import Select from "../../Components/fields/Select.vue";
@@ -119,8 +121,84 @@ const setStateItem = (e) => {
     }
 }
 
+
+const getData = (e, dataType, single) => {
+    if (e) {
+    if (e.target) {
+        if (dataType === 'Text') {
+            let identif = 0;
+            var lastItem = e.target.value;
+            let plus = identif++;
+
+            const reactiveDText = reactive({
+                id: (identif === 0) ? plus : identif,
+                item: lastItem,
+            })
+
+            let valueOfId = reactiveDText.id;
+            let exists = Object.values(reactiveDText).includes(valueOfId);
+            if (exists) {
+                let monitor = single
+                let check = Object.keys(monitor).indexOf("save") != -1
+                if (!check) {
+                    single.save = []
+                    single.save.push(reactiveDText)
+                } else {
+                    single.save[0].item = e.target.value
+                }
+            }
+
+        }
+    }
+}
+}
+const changeData = (e, dataType, single) => {
+    if (e) {
+        if (dataType === 'fileUpload') {
+
+            const reactiveDtImg = reactive({
+                id: e.id,
+                formID: e.model_id
+            })
+
+            let monitor = single
+
+            let check = Object.keys(monitor).indexOf("save") != -1
+
+
+            if (!check) {
+                console.log('is not');
+                monitor.save = []
+                monitor.save.push(reactiveDtImg)
+                // this.tempJson.push(monitor)
+            } else {
+                console.log('eshte');
+                monitor.save.push(reactiveDtImg)
+            }
+        }
+    }
+}
+
+const deleteImg = (e, dataType, single) => {
+    if (e) {
+        if (dataType === 'fileUpload') {
+            // console.log(e);
+            let monitor = single
+
+            if (e[1] === 'delete') {
+                console.log(e[0]);
+                // e[0].shift()
+                monitor.save.shift()
+            }
+        }
+    }
+}
+
+
+
+
+
 const hideReplace = (e) => {
-    // console.log(e);
     e.backCond = !e.backCond
 }
 
@@ -129,7 +207,9 @@ const rowHeight = computed(() => (window.innerWidth - 56) / 12)
 const fields = computed(() => fieldlist.value)
 
 onMounted(() => {
-    containerResizedEvent, layoutUpdatedEvent, setStateItem, hideReplace, removeItem
+    containerResizedEvent, layoutUpdatedEvent, setStateItem, hideReplace, removeItem,
+    //data
+    getData, changeData, deleteImg,
     colNum, elements, rowHeight, formId
     // components
     XMarkIcon, SwatchIcon, EllipsisVerticalIcon, EllipsisHorizontalIcon
@@ -138,7 +218,6 @@ onMounted(() => {
     fieldlist, fields, components, styleObject
 
     element.value = element
-
 })
 
 </script>
@@ -151,12 +230,12 @@ onMounted(() => {
         <grid-item v-for="item in elements" :x="item.x" :y="item.y" :w="item.w" :h="item.h" :i="item.i" :key="item.i"
             @container-resized="containerResizedEvent" :is-horizontal-resize="true" :is-vertical-resize="true"
             class="pb-36">
-            <div class="flex flex-row h-36 bg-no-repeat bg-contain bg-center"
+            <div class="flex flex-row bg-center bg-no-repeat bg-contain h-36"
                 :style="item.backCond ? styleObject :  'background-image: url()'">
-                <div class="basis-5/6 relative w-full h-full">
-                    <EllipsisVerticalIcon class="h-4 w-4" @click="setStateItem(item)" v-if="!item.field">
+                <div class="relative w-full h-full basis-5/6">
+                    <EllipsisVerticalIcon class="w-4 h-4" @click="setStateItem(item)" v-if="!item.field">
                     </EllipsisVerticalIcon>
-                    <div class="absolute top-0 left-0 min-h-0 overflow-y-auto inset-y-0 z-0 rounded-r-lg bg-white h-36 text-left"
+                    <div class="absolute inset-y-0 top-0 left-0 z-0 min-h-0 overflow-y-auto text-left bg-white rounded-r-lg h-36"
                         :class="item.stateitem ? 'w-11/12 opacity-100 transition-width transition-slowest ease' : 'w-0 opacity-0 transition-width transition-slowest ease-in-out delay-150'"
                         v-if="!item.field">
                         <div class="w-full">
@@ -173,18 +252,21 @@ onMounted(() => {
                                     </ul>
                                 </div>
                                 <div>
-                                    <EllipsisHorizontalIcon class="h-3 w-3 mx-auto mt-2 text-black"
+                                    <EllipsisHorizontalIcon class="w-3 h-3 mx-auto mt-2 text-black"
                                         @click="setStateItem(item)"> </EllipsisHorizontalIcon>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <component :name="item.field" :formId="formId" :is="components[item.field]" class="w-full">
+                    <component :name="item.field" :formId="formId" :is="components[item.field]"
+                        @input="getData($event, item.field, item)" @change-file="changeData($event, item.field, item)"
+                        @delete-file="deleteImg($event, item.field, item)"
+                        @input-signature="signatureData($event, item.field, item)" class="w-full">
                     </component>
                 </div>
                 <div class="basis-1/6">
-                    <XMarkIcon class="h-5 w-5 text-black" @click="removeItem(item.i)"> </XMarkIcon>
+                    <XMarkIcon class="w-5 h-5 text-black" @click="removeItem(item.i)"> </XMarkIcon>
                 </div>
             </div>
 
