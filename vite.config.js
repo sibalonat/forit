@@ -1,24 +1,19 @@
 import { defineConfig } from "vite";
 import laravel from "laravel-vite-plugin";
 import vue from "@vitejs/plugin-vue";
+import mkcert from 'vite-plugin-mkcert';
+
 // optimizeDeps: {
 //     include: ['vue3-grid-layout']
 // },
 
-// resolve: {
-//     alias: {
-//         "@": fileURLToPath(new URL("./resources/js", import.meta.url))
-//     }
-// }
 
 export default defineConfig({
     server: {
         https: true,
         host: 'localhost',
         hmr: {
-            // host: 'forit.test',
             host: 'localhost',
-            // port: 3001,
             protocol: 'wss'
           }
     },
@@ -35,5 +30,6 @@ export default defineConfig({
                 },
             },
         }),
+        mkcert()
     ],
 });
