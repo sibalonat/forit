@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AugmentController;
 use App\Http\Controllers\FormController;
 use App\Http\Controllers\KonvaController;
 use Inertia\Inertia;
@@ -86,6 +87,10 @@ Route::delete('de/{form}', [KonvaController::class, 'destroy'])->middleware(['au
 Route::post('konva/{form}/image', [KonvaController::class, 'stimage'])->middleware(['auth', 'verified'])->name('konva.image');
 Route::get('konva/{form}/image/{id}/show', [KonvaController::class, 'showMedia'])->middleware(['auth', 'verified'])->name('konvaimage.show');
 Route::delete('konva/{form}/image/{id}', [KonvaController::class, 'deleteMedia'])->middleware(['auth', 'verified'])->name('konvaimage.delete');
+
+
+//augmentation
+Route::get('augmentation/create', [AugmentController::class, 'create'])->middleware(['auth', 'verified'])->name('augmentation');
 
 
 require __DIR__.'/auth.php';

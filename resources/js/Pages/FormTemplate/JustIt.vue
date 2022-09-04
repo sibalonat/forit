@@ -1,5 +1,5 @@
 <script setup>
-import { computed, inject, onMounted, reactive, ref } from 'vue'
+import { computed, defineAsyncComponent, inject, onMounted, reactive, ref } from 'vue'
 import Text from "../../Components/fields/Input.vue";
 // import Text from "../../Components/fields/Input.vue";
 // @/Components/
@@ -24,6 +24,12 @@ const formId = inject('formId')
 const styleObject = reactive({
     backgroundImage: `url('/images/bgimg.svg')`
 })
+
+// const AdminPage = defineAsyncComponent(() =>
+//   import('./components/AdminPageComponent.vue')
+// )
+
+// defineAsyncComponent
 
 
 const fieldlist = ref(
