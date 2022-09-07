@@ -13,7 +13,30 @@ import { GridItem, GridLayout } from "vue-grid-layout";
 
 // defineAsyncComponent
 
+// for (const [key, component] of Object.entries(ARJS)) {
+//     console.log(key);
+//     VueApp.component(key, component);
+// }
+// VueApp.config.ignoredElements = [/^a-/];
 
+
+// import AFrame from "aframe";
+// import AFrameLookAtTheComponent from "aframe-look-at-component";
+// import { AScene, AImage, ACamera } from "aframe";
+
+// console.log(AScene);
+// import ARJS from "@ar-js-org/ar.js/aframe/build/aframe-ar-nft";
+// import { AScene, AImage, ACamera } from "@ar-js-org/ar.js";
+// import AR from "@ar-js-org/ar.js";
+
+//vuexr
+// VueApp.use(AFrame);
+// VueApp.use(AFrame);
+// VueApp.use(AFrameLookAtTheComponent);
+// VueApp.use(ARJS);
+// VueApp.component("a-scene", AScene);
+// VueApp.component("a-image", AImage);
+// VueApp.component("a-camera", ACamera);
 
 // import Datepicker from '@vuepic/vue-datepicker';
 // import '@vuepic/vue-datepicker/dist/main.css'
@@ -42,8 +65,6 @@ createInertiaApp({
         VueApp.use(VueGridLayout);
         VueApp.component("grid-layout", GridLayout);
         VueApp.component("grid-item", GridItem);
-        //vuexr
-
 
         VueApp.use(VueSignaturePad);
 

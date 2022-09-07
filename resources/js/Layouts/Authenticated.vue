@@ -33,6 +33,12 @@ const showingNavigationDropdown = ref(false);
                                 <BreezeNavLink :href="route('markers')" :active="route().current('markers')">
                                     Markers
                                 </BreezeNavLink>
+                                <!-- <BreezeNavLink href="/augmentation/create">
+                                    AR
+                                </BreezeNavLink> -->
+                                <BreezeNavLink :href="route('app.augmentation')" :active="route().current('app.augmentation')">
+                                    AR
+                                </BreezeNavLink>
                             </div>
                         </div>
 

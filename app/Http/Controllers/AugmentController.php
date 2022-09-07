@@ -9,6 +9,7 @@ class AugmentController extends Controller
 {
     public function create()
     {
+        // return view('ar.augmented');
         return Inertia::render('Augmentation/ViewAugmentation');
     }
 }

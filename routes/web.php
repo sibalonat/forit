@@ -90,7 +90,7 @@ Route::delete('konva/{form}/image/{id}', [KonvaController::class, 'deleteMedia']
 
 
 //augmentation
-Route::get('augmentation/create', [AugmentController::class, 'create'])->middleware(['auth', 'verified'])->name('augmentation');
+Route::get('augmentation/create', [AugmentController::class, 'create'])->middleware(['auth', 'verified'])->name('app.augmentation');
 
 
 require __DIR__.'/auth.php';
