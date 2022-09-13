@@ -19,7 +19,7 @@ export default defineConfig({
         host: "localhost",
         hmr: {
             host: "localhost",
-            protocol: "wss",
+            // protocol: "wss",
         },
     },
     plugins: [

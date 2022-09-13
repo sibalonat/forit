@@ -1,166 +1,89 @@
 <script setup>
-import { computed, defineAsyncComponent, inject, onMounted, reactive, ref } from 'vue'
 
-import * as THREE from 'three';
-import * as THREEx from "@ar-js-org/ar.js/three.js/build/ar-threex-location-only.js";
+import { ref } from "@vue/reactivity";
+import { onMounted, watchEffect } from "@vue/runtime-core";
+import VRButton from 'troisjs/src/components/misc/VRButton.vue'
 
-
-
+let geolocation = ref(null)
+let errorStr = ref(null)
+let gettinGeolocation = ref(false)
+let long = ref('')
+let lat = ref('')
+let renderer = ref(null)
+let box = ref(null)
+let vrbutton = ref(null)
 
 onMounted(() => {
-
-    THREE, THREEx
-    // console.log(THREEx.ArToolkitSource);
-    const canvas = document.getElementById('canvas1');
-    // console.log(canvas);
-
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(60, 1.33, 0.1, 10000);
-    const renderer = new THREE.WebGLRenderer({ canvas: canvas });
-
-    const arjs = new THREEx.LocationBased(scene, camera);
-    const cam = new THREEx.WebcamRenderer(renderer);
-
-    const geom = new THREE.BoxGeometry(20, 20, 20);
-    const mtl = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-    const box = new THREE.Mesh(geom, mtl);
-    arjs.add(box, -0.72, 51.051);
-
-
-    arjs.fakeGps(-0.72, 51.05);
-
-    requestAnimationFrame(render);
-
-    function render() {
-        if (canvas.width != canvas.clientWidth || canvas.height != canvas.clientHeight) {
-            renderer.setSize(canvas.clientWidth, canvas.clientHeight, false);
-            const aspect = canvas.clientWidth / canvas.clientHeight;
-            camera.aspect = aspect;
-            camera.updateProjectionMatrix();
-        }
-        cam.update();
-        renderer.render(scene, camera);
-        requestAnimationFrame(render);
+    VRButton
+    if (!("geolocation" in navigator)) {
+        errorStr.value = 'Geolocation is not available.';
+        return;
     }
+    gettinGeolocation.value = true;
+    navigator.geolocation.getCurrentPosition(pos => {
+        geolocation.value = pos;
+    })
 
-    // const scene = new THREE.Scene();
-    // const camera = new THREE.PerspectiveCamera(80, 2, 0.1, 50000);
-    // const renderer = new THREE.WebGLRenderer({ canvas: document.querySelector('#canvas1') });
+    // renderer.value.set({alpha: true})
+    // console.log(vrbutton.value.init(renderer.value.renderer));
+    vrbutton.value.init(
+        console.log('start'),
+        renderer.value.renderer
+        // renderer.value.renderer
+    )
+    // console.log(vrbutton.value);
+    // vrbutton.value.init(renderer.renderer)
+    // vrbutton.value.init(renderer.renderer)
+    // vrbutton.init(renderer.renderer)
+    console.log(renderer.value);
+    // .alpha = true;
 
-    // const geom = new THREE.BoxGeometry(20, 20, 20);
-
-    // const threex = new THREEx.LocationBased(scene, camera);
-
-    // // You can change the minimum GPS accuracy needed to register a position - by default 1000m
-    // //const threex = new THREEx.LocationBased(scene, camera. { gpsMinAccuracy: 30 } );
-    // const cam = new THREEx.WebcamRenderer(renderer, '#video1');
-
-    // // const oneDegAsRad = THREE.Math.degToRad(1);
-    // const oneDegAsRad = THREE.MathUtils.degToRad(1);
-
-
-    // let orientationControls;
-
-    // // if (isMobile()) {
-    // //     orientationControls = new THREEx.DeviceOrientationControls(camera);
-    // // }
-
-    // let fake = null;
-    // let first = true;
-
-    // threex.on("gpsupdate", pos => {
-    //     console.log('gpsupdate');
-    //     if (first) {
-    //         setupObjects(pos.coords.longitude, pos.coords.latitude);
-    //         first = false;
-    //     }
-    // });
-
-    // threex.on("gpserror", code => {
-    //     alert(`GPS error: code ${code}`);
-    // });
-
-    // // Uncomment to use a fake GPS location
-    // //fake = { lat: 51.05, lon : -0.72 };
-    // if (fake) {
-    //     threex.fakeGps(fake.lon, fake.lat);
-    // } else {
-    //     threex.startGps();
-    // }
-
-    // requestAnimationFrame(render);
+    renderer.value.onBeforeRender(() => {
+        // renderer.value.alpha = true;
+        box.value.mesh.rotation.x += 0.01;
+    });
 
 
 
-    // // let mousedown = false, lastX = 0;
-
-    // // Mouse events for testing on desktop machine
-    // // if (!isMobile()) {
-    // //     window.addEventListener("mousedown", e => {
-    // //         mousedown = true;
-    // //     });
-
-    // //     window.addEventListener("mouseup", e => {
-    // //         mousedown = false;
-    // //     });
-
-    // //     window.addEventListener("mousemove", e => {
-    // //         if (!mousedown) return;
-    // //         if (e.clientX < lastX) {
-    // //             camera.rotation.y -= oneDegAsRad;
-    // //             if (camera.rotation.y < 0) {
-    // //                 camera.rotation.y += 2 * Math.PI;
-    // //             }
-    // //         } else if (e.clientX > lastX) {
-    // //             camera.rotation.y += oneDegAsRad;
-    // //             if (camera.rotation.y > 2 * Math.PI) {
-    // //                 camera.rotation.y -= 2 * Math.PI;
-    // //             }
-    // //         }
-    // //         lastX = e.clientX;
-    // //     });
-    // // }
-
-    // function render(time) {
-    //     resizeUpdate();
-    //     if (orientationControls) orientationControls.update();
-    //     cam.update();
-    //     renderer.render(scene, camera);
-    //     requestAnimationFrame(render);
-    // }
-
-    // function resizeUpdate() {
-    //     const canvas = renderer.domElement;
-    //     const width = canvas.clientWidth, height = canvas.clientHeight;
-    //     if (width != canvas.width || height != canvas.height) {
-    //         renderer.setSize(width, height, false);
-    //     }
-    //     camera.aspect = canvas.clientWidth / canvas.clientHeight;
-    //     camera.updateProjectionMatrix();
-    // }
-
-    // function setupObjects(longitude, latitude) {
-    //     // Use position of first GPS update (fake or real)
-    //     const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-    //     const material2 = new THREE.MeshBasicMaterial({ color: 0xffff00 });
-    //     const material3 = new THREE.MeshBasicMaterial({ color: 0x0000ff });
-    //     const material4 = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-    //     threex.add(new THREE.Mesh(geom, material), longitude, latitude + 0.001); // slightly north
-    //     threex.add(new THREE.Mesh(geom, material2), longitude, latitude - 0.001); // slightly south
-    //     threex.add(new THREE.Mesh(geom, material3), longitude - 0.001, latitude); // slightly west
-    //     threex.add(new THREE.Mesh(geom, material4), longitude + 0.001, latitude); // slightly east
-    // }
+    // .three.cameraCtrl
 
 
+    const orbitCtrl = renderer.value.three.cameraCtrl;
+    const xr = renderer.value;
+    // console.log(xr);
+    console.log(orbitCtrl);
 })
 
-</script>
-<template>
-    <div>
-        <!-- <video id='video1' autoplay playsinline style='display:none'></video> -->
+watchEffect(() => {
+    console.log(geolocation.value);
 
-        <canvas id='canvas1' style='background-color: black; width: 100%; height: 100%'></canvas>
-    </div>
+    if (geolocation.value) {
+        lat.value = geolocation.value.coords.latitude
+        long.value = geolocation.value.coords.longitude
+        console.log(lat.value);
+        console.log(long.value);
+    }
+
+})
+</script>
+
+<template>
+
+    <Renderer ref="renderer" resize="window" orbit-ctrl alpha xr>
+        <Camera :position="{ z: 10 }" />
+        <Scene>
+            <PointLight :position="{ y: 50, z: 50 }" />
+            <Box ref="box" :rotation="{ y: Math.PI / 4, z: Math.PI / 4 }">
+                <LambertMaterial />
+            </Box>
+        </Scene>
+        <!-- <EffectComposer>
+            <RenderPass />
+            <UnrealBloomPass :strength="1" />
+            <HalftonePass :radius="1" :scatter="0" />
+        </EffectComposer> -->
+    </Renderer>
+    <VRButton ref="vrbutton" />
 
 
 </template>
