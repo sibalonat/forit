@@ -84,6 +84,7 @@ onMounted(() => {
     form.name = props.m.name
     form.status = props.m.status
 
+    console.log(props.img);
     console.log(props.m);
 
 })

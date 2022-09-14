@@ -52,12 +52,13 @@ class MarkersController extends Controller
      */
     public function show(MapView $mapview)
     {
-        // $markers = Marker::where('map_view_id', $mapview->id)->get();
-        // dd($markers);
+        $markerdt = $mapview->first();
+
+        $media = $mapview->getMedia('mapview')->first();
+
         return Inertia::render('Markers/CreateMarker', [
-            'm' => $mapview->with('media')->get()->first(),
-            // 'm' => $mapview->with('markers')->with('media')->get()->first(),
-            // 'markers' => $mapview->markers->all(),
+            'm' => $markerdt,
+            'media' => $media
         ]);
     }
 

@@ -40,6 +40,7 @@ const FilePond = vueFilePond(
 
 const props = defineProps({
     m: Object,
+    media: Object,
 })
 
 let name = ref('markersArr')
@@ -59,7 +60,9 @@ let header = reactive({
 
 let data = ref([])
 
-let url = ref(props.m.media[0].original_url)
+console.log(props.m);
+
+let url = ref(props.media.original_url)
 
 let bounds = ref([[-326, -326], [326, 326]])
 let zoom = ref(2)

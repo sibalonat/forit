@@ -13,6 +13,8 @@ let renderer = ref(null)
 let box = ref(null)
 let vrbutton = ref(null)
 
+// https://codesandbox.io/s/vue-troisjs-oslvr2?file=/src/components/EmptyBox.vue
+
 onMounted(() => {
     VRButton
     if (!("geolocation" in navigator)) {
@@ -27,9 +29,7 @@ onMounted(() => {
     // renderer.value.set({alpha: true})
     // console.log(vrbutton.value.init(renderer.value.renderer));
     vrbutton.value.init(
-        console.log('start'),
         renderer.value.renderer
-        // renderer.value.renderer
     )
     // console.log(vrbutton.value);
     // vrbutton.value.init(renderer.renderer)
@@ -56,6 +56,8 @@ onMounted(() => {
 
 watchEffect(() => {
     console.log(geolocation.value);
+    const xr = renderer.value;
+    console.log(xr);
 
     if (geolocation.value) {
         lat.value = geolocation.value.coords.latitude
@@ -68,8 +70,8 @@ watchEffect(() => {
 </script>
 
 <template>
-
-    <Renderer ref="renderer" resize="window" orbit-ctrl alpha xr>
+<!-- xr -->
+    <Renderer ref="renderer" resize="window" orbit-ctrl alpha autoClear xr antialias>
         <Camera :position="{ z: 10 }" />
         <Scene>
             <PointLight :position="{ y: 50, z: 50 }" />
@@ -83,7 +85,7 @@ watchEffect(() => {
             <HalftonePass :radius="1" :scatter="0" />
         </EffectComposer> -->
     </Renderer>
-    <VRButton ref="vrbutton" />
+    <VRButton ref="vrbutton" :enter-message="'Enter AR'" />
 
 
 </template>
