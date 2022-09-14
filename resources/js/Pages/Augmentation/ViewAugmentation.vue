@@ -2,7 +2,7 @@
 
 import { ref } from "@vue/reactivity";
 import { onMounted, watchEffect } from "@vue/runtime-core";
-import VRButton from 'troisjs/src/components/misc/VRButton.vue'
+import ARButton from 'troisjs/src/components/misc/ARButton.vue'
 
 let geolocation = ref(null)
 let errorStr = ref(null)
@@ -11,12 +11,12 @@ let long = ref('')
 let lat = ref('')
 let renderer = ref(null)
 let box = ref(null)
-let vrbutton = ref(null)
+let arbutton = ref(null)
 
 // https://codesandbox.io/s/vue-troisjs-oslvr2?file=/src/components/EmptyBox.vue
 
 onMounted(() => {
-    VRButton
+    ARButton
     if (!("geolocation" in navigator)) {
         errorStr.value = 'Geolocation is not available.';
         return;
@@ -28,15 +28,12 @@ onMounted(() => {
 
     // renderer.value.set({alpha: true})
     // console.log(vrbutton.value.init(renderer.value.renderer));
-    vrbutton.value.init(
+    arbutton.value.init(
         renderer.value.renderer
     )
-    // console.log(vrbutton.value);
-    // vrbutton.value.init(renderer.renderer)
-    // vrbutton.value.init(renderer.renderer)
-    // vrbutton.init(renderer.renderer)
+
     console.log(renderer.value);
-    // .alpha = true;
+
 
     renderer.value.onBeforeRender(() => {
         // renderer.value.alpha = true;
@@ -85,7 +82,7 @@ watchEffect(() => {
             <HalftonePass :radius="1" :scatter="0" />
         </EffectComposer> -->
     </Renderer>
-    <VRButton ref="vrbutton" :enter-message="'Enter AR'" />
+    <ARButton ref="arbutton" :enter-message="'Enter AR'" :exit-message="'Leave AR'" />
 
 
 </template>
