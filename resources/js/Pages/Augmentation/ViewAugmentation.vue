@@ -51,6 +51,10 @@ onMounted(() => {
     console.log(orbitCtrl);
 })
 
+// const onPointerOver = (event) => {
+//       event.component.mesh.material.color.set(event.over ? 0xff0000 : 0xffffff);
+//     }
+
 watchEffect(() => {
     console.log(geolocation.value);
     const xr = renderer.value;
@@ -68,17 +72,24 @@ watchEffect(() => {
 
 <template>
     <!-- xr -->
-    <Renderer ref="renderer" resize="window" orbit-ctrl alpha autoClear xr antialias>
+    <Renderer :pointer="{ intersectMode: 'frame' }" ref="renderer" resize="window" orbit-ctrl alpha autoClear xr antialias>
         <Camera :position="{ z: 10 }" />
-        <Raycaster @pointerEnter="onPointerEvent" @pointerOver="onPointerOver" @pointerMove="onPointerEvent"
-            @pointerLeave="onPointerEvent" @click="onPointerEvent" />
+        <!-- <Raycaster @pointerEnter="onPointerEvent" @pointerOver="onPointerOver" @pointerMove="onPointerEvent"
+            @pointerLeave="onPointerEvent" @click="onPointerEvent" /> -->
         <Scene>
-            <PointLight :position="{ y: 50, z: 50 }" />
+            <!-- :size="10" -->
+            <!-- z: -10 -->
+            <!-- <PointLight :position="{ y: 50, z: 50 }" />
             <Box ref="box" v-for="i in 5" :key="i" :position="{ y: 1, z: -10, x: -6 + i * 2 }" :size="5">
-                <!-- :size="10" -->
-                <!-- z: -10 -->
                 <LambertMaterial />
-            </Box>
+            </Box> -->
+            <!-- x: Math.PI / 50 -->
+            <Plane ref="box" :rotation="{ y: Math.PI * 2, z: Math.PI / 2 }">
+                <LambertMaterial />
+            </Plane>
+            <!-- <Mesh ref="box" :rotation="{ y: Math.PI / 4, z: Math.PI / 4 }" :size="5">
+                <PlaneGeometry></PlaneGeometry>
+            </Mesh> -->
             <!-- <Box ref="box" :position="{ y: 1, z: -10 }" :rotation="{ y: Math.PI / 4, z: Math.PI / 4 }" :size="5">
 
                 <LambertMaterial />
