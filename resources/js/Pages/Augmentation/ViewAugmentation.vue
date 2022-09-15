@@ -72,15 +72,12 @@ watchEffect(() => {
         <Camera :position="{ z: 10 }" />
         <Scene>
             <PointLight :position="{ y: 50, z: 50 }" />
-            <Box ref="box" :rotation="{ y: Math.PI / 4, z: Math.PI / 4 }">
+            <Box ref="box" :position="{ y: 1, z: -10 }" :rotation="{ y: Math.PI / 4, z: Math.PI / 4 }" :size="5" >
+                <!-- :size="10" -->
+                <!-- z: -10 -->
                 <LambertMaterial />
             </Box>
         </Scene>
-        <!-- <EffectComposer>
-            <RenderPass />
-            <UnrealBloomPass :strength="1" />
-            <HalftonePass :radius="1" :scatter="0" />
-        </EffectComposer> -->
     </Renderer>
     <ARButton ref="arbutton" :enter-message="'Enter AR'" :exit-message="'Leave AR'" />
 
