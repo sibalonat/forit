@@ -35,10 +35,10 @@ onMounted(() => {
     console.log(renderer.value);
 
 
-    renderer.value.onBeforeRender(() => {
-        // renderer.value.alpha = true;
-        box.value.mesh.rotation.x += 0.01;
-    });
+    // renderer.value.onBeforeRender(() => {
+    //     // renderer.value.alpha = true;
+    //     box.value.mesh.rotation.x += 0.01;
+    // });
 
 
 
@@ -67,16 +67,22 @@ watchEffect(() => {
 </script>
 
 <template>
-<!-- xr -->
+    <!-- xr -->
     <Renderer ref="renderer" resize="window" orbit-ctrl alpha autoClear xr antialias>
         <Camera :position="{ z: 10 }" />
+        <Raycaster @pointerEnter="onPointerEvent" @pointerOver="onPointerOver" @pointerMove="onPointerEvent"
+            @pointerLeave="onPointerEvent" @click="onPointerEvent" />
         <Scene>
             <PointLight :position="{ y: 50, z: 50 }" />
-            <Box ref="box" :position="{ y: 1, z: -10 }" :rotation="{ y: Math.PI / 4, z: Math.PI / 4 }" :size="5" >
+            <Box ref="box" v-for="i in 5" :key="i" :position="{ y: 1, z: -10, x: -6 + i * 2 }" :size="5">
                 <!-- :size="10" -->
                 <!-- z: -10 -->
                 <LambertMaterial />
             </Box>
+            <!-- <Box ref="box" :position="{ y: 1, z: -10 }" :rotation="{ y: Math.PI / 4, z: Math.PI / 4 }" :size="5">
+
+                <LambertMaterial />
+            </Box> -->
         </Scene>
     </Renderer>
     <ARButton ref="arbutton" :enter-message="'Enter AR'" :exit-message="'Leave AR'" />
