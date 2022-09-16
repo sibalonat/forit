@@ -12,6 +12,7 @@ import VueGridLayout from "vue-grid-layout";
 import { GridItem, GridLayout } from "vue-grid-layout";
 
 import { TroisJSVuePlugin } from 'troisjs';
+// import { VideoTexture } from 'troisjs/src/materials';
 
 import VueSignaturePad from "vue-signature-pad";
 
@@ -40,6 +41,7 @@ createInertiaApp({
 
         VueApp.use(VueSignaturePad);
         VueApp.use(TroisJSVuePlugin);
+        // VueApp.component("video-texture", VideoTexture);
 
 
         VueApp.mount(el);

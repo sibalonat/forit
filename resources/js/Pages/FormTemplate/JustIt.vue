@@ -176,7 +176,6 @@ const changeData = (e, dataType, single) => {
                 console.log('is not');
                 monitor.save = []
                 monitor.save.push(reactiveDtImg)
-                // this.tempJson.push(monitor)
             } else {
                 console.log('eshte');
                 monitor.save.push(reactiveDtImg)
@@ -199,10 +198,6 @@ const deleteImg = (e, dataType, single) => {
         }
     }
 }
-
-
-
-
 
 const hideReplace = (e) => {
     e.backCond = !e.backCond
