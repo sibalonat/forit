@@ -66,7 +66,7 @@ onMounted(() => {
     renderer.value.onBeforeRender(() => {
         // renderer.value.alpha = true;
 
-        box.value.mesh.rotation.y += 0.01;
+        // box.value.mesh.rotation.y += 0.01;
         // console.log(aboutscreen.value);
 
     });
@@ -112,7 +112,7 @@ watchEffect(() => {
 </script>
 
 <template>
-    <!-- xr -->
+    <!-- xr, autoplay -->
     <video ref="aboutvideo" id="vid" controls autoplay :src="videosrc" loop />
     <button class="w-1/5 flex bg-slate-900 text-lg text-white" @click="play"> play </button>
     <Renderer :pointer="{ intersectMode: 'frame' }" ref="renderer" resize="window" orbit-ctrl alpha autoClear xr
