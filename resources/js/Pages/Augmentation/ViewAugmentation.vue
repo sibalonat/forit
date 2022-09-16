@@ -50,6 +50,7 @@ onMounted(() => {
     )
 
     console.log(video.value);
+    console.log(video.value.material.material.map);
     // console.log(video.value.material);
     // console.log(VideoTexture);
 
@@ -65,6 +66,12 @@ onMounted(() => {
 
     renderer.value.onBeforeRender(() => {
         // renderer.value.alpha = true;
+        // console.log(video.value.);
+        video.value.material.needsUpdate = true
+        video.value.material.material.map.isRenderTargetTexture = true
+        video.value.material.material.map.generateMipmaps = true
+
+        // aboutscreen.value.side = 1
 
         // box.value.mesh.rotation.y += 0.01;
         // console.log(aboutscreen.value);
@@ -77,6 +84,8 @@ onMounted(() => {
     // aboutscreen.value.setTexture(vidtex);
     // aboutscreen.value.setTexture(vidtex);
     console.log(aboutscreen.value.material);
+    // :side="'front'"
+    console.log(aboutscreen.value);
 
 
 
@@ -98,7 +107,8 @@ watchEffect(() => {
     // console.log(videosrc.value);
 
     // console.log(xr);
-    console.log(VideoTexture);
+    // console.log(VideoTexture);
+    console.log(video.value);
 
     if (geolocation.value) {
         lat.value = geolocation.value.coords.latitude
@@ -112,22 +122,30 @@ watchEffect(() => {
 </script>
 
 <template>
-    <!-- xr, autoplay -->
-    <video ref="aboutvideo" id="vid" controls autoplay :src="videosrc" loop />
+    <!-- xr, autoplay  v-show="false"-->
+    <!-- refraction :refraction-ratio="0.95" -->
+    <video ref="aboutvideo" id="vid" autoplay crossOrigin="anonymous" playsinline loop>
+        <source :src="videosrc" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"'>
+    </video>
     <button class="w-1/5 flex bg-slate-900 text-lg text-white" @click="play"> play </button>
-    <Renderer :pointer="{ intersectMode: 'frame' }" ref="renderer" resize="window" orbit-ctrl alpha autoClear xr
-        antialias>
+    <!-- <Renderer :pointer="{ intersectMode: 'frame' }" ref="renderer" resize="window" orbit-ctrl alpha autoClear xr
+        antialias> -->
+    <!-- :props="{autoClear: false}" -->
+    <Renderer :orbit-ctrl="{ enableDamping: true, dampingFactor: 0.05 }" ref="renderer" resize="window" antialias
+        autoClear alpha xr>
         <Camera :position="{ z: 10 }" />
 
         <Scene>
 
             <Plane ref="box" :rotation="{ y: Math.PI * 2, z: Math.PI / 2 }">
+                <!-- :side="" -->
+                <!-- :props="{ side: 2 }" -->
 
-                <LambertMaterial ref="aboutscreen">
+                <PhongMaterial ref="aboutscreen" :props="{color: 0xffffff}">
 
-                    <VideoTexture ref="video" :video-id="'vid'" />
+                    <VideoTexture ref="video" :video-id="'vid'"></VideoTexture>
 
-                </LambertMaterial>
+                </PhongMaterial>
             </Plane>
 
         </Scene>
