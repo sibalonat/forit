@@ -4,7 +4,7 @@ import { ref } from "@vue/reactivity";
 import { onBeforeMount, onMounted, watch, watchEffect, watchPostEffect } from "@vue/runtime-core";
 import ARButton from 'troisjs/src/components/misc/ARButton.vue'
 import { VideoTexture } from "troisjs";
-// import { VideoTexture } from "three";
+import * as THREE from "three";
 let geolocation = ref(null)
 let errorStr = ref(null)
 let gettinGeolocation = ref(false)
@@ -21,7 +21,14 @@ let root = route('welcome');
 // https://codesandbox.io/s/vue-troisjs-oslvr2?file=/src/components/EmptyBox.vue
 
 const play = () => {
-    aboutvideo.value.play();
+
+    if (aboutvideo.value.paused) {
+
+        aboutvideo.value.play();
+    } else {
+
+        aboutvideo.value.pause();
+    }
 }
 
 onBeforeMount(() => {
@@ -32,7 +39,7 @@ onBeforeMount(() => {
 
 
 onMounted(() => {
-    ARButton,
+    ARButton, THREE
         play
     if (!("geolocation" in navigator)) {
         errorStr.value = 'Geolocation is not available.';
@@ -68,8 +75,15 @@ onMounted(() => {
         // renderer.value.alpha = true;
         // console.log(video.value.);
         video.value.material.needsUpdate = true
-        video.value.material.material.map.isRenderTargetTexture = true
-        video.value.material.material.map.generateMipmaps = true
+        video.value.material.material.map.needsUpdate = true
+        // aboutscreen.value.material.alphaToCoverage = true
+        // renderer.value.physicallyCorrectLights = true
+        // renderer.value.outputEncoding = THREE.sRGBEncoding
+        // renderer.value.toneMapping = THREE.ACESFilmicToneMapping
+        // renderer.value.toneMappingExposure = 1.3
+        // video.value.material.material.map.isRenderTargetTexture = true
+        // video.value.material.material.map.premultiplyAlpha = true
+        // video.value.material.material.map.generateMipmaps = true
 
         // aboutscreen.value.side = 1
 
@@ -77,6 +91,12 @@ onMounted(() => {
         // console.log(aboutscreen.value);
 
     });
+    renderer.value.onAfterRender(() => {
+        // console.log(video.value.texture.image);
+
+        // video.value.material.needsUpdate = true
+    })
+    video.value.texture.image.play()
     // console.log(box.value.mesh.material.map);
     // console.log(video.value);
     // const vidtex = new VideoTexture(aboutvideo.value);
@@ -86,6 +106,9 @@ onMounted(() => {
     console.log(aboutscreen.value.material);
     // :side="'front'"
     console.log(aboutscreen.value);
+
+    // cameraTexture.needsUpdate = true;
+    // material.needsUpdate = true;
 
 
 
@@ -123,30 +146,31 @@ watchEffect(() => {
 
 <template>
     <!-- xr, autoplay  v-show="false"-->
-    <!-- refraction :refraction-ratio="0.95" -->
-    <video ref="aboutvideo" id="vid" autoplay crossOrigin="anonymous" playsinline loop>
-        <source :src="videosrc" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"'>
+    <!-- refraction :refraction-ratio="0.95" autoplay -->
+    <video ref="aboutvideo" id="vid" crossOrigin="anonymous" playsinline muted loop>
+        <source :src="'/images/animation.mp4'" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"'>
     </video>
     <button class="w-1/5 flex bg-slate-900 text-lg text-white" @click="play"> play </button>
     <!-- <Renderer :pointer="{ intersectMode: 'frame' }" ref="renderer" resize="window" orbit-ctrl alpha autoClear xr
         antialias> -->
     <!-- :props="{autoClear: false}" -->
+    <!-- :side="" -->
+    <!-- :props="{ side: 2 }" -->
     <Renderer :orbit-ctrl="{ enableDamping: true, dampingFactor: 0.05 }" ref="renderer" resize="window" antialias
         autoClear alpha xr>
         <Camera :position="{ z: 10 }" />
 
         <Scene>
 
-            <Plane ref="box" :rotation="{ y: Math.PI * 2, z: Math.PI / 2 }">
-                <!-- :side="" -->
-                <!-- :props="{ side: 2 }" -->
+            <Box ref="box" :rotation="{ y: Math.PI * 2, z: Math.PI / 2 }" :size="4">
 
-                <PhongMaterial ref="aboutscreen" :props="{color: 0xffffff}">
+                <!-- :props="{color: 0xffffff}" -->
+                <LambertMaterial  ref="aboutscreen" >
 
                     <VideoTexture ref="video" :video-id="'vid'"></VideoTexture>
 
-                </PhongMaterial>
-            </Plane>
+                </LambertMaterial>
+            </Box>
 
         </Scene>
     </Renderer>
