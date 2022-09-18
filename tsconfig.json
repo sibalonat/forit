@@ -17,6 +17,9 @@
       "declarationMap": true,
       "outDir": "types",
     },
-    "include": ["src/**/*.ts", "src/**/*.vue", "node_modules"],
+    "include": ["node_modules/troisjs/src/**/*.ts", "node_modules/troisjs/src/**/*.vue"],
+    // "include": ["node_modules/troijs/src/**/*.ts", "node_modules/troijs/src/**/*.vue"],
     // "include": ["src/export.ts"],
+    "exclude": ["node_modules/troisjs/src/meshes/Text.ts"]
+
   }
