@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
 
 use App\Http\Controllers\MarkersController;
+use App\Http\Controllers\PiniaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -96,5 +97,7 @@ Route::delete('konva/{form}/image/{id}', [KonvaController::class, 'deleteMedia']
 //augmentation
 Route::get('augmentation/create', [AugmentController::class, 'create'])->middleware(['auth', 'verified'])->name('app.augmentation');
 
+// pinia
+Route::get('pinia', [PiniaController::class, 'create'])->middleware(['auth', 'verified'])->name('app.pinia');
 
 require __DIR__.'/auth.php';
