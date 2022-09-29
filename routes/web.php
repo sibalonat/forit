@@ -9,6 +9,7 @@ use Illuminate\Foundation\Application;
 
 use App\Http\Controllers\MarkersController;
 use App\Http\Controllers\PiniaController;
+use App\Http\Controllers\TourController;
 
 /*
 |--------------------------------------------------------------------------
@@ -99,5 +100,10 @@ Route::get('augmentation/create', [AugmentController::class, 'create'])->middlew
 
 // pinia
 Route::get('pinia', [PiniaController::class, 'create'])->middleware(['auth', 'verified'])->name('app.pinia');
+// virtual tours
+Route::get('tours', [TourController::class, 'index'])->middleware(['auth', 'verified'])->name('app.tours');
+Route::get('tours/create', [TourController::class, 'create'])->middleware(['auth', 'verified'])->name('tour.create');
+Route::post('tours', [TourController::class, 'store'])->middleware(['auth', 'verified'])->name('tour.store');
+Route::get('tours/edit/{tour:slug}', [TourController::class, 'edit'])->middleware(['auth', 'verified'])->name('tour.edit');
 
 require __DIR__.'/auth.php';

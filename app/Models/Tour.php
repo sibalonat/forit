@@ -21,4 +21,9 @@ class Tour extends Model
     }
 
     protected $fillable = ['uuid', 'title', 'slug'];
+
+    public function stations()
+    {
+        return $this->hasMany(Station::class);
+    }
 }

@@ -20,4 +20,9 @@ class Station extends Model
     }
 
     protected $fillable = ['slug', 'uuid', 'teaser', 'tour_id', 'lng', 'lat'];
+
+    public function tour()
+    {
+        return $this->belongsTo(Tour::class);
+    }
 }
