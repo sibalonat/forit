@@ -3,6 +3,7 @@
 use App\Http\Controllers\AugmentController;
 use App\Http\Controllers\FormController;
 use App\Http\Controllers\KonvaController;
+use App\Http\Controllers\LayoutController;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
@@ -10,6 +11,7 @@ use Illuminate\Foundation\Application;
 use App\Http\Controllers\MarkersController;
 use App\Http\Controllers\PiniaController;
 use App\Http\Controllers\TourController;
+use App\Http\Controllers\UserRolesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -97,13 +99,43 @@ Route::delete('konva/{form}/image/{id}', [KonvaController::class, 'deleteMedia']
 
 //augmentation
 Route::get('augmentation/create', [AugmentController::class, 'create'])->middleware(['auth', 'verified'])->name('app.augmentation');
+Route::get('augmentation', [AugmentController::class, 'mind'])->middleware(['auth', 'verified'])->name('app.mind');
 
 // pinia
 Route::get('pinia', [PiniaController::class, 'create'])->middleware(['auth', 'verified'])->name('app.pinia');
+
+
 // virtual tours
 Route::get('tours', [TourController::class, 'index'])->middleware(['auth', 'verified'])->name('app.tours');
 Route::get('tours/create', [TourController::class, 'create'])->middleware(['auth', 'verified'])->name('tour.create');
+// Route::get('tours/{tour:slug}', [TourController::class, 'show'])->middleware(['auth', 'verified'])->name('tour.show');
 Route::post('tours', [TourController::class, 'store'])->middleware(['auth', 'verified'])->name('tour.store');
 Route::get('tours/edit/{tour:slug}', [TourController::class, 'edit'])->middleware(['auth', 'verified'])->name('tour.edit');
+
+// stations
+Route::get('tours/{tour:slug}/create-station', [TourController::class, 'createStation'])->middleware(['auth', 'verified'])->name('tour.redirect');
+Route::get('tours/{tour:slug}/edit-station/{station}', [TourController::class, 'editStation'])->middleware(['auth', 'verified'])->name('tour.stationmodal');
+// apiIndex
+Route::get('tours/{tour}/all', [TourController::class, 'apiIndex'])->middleware(['auth', 'verified'])->name('tours.all');
+Route::put('tours/{tour:slug}/edit-station/{station}', [TourController::class, 'update'])->middleware(['auth', 'verified'])->name('tour.stationupdate');
+Route::get('single/{station}', [TourController::class, 'showStation'])->middleware(['auth', 'verified'])->name('single.station');
+// api delete
+Route::delete('single/{station}/delete', [TourController::class, 'delete'])->middleware(['auth', 'verified'])->name('station.delete');
+
+
+// api station img
+Route::post('single/{station}/image-store', [TourController::class, 'stationImage'])->middleware(['auth', 'verified'])->name('station.storeimg');
+Route::delete('single/{station}/images/{id}', [TourController::class, 'deleteStationImg'])->middleware(['auth', 'verified'])->name('station.imgdel');
+Route::get('single/{station}/images', [TourController::class, 'stationImages'])->middleware(['auth', 'verified'])->name('station.imgsget');
+// Route::get('tours/{tour:slug}/create-dialog', [TourController::class, 'createDialog'])->middleware(['auth', 'verified'])->name('tour.stationdialog');
+
+
+// users
+Route::get('users', [UserRolesController::class, 'index'])->middleware(['auth', 'verified'])->name('users.all');
+Route::post('users', [UserRolesController::class, 'store'])->middleware(['auth', 'verified'])->name('user.change');
+
+// layout
+Route::get('layout', [LayoutController::class, 'index'])->middleware(['auth', 'verified'])->name('layout.mixin');
+Route::get('lay', [LayoutController::class, 'ndryshe'])->middleware(['auth', 'verified'])->name('layout.pamixin');
 
 require __DIR__.'/auth.php';

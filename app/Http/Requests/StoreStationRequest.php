@@ -24,11 +24,11 @@ class StoreStationRequest extends FormRequest
     public function rules()
     {
         return [
-            'uuid' => 'required|uuid',
-            'slug' => 'required|string|max:255',
+            'uuid' => 'uuid',
+            'slug' => 'string|max:255',
             'lat' => 'required|between:-90,90',
             'lng' => 'required|between:-180,180',
-            'tour_id' => 'required|exists:users,id',
+            'tour_id' => 'required|exists:tours,id',
             'teaser' => 'required'
         ];
     }

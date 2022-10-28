@@ -416,7 +416,7 @@ watchEffect(() => console.log(data.value))
 
         <div class="py-12">
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                <div class="overflow-visible relative bg-white shadow-sm sm:rounded-lg">
+                <div class="relative overflow-visible bg-white shadow-sm sm:rounded-lg">
 
                     <l-map v-model="zoom" v-model:zoom="zoom" :center="[17.41322, -1.219482]" @move="infodrag"
                         style="height:100vh">
@@ -428,56 +428,56 @@ watchEffect(() => console.log(data.value))
                             <l-popup :content="marker.name" />
                         </l-marker>
                     </l-map>
-                    <div class="absolute top-0 -left-64 z-50">
+                    <div class="absolute top-0 z-50 -left-64">
 
-                        <button type="button" class=" bg-slate-800 text-white p-1 rounded-lg"
+                        <button type="button" class="p-1 text-white rounded-lg  bg-slate-800"
                             :class="statement ? 'opacity-0' : ''" @click="closes">Create
                             Marker</button>
                     </div>
 
                     <div ref="bool"
-                        class="absolute top-0 -left-64 h-full min-h-0 overflow-y-auto inset-y-0 z-0 bg-white"
+                        class="absolute inset-y-0 top-0 z-0 h-full min-h-0 overflow-y-auto bg-white -left-64"
                         :class="statement ? 'w-64 opacity-100 transition-width transition-slowest ease' : 'w-0 opacity-0 transition-width transition-slowest ease-in-out delay-150'">
-                        <div class="flex justify-end items-center h-20">
-                            <button class="rounded-full bg-black text-white px-3" @click="closes"> X
+                        <div class="flex items-center justify-end h-20">
+                            <button class="px-3 text-white bg-black rounded-full" @click="closes"> X
                             </button>
-                            <!-- <button class="rounded-full bg-black text-white px-3" @click="statement = !statement"> X
+                            <!-- <button class="px-3 text-white bg-black rounded-full" @click="statement = !statement"> X
                             </button> -->
                         </div>
                         <div class="flex flex-col">
-                            <div class="grow px-4">
+                            <div class="px-4 grow">
                                 <label for="name">name</label>
-                                <input type="text" class=" h-8" id="name" v-model="ob.name">
+                                <input type="text" class="h-8 " id="name" v-model="ob.name">
                                 <br>
                                 <label for="notes">notes</label>
                                 <textarea id="notes" name="notes" rows="6" v-model="ob.notes"></textarea>
                                 <br>
                                 <br>
-                                <button class=" bg-slate-900 text-neutral-400 rounded-md py-1 px-2 " @click="store">
+                                <button class="px-2 py-1 rounded-md  bg-slate-900 text-neutral-400" @click="store">
                                     Store Marker</button>
                             </div>
                         </div>
                         <br>
                         <br>
-                        <div class="flex flex-col grow overflow-y-auto min-h-0">
+                        <div class="flex flex-col min-h-0 overflow-y-auto grow">
                             <div class="px-4">
-                                <!-- <p class=" text-lg ">kjo</p> -->
+                                <!-- <p class="text-lg ">kjo</p> -->
                                 <div class="grid grid-cols-2 mb-2" v-for="mark in data" :key="mark.id">
-                                    <p class=" text-lg self-center">{{ mark.name }}</p>
+                                    <p class="self-center text-lg ">{{ mark.name }}</p>
                                     <div class="flex flex-col">
-                                        <button class=" bg-teal-500 text-slate-900 rounded-md py-0 px-1 grow mb-1"
+                                        <button class="px-1 py-0 mb-1 bg-teal-500 rounded-md  text-slate-900 grow"
                                             @click="updateValues(mark.id)"> Edit </button>
-                                        <button class=" bg-red-600 text-slate-900 rounded-md py-0 px-1 grow"
+                                        <button class="px-1 py-0 bg-red-600 rounded-md  text-slate-900 grow"
                                             @click="deleteValues(mark.id)"> Delete </button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="absolute top-0 -right-72 h-full min-h-0 overflow-y-auto inset-y-0 z-0 bg-white"
+                    <div class="absolute inset-y-0 top-0 z-0 h-full min-h-0 overflow-y-auto bg-white -right-72"
                         :class="stateimg ? 'w-72 opacity-100 transition-width transition-slowest ease' : 'w-0 opacity-0 transition-width transition-slowest ease-in-out delay-150'">
                         <div class="flex flex-col">
-                            <div class="grow px-4">
+                            <div class="px-4 grow">
                                 <br>
                                 <br>
 

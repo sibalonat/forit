@@ -2,6 +2,8 @@ import { defineConfig, splitVendorChunkPlugin } from "vite";
 import laravel from "laravel-vite-plugin";
 import vue from "@vitejs/plugin-vue";
 import mkcert from "vite-plugin-mkcert";
+
+// console.log(mkcert);
 // import { splitVendorChunkPlugin } from 'vite'
 // optimizeDeps: {
 //     include: ['vue3-grid-layout']
@@ -23,14 +25,14 @@ import mkcert from "vite-plugin-mkcert";
 //     // protocol: "wss",
 // },
 
-        // outDir,
+// outDir,
 
 export default defineConfig({
     server: {
         https: true,
         host: "localhost",
         hmr: {
-            host: 'localhost',
+            host: "localhost",
         },
     },
     build: {
@@ -40,9 +42,14 @@ export default defineConfig({
                 entryFileNames: "[name].js",
                 chunkFileNames: "[name].js",
                 assetFileNames: "[name].[ext]",
-            }
-        }
+            },
+        },
     },
+    // resolve: {
+    //     alias: {
+    //       'vue-easy-lightbox': 'vue-easy-lightbox/dist/external-css/vue-easy-lightbox.esm.min.js'
+    //     }
+    // },
     plugins: [
         laravel({
             input: "resources/js/app.js",
