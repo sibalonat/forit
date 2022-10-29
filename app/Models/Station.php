@@ -3,10 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Support\Str;
+use Spatie\Image\Manipulations;
 use Spatie\MediaLibrary\HasMedia;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class Station extends Model implements HasMedia
 {
@@ -15,7 +17,7 @@ class Station extends Model implements HasMedia
 
     public static function booted()
     {
-        static::creating(function(Station $station) {
+        static::creating(function (Station $station) {
             $station->uuid = Str::uuid();
             if (!$station->slug) {
                 $station->slug = $station->uuid;
@@ -26,10 +28,32 @@ class Station extends Model implements HasMedia
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('stationArr')
-            ->acceptsMimeTypes(['image/jpg', 'image/jpeg', 'image/png', 'image/gif', 'video/mp4', 'audio/mp3']);
+        ->acceptsMimeTypes(['image/jpg', 'image/jpeg', 'image/png', 'image/gif']);
+            // ->acceptsMimeTypes(['image/jpg', 'image/jpeg', 'image/png', 'image/gif', 'video/mp4', 'audio/mp3']);
+
+        $this->addMediaCollection('videos')
+        ->acceptsMimeTypes(['video/mp4']);
+
+        $this->addMediaCollection('audios')
+        ->acceptsMimeTypes(['audio/mp3']);
     }
 
-    protected $fillable = ['slug', 'uuid', 'teaser', 'tour_id', 'lng', 'lat'];
+    public function registerMediaConversions(Media $media = null): void
+    {
+        $this->addMediaConversion('thumb')
+            ->width(600)
+            ->height(600)
+            ->performOnCollections('videos');
+
+        $this->addMediaConversion('thumbimg')
+            ->width(600)
+            ->height(600)
+            ->crop(Manipulations::CROP_TOP_RIGHT, 600, 600)
+            ->performOnCollections('stationArr');
+            // ->manualCrop(600, 600, 0, 0)
+    }
+
+    protected $fillable = ['slug', 'uuid', 'teaser', 'tour_id', 'lng', 'lat', 'title'];
 
     public function tour()
     {

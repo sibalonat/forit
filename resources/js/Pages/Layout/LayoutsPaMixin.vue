@@ -38,7 +38,8 @@ const indexRef = ref(0)
 const target = ref(null)
 
 const handlePreview = (u) => {
-    v3ImgPreviewFn(u)
+    console.log(u);
+    v3ImgPreviewFn(u.original_url)
 }
 
 
@@ -52,10 +53,16 @@ const onSwiper = (swiper) => {
 };
 
 const showImg = (index) => {
+    console.log(index);
     indexRef.value = index
-    let thing = pro.images.filter((v, i) => i === index)
+    console.log(pro.images);
+    let thing = pro.images.filter((v, i) => {
+        return i === index
+    })
 
-    options.src = thing[0]
+    let flated = thing[0].flat()
+
+    options.src = flated[0].original_url
 
     visibleRef.value = true
 }
@@ -69,6 +76,7 @@ const onHide = () => visibleRef.value = false
 onMounted(() => {
     Head, BreezeAuthenticatedLayout
     // grid
+    // <!-- {{ image.split('.').pop() }} -->
     // console.log(location);
     // icons
     XMarkIcon, SwatchIcon, EllipsisVerticalIcon, EllipsisHorizontalIcon
@@ -93,18 +101,15 @@ onMounted(() => {
         </template>
         <div class="py-12">
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                <!-- <div class="relative flex justify-center py-40 overflow-hidden bg-white shadow-sm sm:rounded-lg space-x-11"> -->
                 <div class="relative flex justify-center py-40 overflow-hidden bg-white shadow-sm sm:rounded-lg">
                     <div class="max-w-lg">
                         <swiper :slides-per-view="3" :space-between="20" :slidesPerColumn="2" @swiper="onSwiper"
                             @slideChange="onSlideChange">
                             <swiper-slide v-for="(image, index) in pro.images" :key="image">
-                                <!-- {{ image.split('.').pop() }} -->
-                                <img :src="image" class="w-full" v-if="image.split('.').pop() === 'jpg'" alt=""
-                                    @click.stop="handlePreview(image)">
-                                <video class="w-full" v-else @click="() => showImg(index)">
-                                    <source :src="image" type="video/mp4">
-                                </video>
+                                <img :src="image[1]" class="w-full"
+                                v-if="image[3] === 'image/jpg' || image[3] === 'image/jpeg' || image[3] === 'image/png' || image[3] === 'image/gif'"
+                                @click.stop="handlePreview(image[0])">
+                                <img :src="image[1]" class="w-full" v-else @click="showImg(index)" >
                             </swiper-slide>
                         </swiper>
                     </div>

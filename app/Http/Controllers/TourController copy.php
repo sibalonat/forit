@@ -53,7 +53,7 @@ class TourController extends Controller
     {
         return Inertia::modal('Tour/ModalStation')
             ->with([
-                'stat' => $station->only('id', 'slug', 'uuid', 'title', 'teaser', 'tour_id', 'lng', 'lat'),
+                'stat' => $station->only('id', 'slug', 'uuid', 'teaser', 'tour_id', 'lng', 'lat'),
                 'media' => $station->media->all()
             ])
             ->baseRoute('tour.edit', $tour->slug);
@@ -71,20 +71,31 @@ class TourController extends Controller
     // api calls
     public function stationImage(Request $request, Station $station)
     {
-
+        // Request $request
         if (isset($request->stationArr)) {
-
+            // dd($request->files);
+            // foreach ($request->images)
+            // dd($request->stationArr);
             foreach ($request->files as $value) {
+                // dd($value);
+                // dd($value->getMimeType());
                 if ($value->getMimeType() === 'video/mp4') {
+                    // dd($value);
                     $station->addMediaFromRequest('stationArr')->toMediaCollection('videos');
-                } else {
-                    $station->addMediaFromRequest('stationArr')->toMediaCollection('stationArr');
+                    // dd($station->media->last());
                 }
+                # code...
             }
             // $station->addMultipleMediaFromRequest(['stationArr'])->each(function ($fileAdder) {
             // $fileAdder->toMediaCollection('stationArr');
             // });
-
+            // dd($station);
+            // $fileAdders = $station
+            //     ->addMultipleMediaFromRequest(['stationArr'])
+            //     ->each(function ($fileAdder) {
+            //         dd($fileAdder);
+            //         $fileAdder->toMediaCollection();
+            //     });
             // $station->addMediaFromRequest('stationArr')->toMediaCollection('stationArr');
             // $st = $station->media->last();
 

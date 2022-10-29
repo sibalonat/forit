@@ -18,6 +18,7 @@ return new class extends Migration
             $table->id();
             $table->string('slug');
             $table->uuid('uuid')->unique();
+            $table->text('title')->nullable();
             $table->text('teaser')->nullable();
             $table->foreignIdFor(Tour::class);
             $table->string('lng')->default(0);

@@ -29,7 +29,8 @@ class StoreStationRequest extends FormRequest
             'lat' => 'required|between:-90,90',
             'lng' => 'required|between:-180,180',
             'tour_id' => 'required|exists:tours,id',
-            'teaser' => 'required'
+            'teaser' => 'required',
+            'title' => 'required'
         ];
     }
 }

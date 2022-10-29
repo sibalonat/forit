@@ -44,11 +44,11 @@ const prop = defineProps({
 
 let url = ref('https://{s}.tile.osm.org/{z}/{x}/{y}.png')
 // let attribution = ref('&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors')
-let zoom = ref(8)
+let zoom = ref(12)
 let zoomOuter = ref(11)
 // let imgs = ref(null)
 const name = ref('stationArr')
-let center = ref([41.261291, 21.401367])
+let center = ref([41.341291, 19.861367])
 let centerOuter = reactive({ lng: 19.850004785156254, lat: 41.33198614680859 })
 let geolocation = ref(null)
 let geo = reactive({
@@ -87,6 +87,7 @@ let stations = ref(null)
 
 
 const form = useForm({
+    title: '',
     teaser: '',
     lng: '',
     lat: '',
@@ -252,6 +253,12 @@ onMounted(() => {
     submitForm, deleteStation, changingView, onReady, errorCatched
 
     // imageDelete
+    if (geolocation.value) {
+        geo.lat = geolocation.value.latitude
+        geo.lng = geolocation.value.longitude
+    }
+
+    console.log();
 
 
     // maped.value.noBlockingAnimations = true
@@ -391,13 +398,21 @@ watchEffect(async () => {
         </template>
         <template #default>
             <form class="mt-6" @submit.prevent="submitForm">
-                <div class="flex flex-wrap gap-2 ">
-                    <div class="flex justify-between w-full mx-auto">
-                        <label for="teaser" class="self-center px-8 py-3 text-white bg-black rounded-lg ">
-                            Teaser
-                        </label>
-                        <textarea name="teaser" id="teaser" class="self-center w-10/12"
-                            v-model="form.teaser"></textarea>
+                <div class="flex flex-wrap">
+                    <div class="grid w-11/12 grid-cols-3 gap-x-2">
+                        <div>
+                            <label for="title" class="self-center px-8 py-1 text-white bg-black rounded-lg">Title</label>
+                            {{ form.title }}
+                            <input type="text" id="title" v-model="form.title">
+                        </div>
+                        <div class="col-span-2">
+                            <label for="teaser" class="self-center px-8 py-1 text-white bg-black rounded-lg ">
+                                Teaser
+                            </label>
+                            <textarea name="teaser" id="teaser" class="self-center w-full"
+                                v-model="form.teaser"></textarea>
+                        </div>
+
                     </div>
                     <br>
 
