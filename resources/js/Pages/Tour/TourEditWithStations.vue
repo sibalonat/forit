@@ -345,7 +345,7 @@ watchEffect(async () => {
                             <div class="h-min">
                                 <Link class="px-5 py-2 mx-auto text-yellow-300 uppercase rounded-md bg-amber-900"
                                     :href="route('tour.redirect', prop.tour.slug)">
-                                Krijo nje stacion
+                                CREATE STATION
                                 </Link>
                             </div>
                         </div>

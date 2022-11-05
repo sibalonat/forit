@@ -13,6 +13,7 @@ export let useCounterStore = defineStore('counter', {
             }
         }
     },
+
     getters: {
         remaining() {
             return 10 - this.count

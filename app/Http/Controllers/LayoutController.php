@@ -14,7 +14,7 @@ class LayoutController extends Controller
         $medias = Media::get()->map(function ($url) {
             return $url->getUrl();
         });
-        // dd($medias);
+
         return Inertia::render('Layout/LayoutsWithMixin', [
             'images' => $medias
         ]);
@@ -29,7 +29,6 @@ class LayoutController extends Controller
                     $resource = collect([$url]);
                     $media = $url->getUrl('thumb');
                     $finale = $resource->zip([$media])->concat([$item->title, $url->mime_type]);
-                    // dd($finale->flatten(1));
                     return $finale->flatten(1);
                 } else if($url->mime_type === 'audio/mp3') {
                 } else {

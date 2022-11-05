@@ -10,6 +10,7 @@ use Illuminate\Foundation\Application;
 
 use App\Http\Controllers\MarkersController;
 use App\Http\Controllers\PiniaController;
+use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\TourController;
 use App\Http\Controllers\UserRolesController;
 
@@ -137,5 +138,17 @@ Route::post('users', [UserRolesController::class, 'store'])->middleware(['auth',
 // layout
 Route::get('layout', [LayoutController::class, 'index'])->middleware(['auth', 'verified'])->name('layout.mixin');
 Route::get('lay', [LayoutController::class, 'ndryshe'])->middleware(['auth', 'verified'])->name('layout.pamixin');
+
+
+// projects and adjencency list
+
+Route::get('projects', [ProjectController::class, 'index'])->middleware(['auth', 'verified'])->name('project.all');
+Route::get('projects/create', [ProjectController::class, 'create'])->middleware(['auth', 'verified'])->name('project.create');
+Route::get('projects/{project}', [ProjectController::class, 'show'])->middleware(['auth', 'verified'])->name('project.show');
+// projects folder
+Route::post('projects/{project}', [ProjectController::class, 'folderStore'])->middleware(['auth', 'verified'])->name('folder.store');
+Route::post('projects', [ProjectController::class, 'store'])->middleware(['auth', 'verified'])->name('project.post');
+
+
 
 require __DIR__.'/auth.php';
