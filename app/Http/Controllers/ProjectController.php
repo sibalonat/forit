@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\Redirect;
 use App\Http\Requests\ProjectStoreRequest;
 use App\Models\Obj;
 
-use function PHPSTORM_META\map;
 
 class ProjectController extends Controller
 {
