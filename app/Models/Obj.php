@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// use App\Models\Traits\RelateToTeam;
 
 use Illuminate\Support\Str;
 use App\Models\Traits\RelatesToProject;
@@ -26,6 +25,11 @@ class Obj extends Model
     {
         static::creating(function($model) {
             $model->uuid = Str::uuid();
+        });
+
+        static::deleting(function($model) {
+            optional($model->objectable)->delete();
+            $model->descendants->each->delete();
         });
     }
 

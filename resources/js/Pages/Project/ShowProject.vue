@@ -1,10 +1,8 @@
 <script setup>
 import BreezeAuthenticatedLayout from '@/Layouts/Authenticated.vue';
 import { Head, Link, useForm } from '@inertiajs/inertia-vue3';
-import { computed, onMounted, reactive, ref } from '@vue/runtime-core';
-// import route from 'vendor/tightenco/ziggy/src/js';
+import { computed, onMounted, reactive, ref, watch  } from '@vue/runtime-core';
 
-let creatingFolder = ref(false)
 
 // Link
 const prop = defineProps({
@@ -13,7 +11,9 @@ const prop = defineProps({
     project: Object,
 })
 
+let creatingFolder = ref(false)
 let acen = reactive(prop.objects)
+let rename = ref(null)
 
 const form = useForm({
     name: ''
@@ -22,7 +22,6 @@ const form = useForm({
 
 const getName = computed({
   get() {
-    console.log(acen);
     return acen
   },
   set(val) {
@@ -30,18 +29,48 @@ const getName = computed({
   }
 })
 
+const getIdForRename = computed({
+  get() {
+    return rename.value
+  },
+  set(val) {
+    rename.value = val
+  }
+})
+
+const renameValue = (n) => {
+    form.name = n
+}
+
 
 const submitForm = () => {
     let data = getName.value
     form.post(route('folder.store', {project: prop.project.id, uuid: data.uuid}))
+    creatingFolder.value = false
+    form.name = ''
+}
+
+const updateForm = () => {
+    let data = getName.value
+
+    form.put(route('folder.update', {project: prop.project.id, uuid: data.uuid, id: getIdForRename.value}))
+    getIdForRename.value = null
+    form.name = ''
+}
+
+const deleteForm = (n) => {
+    getIdForRename.value = n;
+    form.delete(route('folder.delete', {project: prop.project.id, id: getIdForRename.value}))
+    getIdForRename.value = null
 }
 
 onMounted(() => {
     BreezeAuthenticatedLayout, Head, Link
-    creatingFolder
+    creatingFolder, getIdForRename, getName
     // methods
-    submitForm
+    submitForm, renameValue, updateForm, deleteForm
 })
+
 
 </script>
 
@@ -104,11 +133,33 @@ onMounted(() => {
                                     </tr>
                                 </div>
                                 <tr v-for="child in prop.objects.children" :key="child.id">
-                                    <td>{{ child.objectable.name }}</td>
+                                    <td>
+                                        <div v-if="rename === child.id">
+                                            <form class="flex items-center flex-grow" @submit.prevent="updateForm">
+                                                <input type="text" id="nameFolder"
+                                                    v-model="form.name"
+                                                    class="w-full h-10 px-3 mr-2 border-2 border-gray-200 rounded-lg">
+                                                <button type="submit"
+                                                    class="h-10 px-3 mr-2 bg-blue-700 rounded-md text-slate-300">
+                                                    Rename
+                                                </button>
+                                                <button type="button"
+                                                    class="h-10 px-3 mr-2 bg-gray-500 rounded-md text-slate-300"
+                                                    @click="getIdForRename = null">
+                                                    Cancel
+                                                </button>
+                                            </form>
+                                        </div>
+                                        <div v-else>
+                                            <Link :href="route('project.show', { project: prop.project.id, uuid: child.uuid })" @click="getName = child">
+                                                {{ child.objectable.name }}
+                                            </Link>
+                                        </div>
+                                    </td>
                                     <td>-</td>
                                     <td class="grid grid-cols-2">
-                                        <button>rename</button>
-                                        <button>delete</button>
+                                        <button type="button" class="w-1/2 h-10 mx-auto mr-2 text-black bg-orange-300 rounded-md" @click="getIdForRename = child.id; renameValue(child.objectable.name)">Rename</button>
+                                        <button class="w-1/2 h-10 mx-auto mr-2 text-red-600 border border-red-600 rounded-md" @click="deleteForm(child.id)">Delete</button>
                                     </td>
                                 </tr>
                             </tbody>

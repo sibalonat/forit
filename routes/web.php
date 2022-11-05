@@ -147,6 +147,8 @@ Route::get('projects/create', [ProjectController::class, 'create'])->middleware(
 Route::get('projects/{project}', [ProjectController::class, 'show'])->middleware(['auth', 'verified'])->name('project.show');
 // projects folder
 Route::post('projects/{project}', [ProjectController::class, 'folderStore'])->middleware(['auth', 'verified'])->name('folder.store');
+Route::put('projects/{project}', [ProjectController::class, 'folderUpdate'])->middleware(['auth', 'verified'])->name('folder.update');
+Route::delete('projects/{project}', [ProjectController::class, 'destroy'])->middleware(['auth', 'verified'])->name('folder.delete');
 Route::post('projects', [ProjectController::class, 'store'])->middleware(['auth', 'verified'])->name('project.post');
 
 

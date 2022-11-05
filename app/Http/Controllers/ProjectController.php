@@ -52,7 +52,6 @@ class ProjectController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    // public function folderStore(Request $request, Project $project)
     public function folderStore(FolderStoreRequest $request, Project $project)
     {
         $request->validated();
@@ -66,7 +65,29 @@ class ProjectController extends Controller
         $obj->save();
         $obj = $object->fresh();
 
-        return Redirect::route('project.show', [$project->id, 'uuid'=>$obj->uuid]);
+        return Redirect::route('project.show', [$project->id, 'uuid' => $obj->uuid]);
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+
+    public function folderUpdate(FolderStoreRequest $request, Project $project)
+    {
+        $request->validated();
+
+        $object = Obj::whereUuid(
+            $request->get('uuid', Obj::forCurrentProject($project->id)->whereNull('parent_id')->first()->uuid)
+        )->firstOrFail();
+
+        $obj = Obj::find($request->query('id'))->objectable->update($request->all());
+
+        $obj = $object->fresh();
+
+        return Redirect::route('project.show', [$project->id, 'uuid' => $obj->uuid]);
     }
 
     /**
@@ -119,8 +140,14 @@ class ProjectController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request, Project $project)
     {
-        //
+        $object = Obj::whereUuid(
+            $request->get('uuid', Obj::forCurrentProject($project->id)->whereNull('parent_id')->first()->uuid)
+        )->firstOrFail();
+
+        Obj::find($request->query('id'))->delete();
+        $object->fresh();
+        return Redirect::route('project.show', [$project->id, 'uuid' => $object->uuid]);
     }
 }
