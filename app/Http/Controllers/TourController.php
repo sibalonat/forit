@@ -95,7 +95,7 @@ class TourController extends Controller
             // $st = $station->select('id')->with('media')->first();
             $st = $station->with('media')->get();
             $medias = $st->map(function($item) {
-                $flatten = $item->media->map(function($url) use($item) {
+                $flatten = $item->getMedia('stationArr')->map(function($url) use($item) {
                     if ($url->mime_type === 'video/mp4') {
                         $resource = collect([$url]);
                         $media = $url->getUrl('thumb');
@@ -121,7 +121,10 @@ class TourController extends Controller
     {
         if (isset($request->imgAudio)) {
             $station->addMediaFromRequest('imgAudio')->toMediaCollection('imgAudio');
-            // imgAudio
+
+            $st = $station->getMedia('imgAudio')->last();
+
+            return response()->json($st);
         }
     }
 
@@ -137,7 +140,7 @@ class TourController extends Controller
         // $element = $station->media->all();
         $st = $station->with('media')->get();
         $medias = $st->map(function($item) {
-            $flatten = $item->media->map(function($url) use($item) {
+            $flatten = $item->getMedia('stationArr')->map(function($url) use($item) {
                 if ($url->mime_type === 'video/mp4') {
                     $resource = collect([$url]);
                     $media = $url->getUrl('thumb');

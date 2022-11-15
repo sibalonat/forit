@@ -255,13 +255,13 @@ function imageDelete(error) {
                         <div class="grid grid-cols-2 gap-x-10">
                             <div class="grid grid-flow-row-dense">
                                 <div class="p-3">
-                                    <label for="textname" class="w-full flex">Name</label>
-                                    <input type="text" id="textname" class="border-y-1 w-full flex border-cyan-800"
+                                    <label for="textname" class="flex w-full">Name</label>
+                                    <input type="text" id="textname" class="flex w-full border-y-1 border-cyan-800"
                                         v-model="form.name">
                                     <br>
-                                    <label for="selectstatus" class="w-full flex">Status</label>
+                                    <label for="selectstatus" class="flex w-full">Status</label>
                                     <!-- {{ form.status }} -->
-                                    <select id="selectstatus" class="border-y-1 w-full flex border-cyan-800"
+                                    <select id="selectstatus" class="flex w-full border-y-1 border-cyan-800"
                                         v-model="form.status">
                                       <option v-for="opt in selectStatus" :key="opt" :value="opt">{{ opt }}</option>
                                     </select>

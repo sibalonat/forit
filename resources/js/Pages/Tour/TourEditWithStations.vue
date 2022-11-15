@@ -1,7 +1,7 @@
 <script setup>
 import BreezeAuthenticatedLayout from '@/Layouts/Authenticated.vue';
 import { Head, Link, useForm, usePage } from '@inertiajs/inertia-vue3';
-import { onBeforeMount, onMounted, reactive, ref, watchEffect } from '@vue/runtime-core';
+import { onBeforeMount, onMounted, reactive, ref, watchEffect, watch } from '@vue/runtime-core';
 import ModalStationVue from './ModalStation.vue';
 
 
@@ -28,6 +28,7 @@ import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
 import { Inertia } from '@inertiajs/inertia';
 import { nextTick } from 'process';
 import { computed } from '@vue/reactivity';
+// import { watch } from 'fs';
 
 const FilePond = vueFilePond(
     FilePondPluginFileValidateType,
@@ -50,7 +51,7 @@ let zoomOuter = ref(11)
 const name = ref('stationArr')
 
 const imgAudio = ref('imgAudio')
-
+let serverMessage = {};
 let idToDelete = ref('')
 let routedel = ref('')
 let pondus = ref(null)
@@ -104,26 +105,7 @@ const form = useForm({
 });
 
 
-let db = reactive({
-    server: {
-        url: route('markers.edit', props.m.id),
-        process: {
-            url: '/image',
-
-            onerror: (response) => {
-                serverMessage = JSON.parse(response);
-            },
-        },
-        revert: null,
-
-        headers: {
-            'X-CSRF-TOKEN': document.head.querySelector('meta[name="csrf_token"]').content
-        },
-        labelFileProcessingError: () => {
-            return serverMessage.error;
-        },
-    }
-})
+let db = reactive({ server: {} })
 
 
 const submitForm = () => {
@@ -138,21 +120,25 @@ const errorCatched = (error) => {
 
 
 const computedView = computed({
-  // getter
-  get() {
-    return view.value
-  },
-  // setter
-  set(val) {
-    console.log(val);
-    view.value = val
-  }
+    // getter
+    get() {
+        return view.value
+    },
+    // setter
+    set(val) {
+        console.log(val);
+        view.value = val
+    }
 })
 
 
 
 
 const getImages = async (e, header) => {
+    return await axios.get(route('station.imgsget', e), header);
+}
+
+const getFeatureImage = async (e, header) => {
     return await axios.get(route('station.imgsget', e), header);
 }
 
@@ -166,12 +152,14 @@ const filepondInitialized = async () => {
     if (usePage().props.value.modal !== undefined) {
         response.value = usePage().props.value.modal.props.stat;
         // response.value = usePage().props.value.modal.props.media;
-        console.log(usePage().props.value.modal.props.media);
+        // console.log(usePage().props.value.modal.props.media);
 
 
         setOptions({ files: [] })
 
         imgsADelete.value = await getImages(response.value.id, header);
+
+        console.log(imgsADelete.value);
 
 
 
@@ -205,6 +193,52 @@ const filepondInitialized = async () => {
 const filepondInitializedAudios = () => {
     console.log('Filepond is ready!');
     console.log('Filepond object:', pondus.value);
+    console.log(response.value);
+    db.server = {
+        url: route('single.station', { station: response.value.id }),
+        process: {
+            url: '/img',
+            onerror: (response) => {
+                serverMessage = JSON.parse(response);
+            },
+        },
+        revert: null,
+
+        headers: {
+            'X-CSRF-TOKEN': document.head.querySelector('meta[name="csrf_token"]').content
+        },
+        labelFileProcessingError: () => {
+            return serverMessage.error;
+        },
+    }
+
+    // await axios.get(route('markers.mediashow', { mapview: props.m.id }), header)
+    //         .then((response) => {
+    //             // console.log(response);
+    //             // image = response.data
+    //             img = response.data
+    //         })
+    //         .catch((error) => {
+    //             console.log(error);
+    //         })
+
+    //     await pond.value.addFile(
+    //         img,
+    //         // img.name,
+    //         {
+    //             type: 'local',
+    //             metadata: {
+    //                 poster: img.original_url,
+    //             },
+    //             file: {
+    //                 name: img.name,
+    //                 size: img.size,
+    //                 type: img.mime_type,
+    //             },
+    //         }
+    //     )
+
+    console.log(db.server);
 }
 
 
@@ -213,6 +247,20 @@ const handleProcessedFile = (error) => {
         return;
     }
     // filepondInitialized()
+}
+
+const handleProcessedFeature = (error, file) => {
+    if (error) {
+        return;
+    }
+
+    console.log(file);
+
+    let obj = JSON.parse(file.serverId)
+    console.log(obj);
+
+    idToDelete.value = obj.id
+
 }
 
 
@@ -236,6 +284,22 @@ const changingView = () => {
     changeview.value = !changeview.value
     // marker.value = updatedMarker
     console.log(updatedMarker);
+}
+
+function imageDelete(error, file) {
+    if (error) {
+        console.error(error);
+        return;
+    }
+
+    axios.delete(route('tour.delfeature', { station: response.value.id, id: idToDelete.value }), header)
+        .then((reponse) => {
+            console.log(reponse);
+        })
+        .catch(function (error) {
+            console.log(error);
+        })
+
 }
 
 
@@ -277,12 +341,13 @@ onBeforeMount(() => {
 })
 
 onMounted(() => {
-    thingOnUpdate, filepondInitialized, handleProcessedFile, filepondInitializedAudios
+    thingOnUpdate, filepondInitialized, handleProcessedFile, filepondInitializedAudios, handleProcessedFeature
     LMap, LTileLayer, LMarker, LPopup, LCircleMarker
     // marker.value = [41.32801218205472, 19.818165153265003]
     drag.value = true
 
     // imageDelete
+    imageDelete
 
 
 
@@ -338,6 +403,7 @@ watchEffect(async () => {
         geo.lat = await geolocation.value.latitude
         geo.lng = await geolocation.value.longitude
     }
+    console.log(db);
 })
 
 
@@ -473,19 +539,19 @@ watch(idToDelete, async (newId) => {
                     </div>
 
                     <div class="w-full h-full" v-if="computedView == 3">
-                        <!-- allow-revert="false" -->
-                        <FilePond :name="imgAudio" ref="pondus" allowMultiple="false" credits="false"
-                            label-idle="Click to choose image, or drag here..." @init="filepondInitializedAudios"
-                            @error="errorCatched" allow-revert="false" :image-preview-height="200"
-                            accepted-file-types="image/jpg, image/jpeg, image/png"
-                            max-file-size="5MB" />
+                        <FilePond :name="imgAudio" ref="pondus" allowMultiple="false" :server="db.server"
+                            credits="false" label-idle="Click to choose image, or drag here..."
+                            @init="filepondInitializedAudios" @error="errorCatched" :image-preview-height="200"
+                            @processfile="handleProcessedFeature" @removefile="imageDelete"
+                            accepted-file-types="image/jpg, image/jpeg, image/png" max-file-size="5MB" />
                     </div>
 
                 </div>
                 <div class="grid grid-cols-2">
                     <button type="button" class="text-xl text-white bg-slate-900"
-                    @click="computedView > 1 ? computedView = computedView - 1 : computedView = 1">Prev</button>
-                    <button type="button" class="text-xl text-white bg-slate-900" @click="computedView < 3  ? computedView = computedView + 1 : computedView = 3">Next</button>
+                        @click="computedView > 1 ? computedView = computedView - 1 : computedView = 1">Prev</button>
+                    <button type="button" class="text-xl text-white bg-slate-900"
+                        @click="computedView < 3 ? computedView = computedView + 1 : computedView = 3">Next</button>
                 </div>
                 <button type="submit" class="px-6 py-1 mt-12 bg-green-700 rounded-lg text-slate-100">
                     Ruje stacionin
