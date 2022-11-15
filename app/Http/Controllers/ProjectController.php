@@ -52,6 +52,7 @@ class ProjectController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    // public function folderStore(Request $request, Project $project)
     public function folderStore(FolderStoreRequest $request, Project $project)
     {
         $request->validated();
@@ -74,7 +75,8 @@ class ProjectController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-
+    // public function folderUpdate(FolderStoreRequest $request, Project $project)
+    // public function folderUpdate(Request $request, Project $project)
     public function folderUpdate(FolderStoreRequest $request, Project $project)
     {
         $request->validated();

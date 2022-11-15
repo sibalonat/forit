@@ -113,6 +113,17 @@ onMounted(() => {
                             </swiper-slide>
                         </swiper>
                     </div>
+                    <div class="max-w-lg">
+                        <swiper :slides-per-view="3" :space-between="20" :slidesPerColumn="2" @swiper="onSwiper"
+                            @slideChange="onSlideChange">
+                            <swiper-slide v-for="(image, index) in pro.images" :key="image">
+                                <img :src="image[1]" class="w-full"
+                                v-if="image[3] === 'image/jpg' || image[3] === 'image/jpeg' || image[3] === 'image/png' || image[3] === 'image/gif'"
+                                @click.stop="handlePreview(image[0])">
+                                <img :src="image[1]" class="w-full" v-else @click="showImg(index)" >
+                            </swiper-slide>
+                        </swiper>
+                    </div>
                     <div class="fixed inset-y-0 z-50 flex w-screen h-screen space-x-0 demo-player" ref="target"
                         v-if="visibleRef">
                         <div class="flex-col w-full my-auto">

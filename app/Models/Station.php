@@ -29,6 +29,9 @@ class Station extends Model implements HasMedia
     {
         $this->addMediaCollection('stationArr')
         ->acceptsMimeTypes(['image/jpg', 'image/jpeg', 'image/png', 'image/gif']);
+
+        $this->addMediaCollection('imgAudio')
+        ->acceptsMimeTypes(['image/jpg', 'image/jpeg', 'image/png', 'image/gif']);
             // ->acceptsMimeTypes(['image/jpg', 'image/jpeg', 'image/png', 'image/gif', 'video/mp4', 'audio/mp3']);
 
         $this->addMediaCollection('videos')
@@ -50,10 +53,16 @@ class Station extends Model implements HasMedia
             ->height(600)
             ->crop(Manipulations::CROP_TOP_RIGHT, 600, 600)
             ->performOnCollections('stationArr');
+
+        $this->addMediaConversion('thumbimgaudio')
+            ->width(600)
+            ->height(600)
+            ->crop(Manipulations::CROP_TOP_RIGHT, 600, 600)
+            ->performOnCollections('imgAudio');
             // ->manualCrop(600, 600, 0, 0)
     }
 
-    protected $fillable = ['slug', 'uuid', 'teaser', 'tour_id', 'lng', 'lat', 'title'];
+    protected $fillable = ['slug', 'uuid', 'teaser_en', 'teaser_al', 'tour_id', 'lng', 'lat', 'title_en', 'title_al'];
 
     public function tour()
     {

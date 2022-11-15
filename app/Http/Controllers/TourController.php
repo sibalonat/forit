@@ -36,8 +36,7 @@ class TourController extends Controller
 
     public function edit(Tour $tour)
     {
-        // dd($tour->whereId($tour->id)->with('stations:id')->first());
-        // query()
+
         return Inertia::render('Tour/TourEditWithStations', [
 
             'tour' => $tour->whereId($tour->id)->with('stations')->first(),
@@ -51,10 +50,21 @@ class TourController extends Controller
 
     public function editStation(Tour $tour, Station $station)
     {
+
         return Inertia::modal('Tour/ModalStation')
             ->with([
-                'stat' => $station->only('id', 'slug', 'uuid', 'title', 'teaser', 'tour_id', 'lng', 'lat'),
-                'media' => $station->media->all()
+                'stat' => $station->only(
+                    'id',
+                    'slug',
+                    'uuid',
+                    'title_en',
+                    'title_al',
+                    'teaser_al',
+                    'teaser_en',
+                    'tour_id',
+                    'lng',
+                    'lat'),
+                // 'media' => $station->media->all()
             ])
             ->baseRoute('tour.edit', $tour->slug);
     }
@@ -81,21 +91,70 @@ class TourController extends Controller
                     $station->addMediaFromRequest('stationArr')->toMediaCollection('stationArr');
                 }
             }
-            // $station->addMultipleMediaFromRequest(['stationArr'])->each(function ($fileAdder) {
-            // $fileAdder->toMediaCollection('stationArr');
-            // });
 
-            // $station->addMediaFromRequest('stationArr')->toMediaCollection('stationArr');
-            // $st = $station->media->last();
+            // $st = $station->select('id')->with('media')->first();
+            $st = $station->with('media')->get();
+            $medias = $st->map(function($item) {
+                $flatten = $item->media->map(function($url) use($item) {
+                    if ($url->mime_type === 'video/mp4') {
+                        $resource = collect([$url]);
+                        $media = $url->getUrl('thumb');
+                        $finale = $resource->zip([$media])->concat([$item->title, $url->mime_type]);
+                        return $finale->flatten(1);
+                    } else if($url->mime_type === 'audio/mp3') {
+                    } else {
+                        $resource = collect([$url]);
+                        $media = $url->getUrl('thumbimg');
+                        $finale = $resource->zip([$media])->concat([$item->title, $url->mime_type]);
+                        return $finale->flatten(1);
+                    }
+                });
 
-            // return response()->json($st);
+                return $flatten;
+            });
+
+            return response()->json($medias->flatten(1));
         }
+    }
+    // api calls
+    public function stationAudioImage(Request $request, Station $station)
+    {
+        if (isset($request->imgAudio)) {
+            $station->addMediaFromRequest('imgAudio')->toMediaCollection('imgAudio');
+            // imgAudio
+        }
+    }
+
+    public function deleteFeature(Station $station, Request $request, $id)
+    {
+        $id = $request->id;
+
+        $station->media->where('id', $id)->first()->delete();
     }
 
     public function stationImages(Station $station)
     {
-        $element = $station->media->all();
-        return response()->json($element);
+        // $element = $station->media->all();
+        $st = $station->with('media')->get();
+        $medias = $st->map(function($item) {
+            $flatten = $item->media->map(function($url) use($item) {
+                if ($url->mime_type === 'video/mp4') {
+                    $resource = collect([$url]);
+                    $media = $url->getUrl('thumb');
+                    $finale = $resource->zip([$media])->concat([$item->title, $url->mime_type]);
+                    return $finale->flatten(1);
+                } else if($url->mime_type === 'audio/mp3') {
+                } else {
+                    $resource = collect([$url]);
+                    $media = $url->getUrl('thumbimg');
+                    $finale = $resource->zip([$media])->concat([$item->title, $url->mime_type]);
+                    return $finale->flatten(1);
+                }
+            });
+
+            return $flatten;
+        });
+        return response()->json($medias->flatten(1));
     }
 
     public function deleteStationImg(Station $station, Request $request, $id)

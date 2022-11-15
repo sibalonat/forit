@@ -119,6 +119,10 @@ Route::get('tours/{tour:slug}/edit-station/{station}', [TourController::class, '
 // apiIndex
 Route::get('tours/{tour}/all', [TourController::class, 'apiIndex'])->middleware(['auth', 'verified'])->name('tours.all');
 Route::put('tours/{tour:slug}/edit-station/{station}', [TourController::class, 'update'])->middleware(['auth', 'verified'])->name('tour.stationupdate');
+// feature delete
+Route::post('tours/{tour:slug}/edit-station/{station}/img', [TourController::class, 'stationAudioImage'])->middleware(['auth', 'verified'])->name('tour.featureimg');
+Route::delete('tours/{tour:slug}/edit-station/{station}/img/{id}', [TourController::class, 'deleteFeature'])->middleware(['auth', 'verified'])->name('tour.delfeature');
+
 Route::get('single/{station}', [TourController::class, 'showStation'])->middleware(['auth', 'verified'])->name('single.station');
 // api delete
 Route::delete('single/{station}/delete', [TourController::class, 'delete'])->middleware(['auth', 'verified'])->name('station.delete');
